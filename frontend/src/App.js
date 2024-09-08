@@ -16,7 +16,6 @@ function App() {
       reminderSent,
     };
 
-    // Send a POST request to the backend to create the task
     fetch('http://localhost:8080/tasks', {
       method: 'POST',
       headers: {
@@ -27,7 +26,6 @@ function App() {
       .then((response) => response.json())
       .then((data) => {
         console.log('Task created successfully:', data);
-        // Clear form fields after successful submission
         setTitle('');
         setDescription('');
         setDeadline('');
@@ -38,47 +36,62 @@ function App() {
       });
   };
 
-  const matti = 'sdf';
-
   return (
-    <div className="App">
-      <h1>Create a</h1>
-      <form onSubmit={handleSubmit}>
+    <div className="max-w-md mx-auto p-4">
+      <h1 className="text-2xl font-bold mb-4">Create a New Task</h1>
+      <form onSubmit={handleSubmit} className="space-y-4">
         <div>
-          <label>Title:</label>
+          <label className="block text-sm font-medium text-gray-700">
+            Title:
+          </label>
           <input
             type="text"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
+            className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
             required
           />
         </div>
         <div>
-          <label>Description:</label>
+          <label className="block text-sm font-medium text-gray-700">
+            Description:
+          </label>
           <textarea
             value={description}
             onChange={(e) => setDescription(e.target.value)}
+            className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
             required
           />
         </div>
         <div>
-          <label>Deadline:</label>
+          <label className="block text-sm font-medium text-gray-700">
+            Deadline:
+          </label>
           <input
             type="datetime-local"
             value={deadline}
             onChange={(e) => setDeadline(e.target.value)}
+            className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
             required
           />
         </div>
         <div>
-          <label>Reminder Sent:</label>
+          <label className="block text-sm font-medium text-gray-700">
+            Reminder Sent:
+          </label>
           <input
             type="checkbox"
             checked={reminderSent}
             onChange={(e) => setReminderSent(e.target.checked)}
+            className="h-4 w-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500"
           />
         </div>
-        <button type="submit">Create Task</button>
+        <button
+          type="submit"
+          className="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+        >
+          Create Task
+        </button>
       </form>
     </div>
   );
