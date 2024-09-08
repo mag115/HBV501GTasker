@@ -13,7 +13,7 @@ function App() {
       title,
       description,
       deadline,
-      reminderSent
+      reminderSent,
     };
 
     // Send a POST request to the backend to create the task
@@ -24,19 +24,21 @@ function App() {
       },
       body: JSON.stringify(task),
     })
-    .then((response) => response.json())
-    .then((data) => {
-      console.log('Task created successfully:', data);
-      // Clear form fields after successful submission
-      setTitle('');
-      setDescription('');
-      setDeadline('');
-      setReminderSent(false);
-    })
-    .catch((error) => {
-      console.error('Error creating task:', error);
-    });
+      .then((response) => response.json())
+      .then((data) => {
+        console.log('Task created successfully:', data);
+        // Clear form fields after successful submission
+        setTitle('');
+        setDescription('');
+        setDeadline('');
+        setReminderSent(false);
+      })
+      .catch((error) => {
+        console.error('Error creating task:', error);
+      });
   };
+
+  const matti = 'sdf';
 
   return (
     <div className="App">
