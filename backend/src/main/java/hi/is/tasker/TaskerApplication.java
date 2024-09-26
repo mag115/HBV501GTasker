@@ -10,5 +10,4 @@ public class TaskerApplication {
 		// aa
 		SpringApplication.run(TaskerApplication.class, args);
 	}
-
 }
