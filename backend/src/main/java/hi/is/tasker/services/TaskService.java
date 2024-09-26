@@ -16,8 +16,5 @@ public interface TaskService {
     Task updateTaskPriority(Long taskId, String priority);
     List<Task> filterTasksByStatus(String status);
     void sendReminder(Long taskId);
-    void startTaskTimer(Long taskId);
-    void stopTaskTimer(Long taskId);
-    void manualTimeEntry(Long taskId, double timeSpent);
     String generateProjectReport(Long projectId);
 }

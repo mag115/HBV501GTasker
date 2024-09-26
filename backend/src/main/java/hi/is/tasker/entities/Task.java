@@ -27,11 +27,6 @@ public class Task {
     private String priority;  // "Low", "Medium", "High"
     private Long assignedUserId;  // user id sem fær þetta task
 
-    //nýtt fyrir time tracking feature:
-    private LocalDateTime startTime;
-    private LocalDateTime endTime;
-    private double timeSpent;  // Manually entered?
-
     // Getters and Setters
 }
 

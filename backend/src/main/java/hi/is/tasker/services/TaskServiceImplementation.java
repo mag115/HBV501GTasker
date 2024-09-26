@@ -61,18 +61,6 @@ public class TaskServiceImplementation implements TaskService {
     }
 
     @Override
-    public void startTaskTimer(Long taskId) {
-    }
-
-    @Override
-    public void stopTaskTimer(Long taskId) {
-    }
-
-    @Override
-    public void manualTimeEntry(Long taskId, double timeSpent) {
-    }
-
-    @Override
     public String generateProjectReport(Long projectId) {
         return "Project Report";
     }
