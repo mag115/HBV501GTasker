@@ -1,4 +1,4 @@
-import hi.is.tasker.repositories.TaskRepository;
+package hi.is.tasker.services;
 
 import hi.is.tasker.entities.Task;
 import hi.is.tasker.repositories.TaskRepository;

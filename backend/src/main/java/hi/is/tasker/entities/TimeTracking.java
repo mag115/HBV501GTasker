@@ -1,0 +1,29 @@
+package hi.is.tasker.entities;
+
+package hi.is.tasker.entities;
+
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import lombok.Getter;
+import lombok.Setter;
+
+import java.time.LocalDateTime;
+
+@Getter
+@Setter
+@Entity(name = "time_tracking")
+public class TimeTracking {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "task_id", nullable = false)
+    private Task task; //tengja við task entity
+
+    private LocalDateTime startTime;
+    private LocalDateTime endTime;
+    private double timeSpent;
+}
