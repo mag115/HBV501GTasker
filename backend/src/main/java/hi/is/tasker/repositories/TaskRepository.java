@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 public interface TaskRepository extends JpaRepository<Task, Long> {
-    List<Task> findAllByDeadlineBeforeAndReminderSentFalse(LocalDateTime deadline);
+    List<Task> findAllByDeadlineAndReminderFalse(LocalDateTime deadline);
 
     //Nýjar pælingar, hafa þetta líka eða nei?:
     List<Task> findAllByStatus(String status);
