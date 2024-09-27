@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
-public class TaskServiceImplementation implements TimeTracking {
+public class TimeTrackingImplementation implements TimeTrackingService {
     private final TimeTrackingRepository timeTrackingRepository;
     private final TaskRepository taskRepository;
 
