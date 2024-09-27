@@ -29,4 +29,9 @@ public class NotificationController {
     @PatchMapping("/{notificationId}/read")
     public void markNotificationAsRead() {
     }
+
+    @PostMapping("/tasks/{taskId}/reminder")
+    public void sendDeadlineReminder() {
+    }
 }
+

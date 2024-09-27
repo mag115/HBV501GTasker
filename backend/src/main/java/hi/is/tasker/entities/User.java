@@ -1,7 +1,5 @@
 package hi.is.tasker.entities;
 
-package hi.is.tasker.entities;
-
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -19,6 +17,7 @@ public class User {
     private Long id;
 
     @Column(nullable = false, unique = true)
+    @Size(min = 3, max = 50, message = "Username must be between 3 and 50 characters")
     private String username;
 
     @Column(nullable = false)

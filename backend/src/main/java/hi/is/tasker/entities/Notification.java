@@ -1,7 +1,5 @@
 package hi.is.tasker.entities;
 
-package hi.is.tasker.entities;
-
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
