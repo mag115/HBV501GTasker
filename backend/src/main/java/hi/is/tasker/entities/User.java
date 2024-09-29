@@ -28,7 +28,7 @@ public class User {
     @Email
     private String email;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "assignedUser", cascade = CascadeType.ALL)
     private List<Task> tasks;
 
     public User() {}
