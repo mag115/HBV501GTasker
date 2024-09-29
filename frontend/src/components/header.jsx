@@ -5,7 +5,14 @@ const Header = () => {
   return (
     <header className="bg-blue-600 text-white p-4">
       <nav className="container mx-auto flex justify-between">
-        <div className="text-xl font-bold">Tasker App</div>
+        <NavLink
+          to="/"
+          className={({ isActive }) =>
+            isActive ? 'text-gray-200 font-bold' : 'hover:text-gray-200'
+          }
+        >
+          Tasker Home
+        </NavLink>
         <ul className="flex space-x-4">
           <li>
             <NavLink
@@ -25,6 +32,16 @@ const Header = () => {
               }
             >
               Add Task
+            </NavLink>
+          </li>
+          <li>
+            <NavLink
+              to="/tasklist"
+              className={({ isActive }) =>
+                isActive ? 'text-gray-200 font-bold' : 'hover:text-gray-200'
+              }
+            >
+              Task List
             </NavLink>
           </li>
           <li>

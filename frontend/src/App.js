@@ -1,11 +1,12 @@
 import React from 'react';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import { Tasks } from './pages/tasks';
-import { LoginForm } from './components/login-form';
-import { SignupForm } from './components/signup-form';
+import { Login } from './pages/login';
+import { Signup } from './pages/signup';
 import { ProtectedRoute } from './components/protected-route';
 import { Home } from './pages/home';
 import { AuthProvider } from './context/auth-context';
+import { TaskListPage } from './pages/task-list';
 
 const router = createBrowserRouter([
   {
@@ -14,17 +15,25 @@ const router = createBrowserRouter([
   },
   {
     path: '/login',
-    element: <LoginForm />,
+    element: <Login />,
   },
   {
     path: '/signup',
-    element: <SignupForm />,
+    element: <Signup />,
   },
   {
     path: '/tasks',
     element: (
       <ProtectedRoute>
         <Tasks />
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: '/tasklist',
+    element: (
+      <ProtectedRoute>
+        <TaskListPage />
       </ProtectedRoute>
     ),
   },

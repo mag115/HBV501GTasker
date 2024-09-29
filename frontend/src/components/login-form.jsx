@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { handleLogin } from '../api/auth';
-import { useNavigation } from 'react-router-dom';
+import { useAuth } from '../context/auth-context';
+import { useNavigate } from 'react-router-dom';
 import { Header } from './header';
 
 const LoginForm = () => {
@@ -8,7 +9,8 @@ const LoginForm = () => {
   const [password, setPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
-  const navigate = useNavigation();
+  const { login } = useAuth();
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -20,7 +22,8 @@ const LoginForm = () => {
     };
     const res = await handleLogin(loginData);
     if (res.success) {
-      // redirect user.
+      login(res.data); // Set the authenticated user
+      navigate('/tasks'); // Redirect to tasks page
     } else {
       setErrorMessage(res.error || 'Error registering user');
     }
@@ -28,7 +31,6 @@ const LoginForm = () => {
 
   return (
     <>
-      <Header />
       <div className="flex items-center justify-center min-h-screen bg-gray-100">
         <div className="bg-white p-8 rounded-lg shadow-lg max-w-sm w-full">
           <h2 className="text-2xl font-bold mb-6 text-center">Login</h2>

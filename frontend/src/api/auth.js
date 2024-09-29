@@ -19,14 +19,15 @@ export const handleSignup = async (username, email, password, fullName) => {
   }
 };
 
-export const handleLogin = async (username, password) => {
+export const handleLogin = async (data) => {
   try {
     const response = await request('post', '/auth/login', {
-      username,
-      password,
+      ...data, // Sending email and password as payload
     });
 
-    return { success: true, data: response.data };
+    const { token, user } = response.data;
+
+    return { success: true, data: { token, user } };
   } catch (error) {
     console.error('Error during login:', error);
     return {

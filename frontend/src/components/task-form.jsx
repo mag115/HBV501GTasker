@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 
+import { request } from '../api/http';
+
 const TaskForm = () => {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
@@ -17,25 +19,7 @@ const TaskForm = () => {
       reminderSent,
     };
 
-    try {
-      const response = await fetch('http://localhost:8080/tasks', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: '8aac6727-bf63-4234-a027-b630e5178414',
-        },
-        body: JSON.stringify(newTask),
-      });
-
-      if (response.ok) {
-        setResponseMessage('Task added successfully!');
-      } else {
-        setResponseMessage('Error adding task. Please try again.');
-      }
-    } catch (error) {
-      console.error('Error:', error);
-      setResponseMessage('Network error. Please try again.');
-    }
+    const res = await request('post', '/tasks', newTask);
 
     // Clear the form fields
     setTitle('');
