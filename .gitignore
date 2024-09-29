@@ -64,3 +64,6 @@ yarn-error.log*
 *.jar
 *.war
 *.ear
+
+/node_modules
+/.cache
