@@ -2,6 +2,7 @@ package hi.is.tasker.controllers;
 
 import hi.is.tasker.entities.Task;
 import hi.is.tasker.repositories.TaskRepository;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -17,9 +18,15 @@ public class TaskController {
         this.taskRepository = taskRepository;
     }
 
+//    @GetMapping("/tasks")
+//    public List<Task> getAllTasks() {
+//        return taskRepository.findAll();
+//    }
+
     @GetMapping("/tasks")
-    public List<Task> getAllTasks() {
-        return taskRepository.findAll();
+    public ResponseEntity<List<Task>> getAllTasks() {
+        List<Task> tasks = taskRepository.findAll();
+        return ResponseEntity.ok(tasks);
     }
 
     @PostMapping("/tasks")

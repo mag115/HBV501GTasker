@@ -1,20 +1,40 @@
 import React from 'react';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import { Home } from './pages/home';
-import { Header } from './components/header';
+import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import { Tasks } from './pages/tasks';
+import { LoginForm } from './components/login-form';
+import { SignupForm } from './components/signup-form';
+import { ProtectedRoute } from './components/protected-route';
+import { Home } from './pages/home';
+import { AuthProvider } from './context/auth-context';
+
+const router = createBrowserRouter([
+  {
+    path: '/',
+    element: <Home />,
+  },
+  {
+    path: '/login',
+    element: <LoginForm />,
+  },
+  {
+    path: '/signup',
+    element: <SignupForm />,
+  },
+  {
+    path: '/tasks',
+    element: (
+      <ProtectedRoute>
+        <Tasks />
+      </ProtectedRoute>
+    ),
+  },
+]);
 
 const App = () => {
   return (
-    <Router>
-      <Header />
-      <div className="container mx-auto mt-4">
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/tasks" element={<Tasks />} />
-        </Routes>
-      </div>
-    </Router>
+    <AuthProvider>
+      <RouterProvider router={router} />
+    </AuthProvider>
   );
 };
 
