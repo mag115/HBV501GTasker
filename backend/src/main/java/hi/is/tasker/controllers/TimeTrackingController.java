@@ -16,9 +16,8 @@ import java.util.List;
 public class TimeTrackingController {
     private final TimeTrackingService timeTrackingService;
 
-    public TimeTrackingService(TimeTrackingRepository timeTrackingRepository, TaskRepository taskRepository) {
-        this.timeTrackingRepository = timeTrackingRepository;
-        this.taskRepository = taskRepository;
+    public TimeTrackingController(TimeTrackingService timeTrackingService) {
+        this.timeTrackingService = timeTrackingService;
     }
 
     @PostMapping("/start")

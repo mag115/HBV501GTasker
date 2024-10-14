@@ -16,7 +16,7 @@ public class TimeTrackingImplementation implements TimeTrackingService {
     private final TaskRepository taskRepository;
 
     @Autowired
-    public TaskServiceImplementation(TimeTrackingRepository timeTrackingRepository, TaskRepository taskRepository) {
+    public TimeTrackingImplementation(TimeTrackingRepository timeTrackingRepository, TaskRepository taskRepository) {
         this.timeTrackingRepository = timeTrackingRepository;
         this.taskRepository = taskRepository;
     }
