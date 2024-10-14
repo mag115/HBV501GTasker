@@ -1,43 +1,92 @@
 package hi.is.tasker.entities;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.Accessors;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
+import java.util.Collection;
+import java.util.Date;
+import java.util.List;
 
 @Getter
 @Setter
-@Entity(name = "users")
-public class User {
+@Accessors(chain = true)
+@Table(name = "users")
+@Entity
+public class User implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(nullable = false)
     private Long id;
 
-    @Column(nullable = false, unique = true)
-    @Size(min = 3, max = 50, message = "Username must be between 3 and 50 characters")
-    private String username;
-
     @Column(nullable = false)
-    @Size(min = 8)
-    private String password;
+    @Size(min = 3, max = 50, message = "Username must be between 3 and 50 characters")
+    private String fullName;
 
     @Column(nullable = false, unique = true)
     @Email
     private String email;
 
+    @Column(nullable = false)
+    @Size(min = 8, message = "Password must be at least 8 characters")
+    private String password;
+
+    @CreationTimestamp
+    @Column(updatable = false, name = "created_at")
+    private Date createdAt;
+
+    @UpdateTimestamp
+    @Column(name = "updated_at")
+    private Date updatedAt;
+
     @OneToMany(mappedBy = "assignedUser", cascade = CascadeType.ALL)
     private List<Task> tasks;
 
+    // Default constructor
     public User() {}
 
-    public User(String username, String password, String email) {
-        this.username = username;
+    // Constructor with fields
+    public User(String fullName, String password, String email) {
+        this.fullName = fullName;
         this.password = password;
         this.email = email;
     }
 
-    //Getters, setters
+    // UserDetails interface methods
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return List.of();  // Returning empty list as there are no roles/authorities set
+    }
+
+    @Override
+    public String getUsername() {
+        return email;  // Using email as the username
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return true;
+    }
 }
