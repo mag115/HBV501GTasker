@@ -1,7 +1,5 @@
 package hi.is.tasker.controllers;
 
-package hi.is.tasker.controllers;
-
 import hi.is.tasker.entities.Task;
 import hi.is.tasker.services.TaskService;
 import org.springframework.http.ResponseEntity;
