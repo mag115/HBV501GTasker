@@ -71,4 +71,5 @@ yarn-error.log*
 *.bin
 *.lock
 .gradle/**
-*.probe
+*.probenode_modules/
+node_modules/
