@@ -1,69 +1,23 @@
-# General Files
-HELP.md
-.gradle
-build/
-!gradle/wrapper/gradle-wrapper.jar
-!**/src/main/**/build/
-!**/src/test/**/build/
 
 # Logs
 *.log
-*.log.*
 
-# Compiled class files
-*.class
+# Backend
+/backend/.gradle/
+/backend/build/
+/backend/out/
+/backend/taskerDB.db
 
-# Maven specific
-target/
-
-# STS (Spring Tool Suite)
-.apt_generated
-.classpath
-.factorypath
-.project
-.settings
-.springBeans
-.sts4-cache
-bin/
-!**/src/main/**/bin/
-!**/src/test/**/bin/
-
-# IntelliJ IDEA
-.idea
-*.iws
-*.iml
-*.ipr
-out/
-!**/src/main/**/out/
-!**/src/test/**/out/
-
-# NetBeans
-/nbproject/private/
-/nbbuild/
-/dist/
-/nbdist/
-/.nb-gradle/
-
-# VS Code
-.vscode/
-
-# Node.js specific
-node_modules/
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
+# Frontend
+/frontend/node_modules/
+/frontend/build/
+/frontend/dist/
+/frontend/.cache/
+/frontend/node_modules/.cache/
 
 # Environment variables
 .env
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
 
-# Distribution / packaging
-*.jar
-*.war
-*.ear
-
-/node_modules
-/.cache
+# IDE specific files
+/.idea/
+/.vscode/
