@@ -28,7 +28,7 @@ public class User implements UserDetails {
 
     @Column(nullable = false)
     @Size(min = 3, max = 50, message = "Username must be between 3 and 50 characters")
-    private String fullName;
+    private String username;
 
     @Column(nullable = false, unique = true)
     @Email
@@ -53,8 +53,8 @@ public class User implements UserDetails {
     public User() {}
 
     // Constructor with fields
-    public User(String fullName, String password, String email) {
-        this.fullName = fullName;
+    public User(String username, String password, String email) {
+        this.username = username;
         this.password = password;
         this.email = email;
     }
