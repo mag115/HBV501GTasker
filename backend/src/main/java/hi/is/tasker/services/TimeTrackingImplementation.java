@@ -21,20 +21,50 @@ public class TimeTrackingImplementation implements TimeTrackingService {
         this.taskRepository = taskRepository;
     }
 
-    //TODO: implementa
     @Override
-    public TimeTracking startTracking(Long taskId) {return null;}
+    public TimeTracking startTracking(Long taskId) {
+        Task task = taskRepository.findById(taskId)
+            .orElseThrow(() -> new RuntimeException("Task not found"));
+
+        TimeTracking timeTracking = new TimeTracking();
+        timeTracking.setTask(task);
+        timeTracking.setStartTime(LocalDateTime.now());
+        return timeTrackingRepository.save(timeTracking);
+    }
 
     @Override
-    public TimeTracking stopTracking(Long taskId) {return null;}
+    public TimeTracking stopTracking(Long taskId) {
+        TimeTracking timeTracking = timeTrackingRepository.findByTaskId(taskId)
+                .stream()
+                .filter(t -> t.getEndTime() == null)
+                .findFirst()
+                .orElseThrow(() -> new RuntimeException("No active time tracking found"));
+
+        timeTracking.setEndTime(LocalDateTime.now());
+        timeTracking.setTimeSpent(calculateTimeSpent(timeTracking.getStartTime(), timeTracking.getEndTime()));
+        return timeTrackingRepository.save(timeTracking);
+    }
 
     @Override
-    public TimeTracking manualEntry(Long taskId, double timeSpent) {return null;}
+    public TimeTracking manualEntry(Long taskId, double timeSpent) {
+        Task task = taskRepository.findById(taskId)
+                .orElseThrow(() -> new RuntimeException("Task not found"));
+
+        TimeTracking timeTracking = new TimeTracking();
+        timeTracking.setTask(task);
+        timeTracking.setTimeSpent(timeSpent);
+        timeTracking.setStartTime(LocalDateTime.now());
+        timeTracking.setEndTime(LocalDateTime.now()); // manual entry is for a completed period
+
+        return timeTrackingRepository.save(timeTracking);
+    }
 
     @Override
-    public List<TimeTracking> getTimeLogsForTask(Long taskId) {return null;}
+    public List<TimeTracking> getTimeLogsForTask(Long taskId) {
+        return timeTrackingRepository.findByTaskId(taskId);
+    }
 
     private double calculateTimeSpent(LocalDateTime start, LocalDateTime end) {
-        return (double) java.time.Duration.between(start, end).toMinutes() / 60;  // í klst
+        return (double) java.time.Duration.between(start, end).toMinutes() / 60;  // Convert minutes to hours
     }
 }

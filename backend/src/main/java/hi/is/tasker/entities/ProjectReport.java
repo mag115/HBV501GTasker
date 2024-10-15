@@ -23,8 +23,6 @@ public class ProjectReport {
 
     private String overallPerformance; // "On Track" or "Behind Schedule"
 
-    public ProjectReport() {}
-
     public ProjectReport(List<Task> tasks, long totalTimeSpent, String overallPerformance) {
         this.tasks = tasks;
         this.totalTimeSpent = totalTimeSpent;
@@ -33,4 +31,43 @@ public class ProjectReport {
     }
 
     // Getters and Setters
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public List<Task> getTasks() {
+        return tasks;
+    }
+
+    public void setTasks(List<Task> tasks) {
+        this.tasks = tasks;
+    }
+
+    public LocalDateTime getReportDate() {
+        return reportDate;
+    }
+
+    public void setReportDate(LocalDateTime reportDate) {
+        this.reportDate = reportDate;
+    }
+
+    public long getTotalTimeSpent() {
+        return totalTimeSpent;
+    }
+
+    public void setTotalTimeSpent(long totalTimeSpent) {
+        this.totalTimeSpent = totalTimeSpent;
+    }
+
+    public String getOverallPerformance() {
+        return overallPerformance;
+    }
+
+    public void setOverallPerformance(String overallPerformance) {
+        this.overallPerformance = overallPerformance;
+    }
 }

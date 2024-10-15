@@ -17,6 +17,8 @@ import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 
 import java.util.List;
@@ -31,22 +33,28 @@ public class TimeTrackingController {
     }
 
     @PostMapping("/start")
-    public TimeTracking startTracking(@PathVariable Long taskId) {
-        return timeTrackingService.startTracking(taskId);
+    public ResponseEntity<TimeTracking> startTracking(@PathVariable Long taskId) {
+        TimeTracking timeTracking = timeTrackingService.startTracking(taskId);
+        return ResponseEntity.ok(timeTracking);
     }
 
     @PostMapping("/stop")
-    public TimeTracking stopTracking(@PathVariable Long taskId) {
-        return timeTrackingService.stopTracking(taskId);
+    public ResponseEntity<TimeTracking> stopTracking(@PathVariable Long taskId) {
+        TimeTracking timeTracking = timeTrackingService.stopTracking(taskId);
+        return ResponseEntity.ok(timeTracking);
     }
 
     @PatchMapping("/manual")
-    public TimeTracking manualEntry(@PathVariable Long taskId, @RequestBody double timeSpent) {
-        return timeTrackingService.manualEntry(taskId, timeSpent);
+    public ResponseEntity<TimeTracking> manualEntry(
+            @PathVariable Long taskId,
+            @RequestParam double timeSpent) {
+        TimeTracking timeTracking = timeTrackingService.manualEntry(taskId, timeSpent);
+        return ResponseEntity.ok(timeTracking);
     }
 
-    @GetMapping
-    public List<TimeTracking> getTimeLogs(@PathVariable Long taskId) {
-        return timeTrackingService.getTimeLogsForTask(taskId);
+    @GetMapping("/logs")
+    public ResponseEntity<List<TimeTracking>> getTimeLogsForTask(@PathVariable Long taskId) {
+        List<TimeTracking> timeLogs = timeTrackingService.getTimeLogsForTask(taskId);
+        return ResponseEntity.ok(timeLogs);
     }
 }

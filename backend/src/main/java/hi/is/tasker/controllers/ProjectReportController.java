@@ -24,6 +24,11 @@ public class ProjectReportController {
     }
 
     @GetMapping("/{reportId}")
-    public void getProjectReport() {
+    public ResponseEntity<ProjectReport> getProjectReport(@PathVariable Long reportId) {
+        ProjectReport report = projectReportService.getReportById(reportId);
+        if (report == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(report);
     }
 }

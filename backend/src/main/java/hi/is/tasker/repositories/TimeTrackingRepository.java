@@ -8,5 +8,5 @@ import java.util.List;
 
 public interface TimeTrackingRepository extends JpaRepository<TimeTracking, Long>{
     //kannski hafa þetta, finna allt time tracking fyrir ehv spes task
-    List<TimeTracking> findAllByTaskId(Long taskId);
+    List<TimeTracking> findByTaskId(Long taskId);
 }
