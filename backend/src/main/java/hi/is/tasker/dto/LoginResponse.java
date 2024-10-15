@@ -16,4 +16,7 @@ public class LoginResponse {
         return token;
     }
 
+    public long getExpiresIn() {  // Added getter for expiresIn
+        return expiresIn;
+    }
 }

@@ -34,9 +34,6 @@ public class TimeTrackingImplementation implements TimeTrackingService {
     @Override
     public List<TimeTracking> getTimeLogsForTask(Long taskId) {return null;}
 
-    @Override
-    public TimeTracking startTracking(Long taskId) {return null;}
-
     private double calculateTimeSpent(LocalDateTime start, LocalDateTime end) {
         return (double) java.time.Duration.between(start, end).toMinutes() / 60;  // í klst
     }

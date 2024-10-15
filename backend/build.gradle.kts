@@ -28,8 +28,8 @@ dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-data-jpa")
 	implementation("org.springframework.boot:spring-boot-starter-web")
 	compileOnly("org.projectlombok:lombok")
-	developmentOnly("org.springframework.boot:spring-boot-devtools")
 	annotationProcessor("org.projectlombok:lombok")
+	developmentOnly("org.springframework.boot:spring-boot-devtools")
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
 	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 	implementation("org.xerial:sqlite-jdbc:3.46.1.0")
@@ -39,6 +39,11 @@ dependencies {
 	runtimeOnly("io.jsonwebtoken:jjwt-jackson:0.11.5")
 	implementation("org.springframework.boot:spring-boot-starter-hateoas")
 	implementation("jakarta.servlet:jakarta.servlet-api:5.0.0")
+	implementation("jakarta.validation:jakarta.validation-api:3.0.2")
+	implementation("jakarta.persistence:jakarta.persistence-api:3.1.0")
+	implementation("jakarta.persistence:jakarta.persistence-api:3.1.0") // for JPA annotations
+	implementation("jakarta.validation:jakarta.validation-api:3.0.2")   // for validation annotations
+	implementation("javax.annotation:javax.annotation-api:1.3.2")
 }
 
 tasks.withType<Test> {

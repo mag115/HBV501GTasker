@@ -6,6 +6,7 @@ import hi.is.tasker.dto.LoginResponse;
 import hi.is.tasker.entities.User;
 import hi.is.tasker.services.AuthenticationService;
 import hi.is.tasker.services.JwtService;
+import hi.is.tasker.repositories.UserRepository;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;

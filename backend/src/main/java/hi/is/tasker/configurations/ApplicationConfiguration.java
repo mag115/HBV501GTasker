@@ -1,6 +1,7 @@
 package hi.is.tasker.configurations;
 
 import hi.is.tasker.repositories.UserRepository;
+import hi.is.tasker.repositories.UserRepository;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;

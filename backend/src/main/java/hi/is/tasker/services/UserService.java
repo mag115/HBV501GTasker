@@ -1,7 +1,11 @@
 package hi.is.tasker.services;
 
 import hi.is.tasker.entities.User;
+import hi.is.tasker.repositories.UserRepository;
 import java.util.List;
+import java.util.List;
+import java.util.Optional;
+
 
 public interface UserService {
     User createUser(User user);
