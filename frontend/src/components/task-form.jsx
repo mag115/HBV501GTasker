@@ -7,6 +7,7 @@ const TaskForm = () => {
   const [description, setDescription] = useState('');
   const [deadline, setDeadline] = useState('');
   const [reminderSent, setReminderSent] = useState(false);
+  const [priority, setPriority] = useState('');
   const [responseMessage, setResponseMessage] = useState('');
 
   const handleSubmit = async (e) => {
@@ -17,6 +18,7 @@ const TaskForm = () => {
       description,
       deadline: new Date(deadline), // Convert the input to a Date object
       reminderSent,
+      priority,
     };
 
     const res = await request('post', '/tasks', newTask);
@@ -26,6 +28,7 @@ const TaskForm = () => {
     setDescription('');
     setDeadline('');
     setReminderSent(false);
+    setPriority('');
   };
 
   return (
@@ -84,6 +87,25 @@ const TaskForm = () => {
           </div>
 
           <div className="mb-4">
+            <label className="block text-gray-700 text-sm font-bold mb-2"
+            htmlFor="priority">
+              Priority
+            </label>
+            <select
+              id="priority"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-300"
+              value={priority}
+              onChange={(e) => setPriority(e.target.value)}
+              required
+            >
+              <option value="">Select Priority</option>
+              <option value="low">Low</option>
+              <option value="medium">Medium</option>
+              <option value="high">High</option>
+            </select>
+          </div>
+
+          <div className="mb-4">
             <label className="block text-gray-700 text-sm font-bold mb-2">
               Reminder Sent
             </label>
@@ -107,7 +129,7 @@ const TaskForm = () => {
           <div className="flex items-center justify-between">
             <button
               type="submit"
-           
+
                 className="bg-black text-white px-4 py-2 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-50 w-full"
             >
               Add Task
