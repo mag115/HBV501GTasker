@@ -1,5 +1,3 @@
-<<<<<<< HEAD
-=======
 # General Files
 HELP.md
 
@@ -9,10 +7,13 @@ build/
 !gradle/wrapper/gradle-wrapper.jar
 !**/src/main/**/build/
 !**/src/test/**/build/
->>>>>>> main2
 
 # Log files
 *.log
+*.log.*
+
+# Compiled class files
+*.class
 
 # Backend
 /backend/.gradle/
@@ -20,14 +21,14 @@ build/
 /backend/out/
 /backend/taskerDB.db
 
-<<<<<<< HEAD
+
 # Frontend
 /frontend/node_modules/
 /frontend/build/
 /frontend/dist/
 /frontend/.cache/
 /frontend/node_modules/.cache/
-=======
+
 # Maven specific
 target/
 
@@ -72,6 +73,10 @@ yarn-error.log*
 
 # Environment variables
 .env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
 
 # IDE specific files
 /.idea/
