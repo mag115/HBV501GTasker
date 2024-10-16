@@ -40,6 +40,7 @@ public class TaskController {
 
     @PostMapping
     public ResponseEntity<Task> createTask(@Valid @RequestBody Task task) {
+        task.setAssignedUser(null); // assignedUser is initially null
         Task savedTask = taskService.save(task);
         return ResponseEntity.ok(savedTask);
     }
