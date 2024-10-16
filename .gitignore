@@ -7,6 +7,7 @@ build/
 !gradle/wrapper/gradle-wrapper.jar
 !**/src/main/**/build/
 !**/src/test/**/build/
+.gradle/**
 
 # Log files
 *.log
@@ -81,13 +82,13 @@ yarn-error.log*
 # IDE specific files
 /.idea/
 /.vscode/
+
 # Distribution / packaging
 *.jar
 *.war
 *.ear
 
 # Gradle additional outputs
-.gradle/**
 *.bin
 *.lock
 
