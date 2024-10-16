@@ -1,5 +1,17 @@
+<<<<<<< HEAD
+=======
+# General Files
+HELP.md
 
-# Logs
+# Gradle-specific files
+.gradle/
+build/
+!gradle/wrapper/gradle-wrapper.jar
+!**/src/main/**/build/
+!**/src/test/**/build/
+>>>>>>> main2
+
+# Log files
 *.log
 
 # Backend
@@ -8,12 +20,55 @@
 /backend/out/
 /backend/taskerDB.db
 
+<<<<<<< HEAD
 # Frontend
 /frontend/node_modules/
 /frontend/build/
 /frontend/dist/
 /frontend/.cache/
 /frontend/node_modules/.cache/
+=======
+# Maven specific
+target/
+
+# Spring Tool Suite (STS) specific files
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+bin/
+!**/src/main/**/bin/
+!**/src/test/**/bin/
+
+# IntelliJ IDEA specific files
+.idea/
+*.iws
+*.iml
+*.ipr
+out/
+!**/src/main/**/out/
+!**/src/test/**/out/
+
+# NetBeans specific files
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+
+# Visual Studio Code specific files
+.vscode/
+
+# Node.js specific files
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+**/node_modules/
+**/node_modules/**
 
 # Environment variables
 .env
@@ -21,3 +76,15 @@
 # IDE specific files
 /.idea/
 /.vscode/
+# Distribution / packaging
+*.jar
+*.war
+*.ear
+
+# Gradle additional outputs
+.gradle/**
+*.bin
+*.lock
+
+# Cache directories
+**/.cache/

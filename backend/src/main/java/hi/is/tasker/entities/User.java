@@ -1,6 +1,8 @@
 package hi.is.tasker.entities;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -20,18 +22,20 @@ import java.util.List;
 @Entity
 public class User implements UserDetails {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(nullable = false)
-    private Integer id;
+    private Long id;
 
     @Column(nullable = false)
-    private String fullName;
+    @Size(min = 3, max = 50, message = "Username must be between 3 and 50 characters")
+    private String username;
 
-    @Column(unique = true, length = 100, nullable = false)
+    @Column(nullable = false, unique = true)
+    @Email
     private String email;
 
-    @Getter
     @Column(nullable = false)
+    @Size(min = 8, message = "Password must be at least 8 characters")
     private String password;
 
     @CreationTimestamp
@@ -42,14 +46,33 @@ public class User implements UserDetails {
     @Column(name = "updated_at")
     private Date updatedAt;
 
+    @OneToMany(mappedBy = "assignedUser", cascade = CascadeType.ALL)
+    private List<Task> tasks;
+
+    // Default constructor
+    public User() {}
+
+    // Constructor with fields
+    public User(String username, String password, String email) {
+        this.username = username;
+        this.password = password;
+        this.email = email;
+    }
+
+    // UserDetails interface methods
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of();
+        return List.of();  // Returning empty list as there are no roles/authorities set
     }
 
     @Override
     public String getUsername() {
         return email;
+    }
+
+    @Override
+    public String getPassword() {
+        return this.password;
     }
 
     @Override
@@ -71,5 +94,4 @@ public class User implements UserDetails {
     public boolean isEnabled() {
         return true;
     }
-
 }

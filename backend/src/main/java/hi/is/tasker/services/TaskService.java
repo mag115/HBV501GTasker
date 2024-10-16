@@ -4,6 +4,7 @@ import hi.is.tasker.entities.Task;
 import java.util.List;
 
 public interface TaskService {
+    //Task createTask(Task task);
     List<Task> findAll();
     Task findById(Long id);
     Task save(Task task);

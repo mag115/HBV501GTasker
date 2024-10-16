@@ -1,9 +1,6 @@
 package hi.is.tasker.entities;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -23,6 +20,13 @@ Task {
     private LocalDateTime deadline;
     private Boolean reminderSent;
 
-    // Getters and Setters
-}
+    // New fields:
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)  // Foreign key column for User
+    private User assignedUser;  // Reference to the User entity instead of a Long ID
 
+    private String status;  // Example values: "To Do", "In Progress", "Completed"
+    private String priority;  // Example values: "Low", "Medium", "High"
+
+    // Getters and Setters (Lombok handles these)
+}

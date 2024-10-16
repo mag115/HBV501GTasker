@@ -7,7 +7,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class TaskerApplication {
 
 	public static void main(String[] args) {
-		// aa
 		SpringApplication.run(TaskerApplication.class, args);
 	}
 
