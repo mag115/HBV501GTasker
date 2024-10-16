@@ -22,7 +22,7 @@ Task {
 
     // New fields:
     @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)  // Foreign key column for User
+    @JoinColumn(name = "user_id", nullable = true)  // Allows for the assignedUser to be null
     private User assignedUser;  // Reference to the User entity instead of a Long ID
 
     private String status;  // Example values: "To Do", "In Progress", "Completed"
