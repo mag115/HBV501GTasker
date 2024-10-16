@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { Header } from './header';
 
 const LoginForm = () => {
-  const [email, setEmail] = useState('');
+  const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
@@ -17,7 +17,7 @@ const LoginForm = () => {
 
     // Prepare the login data
     const loginData = {
-      email: email,
+      username: username,
       password: password,
     };
     const res = await handleLogin(loginData);
@@ -38,16 +38,16 @@ const LoginForm = () => {
             <div className="mb-4">
               <label
                 className="block text-gray-700 text-sm font-bold mb-2"
-                htmlFor="email"
+                htmlFor="username"
               >
                 Username
               </label>
               <input
-                id="email"
+                id="username"
                 type="text"
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-300"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
                 required
               />
             </div>

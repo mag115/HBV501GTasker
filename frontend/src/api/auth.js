@@ -22,7 +22,7 @@ export const handleSignup = async (username, email, password, fullName) => {
 export const handleLogin = async (data) => {
   try {
     const response = await request('post', '/auth/login', {
-      ...data, // Sending email and password as payload
+      ...data, // Sending username and password as payload
     });
 
     const { token, user } = response.data;
