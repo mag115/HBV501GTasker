@@ -39,12 +39,14 @@ public class AuthenticationService {
     public User authenticate(LoginUserDto input) {
         System.out.println("Username received: " + input.getUsername());
         System.out.println("Password received: " + input.getPassword());
+
         if (input.getUsername() == null || input.getUsername().isEmpty()) {
             throw new RuntimeException("Username is required");
         }
         if (input.getPassword() == null || input.getPassword().isEmpty()) {
             throw new RuntimeException("Password is required");
         }
+
         try {
             authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(
@@ -59,5 +61,4 @@ public class AuthenticationService {
         return userRepository.findByUsername(input.getUsername())
                 .orElseThrow(() -> new RuntimeException("User not found"));
     }
-
 }

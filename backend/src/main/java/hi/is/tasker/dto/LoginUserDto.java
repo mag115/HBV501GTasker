@@ -5,19 +5,10 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 
 public class LoginUserDto {
-    private String email;  // Make sure this is 'email' and not 'username'
     private String password;
     private String username;
 
     // Getters and setters
-    public String getEmail() {
-        return email;
-    }
-
-    public LoginUserDto setEmail(String email) {
-        this.email = email;
-        return this;
-    }
 
     public String getUsername() {return username;}
     public LoginUserDto setUsername(String username) {
