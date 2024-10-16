@@ -37,10 +37,10 @@ public class AuthenticationService {
     }
 
     public User authenticate(LoginUserDto input) {
-        System.out.println("Email received: " + input.getEmail());
+        System.out.println("Username received: " + input.getUsername());
         System.out.println("Password received: " + input.getPassword());
-        if (input.getEmail() == null || input.getEmail().isEmpty()) {
-            throw new RuntimeException("Email is required");
+        if (input.getUsername() == null || input.getUsername().isEmpty()) {
+            throw new RuntimeException("Username is required");
         }
         if (input.getPassword() == null || input.getPassword().isEmpty()) {
             throw new RuntimeException("Password is required");
@@ -48,7 +48,7 @@ public class AuthenticationService {
         try {
             authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(
-                            input.getEmail(),
+                            input.getUsername(),
                             input.getPassword()
                     )
             );
@@ -56,7 +56,7 @@ public class AuthenticationService {
             throw new RuntimeException("Invalid credentials");
         }
 
-        return userRepository.findByEmail(input.getEmail())
+        return userRepository.findByUsername(input.getUsername())
                 .orElseThrow(() -> new RuntimeException("User not found"));
     }
 
