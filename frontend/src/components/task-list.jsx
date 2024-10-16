@@ -52,11 +52,6 @@ const TaskList = () => {
     useEffect(() => {
         const fetchTasks = async () => {
           try {
-            // Uncomment this line when you want to fetch from the API
-            // const response = await request('get', '/tasks');
-            // setTasks(response.data);
-
-            // Use mock data for testing
             setTasks(mockTasks);
           } catch (err) {
             console.error('Error fetching tasks:', err);
@@ -137,35 +132,5 @@ const geraTask = (task) => (
     </div>
   );
 };
-
-
-
-
-
-
-
-
-
-    {/*<div>
-      <h2 className="text-2xl font-bold mb-4">Your Tasks</h2>
-      <ul className="list-disc pl-5">
-        {tasks.map((task) => (
-          <li key={task.id} className="mb-2">
-            <h3 className="text-gray-500">{task.title}</h3>
-            <p className="text-gray-500">{task.status}</p>
-            <p className="text-gray-500">
-            {task.description}</p>
-            <p className="text-gray-500">
-              Deadline: {new Date(task.deadline).toLocaleString()}
-            </p>
-            <p className="text-gray-500">
-            Priority: {task.priority}</p>
-          </li>
-        ))}
-      </ul>
-    </div>
-  );
-};*/}
-
 
 export { TaskList };
