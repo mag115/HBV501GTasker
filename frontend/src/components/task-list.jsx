@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import { request } from '../api/http';
 
@@ -34,24 +35,39 @@ const TaskList = () => {
     return <p>No tasks available yet. Add a task!</p>;
   }
 
+  const toDoTasks = tasks.filter((task) => task.status === 'To-do');
+    const ongoingTasks = tasks.filter((task) => task.status === 'Ongoing');
+    const doneTasks = tasks.filter((task) => task.status === 'Done');
+
+    const handleStatusChange = (taskId, newStatus) => {
+        setTasks((prevTasks) =>
+          prevTasks.map((task) =>
+            task.id === taskId ? { ...task, status: newStatus } : task
+          )
+        );
+      };
+
   return (
-    <div>
-      <h2 className="text-2xl font-bold mb-4">Your Tasks</h2>
-      <ul className="list-disc pl-5">
-        {tasks.map((task) => (
-          <li key={task.id} className="mb-2">
-            <h3 className="font-bold">{task.title}</h3>
-            <p>{task.description}</p>
-            <p className="text-gray-500">
-              Deadline: {new Date(task.deadline).toLocaleString()}
-            </p>
-            {task.reminderSent && (
-              <p className="text-green-500">Reminder sent!</p>
-            )}
-          </li>
-        ))}
-      </ul>
-    </div>
+    <ul className="list-disc pl-5">
+      {tasks.map((task) => (
+        <li key={task.id} className="mb-2">
+          <div className="max-w-sm rounded overflow-hidden shadow-lg bg-white mb-4">
+            <div className="px-6 py-4">
+              <div className="font-bold text-xl mb-2">{task.title}</div>
+              <p className="text-gray-700 text-base">{task.description}</p>
+              <label className="text-gray-500">Status: </label>
+              <select className="text-black-500" value={task.status} onChange={(e) => handleStatusChange(task.id, e.target.value)}>
+                <option value="To-do">To-do</option>
+                <option value="Ongoing">Ongoing</option>
+                <option value="Done">Done</option>
+              </select>
+              <p className="text-black-500">Deadline: {new Date(task.deadline).toLocaleString()}</p>
+              <p className="text-black-500">Priority: {task.priority}</p>
+            </div>
+          </div>
+        </li>
+      ))}
+    </ul>
   );
 };
 
