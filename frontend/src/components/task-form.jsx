@@ -22,6 +22,7 @@ const TaskForm = () => {
       deadline: new Date(deadline),
       reminderSent,
       priority,
+      status:'To-do',
     };
 
     try {
