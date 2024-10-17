@@ -1,4 +1,3 @@
-setja inn
 
 import React, { useEffect, useState } from 'react';
 import { request } from '../api/http';
