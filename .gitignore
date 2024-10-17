@@ -16,18 +16,18 @@ build/
 *.class
 
 # Backend
-/backend/.gradle/
-/backend/build/
-/backend/out/
-/backend/taskerDB.db
+backend/.gradle/
+backend/build/
+backend/out/
+backend/taskerDB.db
 
 
 # Frontend
-/frontend/node_modules/
-/frontend/build/
-/frontend/dist/
-/frontend/.cache/
-/frontend/node_modules/.cache/
+frontend/node_modules/
+frontend/build/
+frontend/dist/
+frontend/.cache/
+frontend/node_modules/.cache/
 
 # Maven specific
 target/
