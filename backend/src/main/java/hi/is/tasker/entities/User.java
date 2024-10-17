@@ -38,9 +38,6 @@ public class User implements UserDetails {
     @Size(min = 8, message = "Password must be at least 8 characters")
     private String password;
 
-    @Column(nullable = false)
-    private String fullName;
-
     @CreationTimestamp
     @Column(updatable = false, name = "created_at")
     private Date createdAt;
@@ -56,11 +53,10 @@ public class User implements UserDetails {
     public User() {}
 
     // Constructor with fields
-    public User(String username, String password, String email, String fullName) {
+    public User(String username, String password, String email) {
         this.username = username;
         this.password = password;
         this.email = email;
-        this.fullName = fullName;
     }
 
     // UserDetails interface methods

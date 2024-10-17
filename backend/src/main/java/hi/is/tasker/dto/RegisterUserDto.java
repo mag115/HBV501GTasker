@@ -8,8 +8,10 @@ import lombok.experimental.Accessors;
 @Setter
 @Accessors(chain = true)
 public class RegisterUserDto {
-    private String fullName;
-    private String username;
     private String email;
+
     private String password;
+
+    private String username;
+
 }
