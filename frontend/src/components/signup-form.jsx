@@ -28,8 +28,7 @@ const SignupForm = () => {
       setFullName('');
       setConfirmPassword('');
     } else {
-      // Use optional chaining to handle cases where result.error is an object
-      setErrorMessage(result.error?.message || result.error?.detail || 'Error registering user');
+      setErrorMessage(result.error || 'Error registering user');
     }
   };
 
