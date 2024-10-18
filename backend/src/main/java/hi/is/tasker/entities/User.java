@@ -46,10 +46,6 @@ public class User implements UserDetails {
     @Column(name = "updated_at")
     private Date updatedAt;
 
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)  // Enforcing that a role must always be set
-    private Role role;  // New field to store user roles
-
     @OneToMany(mappedBy = "assignedUser", cascade = CascadeType.ALL)
     private List<Task> tasks;
 
@@ -57,11 +53,10 @@ public class User implements UserDetails {
     public User() {}
 
     // Constructor with fields
-    public User(String username, String password, String email, Role role) {
+    public User(String username, String password, String email) {
         this.username = username;
         this.password = password;
         this.email = email;
-        this.role = role;
     }
 
     // UserDetails interface methods
