@@ -1,6 +1,5 @@
 package hi.is.tasker.controllers;
 
-import hi.is.tasker.entities.Role;
 import hi.is.tasker.entities.User;
 import hi.is.tasker.repositories.UserRepository;
 import hi.is.tasker.services.UserService;
@@ -30,7 +29,7 @@ public class UserController {
         this.userService = userService;
     }
 
-    //þarf þessar tvær register og authenticate her eða nah?
+    //hverju ætti þetta stöff að skila?
     @PostMapping("/register")
     public void registerUser() {
     }
@@ -40,35 +39,23 @@ public class UserController {
     }
 
     @PatchMapping("/{userId}/role")
-    public ResponseEntity<String> updateUserRole(@PathVariable Long userId, @RequestBody Role newRole) {
-        try {
-            userService.updateUserRole(userId, newRole);
-            return ResponseEntity.ok("User role updated successfully!");
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body("Error updating role: " + e.getMessage());
-        }
+    public void updateUserRole() {
     }
 
     //skoða þetta... veit ekki alveeg
     @GetMapping("/username/{username}")
     public ResponseEntity<User> getUserByUsername(@PathVariable String username) {
-        return userService.getUserByUsername(username)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+        return null;
     }
 
     @GetMapping("/id/{id}")
     public ResponseEntity<User> getUserById(@PathVariable Long id) {
-        return userService.getUserById(id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+        return null;
     }
 
     @GetMapping("/email/{email}")
     public ResponseEntity<User> getUserByEmail(@PathVariable String email) {
-        return userService.getUserByEmail(email)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+        return null;
     }
 
     @DeleteMapping("/{id}")

@@ -1,13 +1,12 @@
 import { request } from './http';
 
-export const handleSignup = async (fullName, username, email, password, role) => {
+export const handleSignup = async (username, email, password, fullName) => {
   try {
     const response = await request('post', '/auth/signup', {
-      fullName,
       username,
       email,
       password,
-      role,
+      fullName,
     });
 
     return { success: true, data: response.data };
