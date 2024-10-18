@@ -7,6 +7,8 @@ import { ProtectedRoute } from './components/protected-route';
 import { Home } from './pages/home';
 import { AuthProvider } from './context/auth-context';
 import { TaskListPage } from './pages/task-list';
+import { MyInfoPage } from './pages/myinfo';
+import { MyTasksPage } from './pages/mytasks';
 
 const router = createBrowserRouter([
   {
@@ -34,6 +36,22 @@ const router = createBrowserRouter([
     element: (
       <ProtectedRoute>
         <TaskListPage />
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: '/myinfo',
+    element: (
+      <ProtectedRoute>
+        <MyInfoPage />
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: '/mytasks',
+    element: (
+      <ProtectedRoute>
+        <MyTasksPage />
       </ProtectedRoute>
     ),
   },
