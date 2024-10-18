@@ -114,7 +114,7 @@ const SignupForm = () => {
 
           <div className="mb-4">
             <label className="block text-gray-700 text-sm font-bold mb-2">
-              Role
+              Role (can be changed in My Info)
             </label>
             <select
               value={role}

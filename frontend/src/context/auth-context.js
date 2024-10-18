@@ -6,26 +6,37 @@ export const AuthProvider = ({ children }) => {
   const [auth, setAuth] = useState({
     token: null,
     user: null,
+    role: null,
   });
 
   useEffect(() => {
     const token = localStorage.getItem('token');
-    if (token) {
-      setAuth({ token });
+    const user = localStorage.getItem('user');
+    const role = localStorage.getItem('role');
+    if (token && role && user) {
+          setAuth({ token, user: JSON.parse(user), role }); // Parse user object from string
     }
   }, []);
 
-  const login = (token, user) => {
+  const login = (token, user, role) => {
     console.log('token', token);
     console.log('user', user);
-    setAuth({ token, user });
-    localStorage.setItem('token', token.token);
+    console.log('role', role);
+    setAuth({ token, user, role });
+    localStorage.setItem('token', token);
+    localStorage.setItem('user', JSON.stringify(user)); // Save the user as a string
+    localStorage.setItem('role', role); // Save role in localStorage
   };
 
+
   const logout = () => {
-    setAuth({ token: null, user: null });
+    setAuth({ token: null, user: null, role: null });
     localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    localStorage.removeItem('role');
   };
+
+
 
   return (
     <AuthContext.Provider value={{ auth, login, logout }}>

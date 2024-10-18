@@ -8,6 +8,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import hi.is.tasker.entities.Role;
 
 @Service
 public class AuthenticationService {
@@ -31,7 +32,8 @@ public class AuthenticationService {
         User user = new User()
                 .setUsername(input.getUsername())
                 .setEmail(input.getEmail())
-                .setPassword(passwordEncoder.encode(input.getPassword()));
+                .setPassword(passwordEncoder.encode(input.getPassword()))
+                .setRole(input.getRole());
 
         return userRepository.save(user);
     }

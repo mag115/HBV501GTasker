@@ -1,5 +1,6 @@
 package hi.is.tasker.services;
 
+import hi.is.tasker.entities.Role;
 import hi.is.tasker.entities.User;
 import hi.is.tasker.repositories.UserRepository;
 import java.util.List;
@@ -13,4 +14,5 @@ public interface UserService {
     Optional<User> getUserByEmail(String email);
     Optional<User> getUserById(Long id);
     void deleteUser(Long id);
+    void updateUserRole(Long userId, Role newRole);
 }

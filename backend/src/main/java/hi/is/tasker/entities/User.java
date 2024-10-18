@@ -70,6 +70,11 @@ public class User implements UserDetails {
         return List.of();  // Returning empty list as there are no roles/authorities set
     }
 
+    // Add the setter method for the role
+    public User setRole(Role role) {
+        this.role = role;
+        return this;  // Return the user object to allow chaining
+    }
     @Override
     public String getUsername() {
         return username;
