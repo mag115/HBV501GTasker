@@ -18,6 +18,7 @@ import java.util.function.Function;
 
 @Service
 public class JwtService {
+
     @Value("${security.jwt.secret-key}")
     private String secretKey;
 
@@ -35,11 +36,11 @@ public class JwtService {
         return claimsResolver.apply(claims);
     }
 
-    // Generate token for a user
+    // Generate token for a user with role as a string
     public String generateToken(User user) {
         // Add user role to token as an extra claim
         Map<String, Object> claims = new HashMap<>();
-        claims.put("role", user.getRole().name());  // Add role to claims
+        claims.put("role", user.getRole());  // Add role as a string to claims
         return generateToken(claims, user);
     }
 

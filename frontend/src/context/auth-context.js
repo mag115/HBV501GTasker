@@ -5,29 +5,34 @@ const AuthContext = createContext();
 export const AuthProvider = ({ children }) => {
   const [auth, setAuth] = useState({
     token: null,
-    role: null, // Store role in auth context
+    role: null,  // Store role as a string
   });
 
   useEffect(() => {
     const token = localStorage.getItem('token');
-    const role = localStorage.getItem('role'); // Retrieve role from localStorage
+    const role = localStorage.getItem('role');  // Retrieve role from localStorage as a string
     if (token && role) {
-      setAuth({ token, role }); // Set both token and role in auth context
+      setAuth({ token, role });  // Set both token and role in state
     }
   }, []);
 
-  const login = (token, role) => {
-    console.log('token', token);
-    console.log('role', role);
-    setAuth({ token, role }); // Store role along with token in state
+  const login = (data) => {
+    const { token, role } = data;  // Extract token and role from the data object
+    console.log('token', token);   // Debug token
+    console.log('role', role);     // Debug role
+
+    // Set both token and role in auth state
+    setAuth({ token, role });
+
+    // Store token and role in localStorage
     localStorage.setItem('token', token);
-    localStorage.setItem('role', role); // Save role to localStorage
+    localStorage.setItem('role', role);
   };
 
   const logout = () => {
-    setAuth({ token: null, role: null }); // Clear role on logout
+    setAuth({ token: null, role: null });  // Clear both token and role from state
     localStorage.removeItem('token');
-    localStorage.removeItem('role'); // Clear role from localStorage
+    localStorage.removeItem('role');  // Clear role from localStorage
   };
 
   return (
@@ -37,6 +42,7 @@ export const AuthProvider = ({ children }) => {
   );
 };
 
+// Use the AuthContext
 export const useAuth = () => {
   return useContext(AuthContext);
 };

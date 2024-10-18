@@ -4,6 +4,7 @@ import { useAuth } from '../context/auth-context'; // Import the useAuth hook
 
 const Header = () => {
   const { auth, logout } = useAuth(); // Access authentication state and logout function
+  const { role } = auth; // Extract role from auth context
 
   return (
     <header className="bg-blue-600 text-white p-4">
@@ -27,27 +28,59 @@ const Header = () => {
               Home
             </NavLink>
           </li>
-          <li>
-            <NavLink
-              to="/tasks"
-              className={({ isActive }) =>
-                isActive ? 'text-gray-200 font-bold' : 'hover:text-gray-200'
-              }
-            >
-              Add Task
-            </NavLink>
-          </li>
-          <li>
-            <NavLink
-              to="/task-list"
-              className={({ isActive }) =>
-                isActive ? 'text-gray-200 font-bold' : 'hover:text-gray-200'
-              }
-            >
-              Task List
-            </NavLink>
-          </li>
-          {auth.token ? ( // If the user is logged in
+
+          {/* Show different options based on the user's role */}
+          {role === 'PROJECT_MANAGER' && (
+            <>
+              <li>
+                <NavLink
+                  to="/tasks"
+                  className={({ isActive }) =>
+                    isActive ? 'text-gray-200 font-bold' : 'hover:text-gray-200'
+                  }
+                >
+                  Create Task
+                </NavLink>
+              </li>
+              <li>
+                <NavLink
+                  to="/task-list"
+                  className={({ isActive }) =>
+                    isActive ? 'text-gray-200 font-bold' : 'hover:text-gray-200'
+                  }
+                >
+                  All Tasks
+                </NavLink>
+              </li>
+            </>
+          )}
+
+          {role === 'TEAM_MEMBER' && (
+            <>
+              <li>
+                <NavLink
+                  to="/my-tasks"
+                  className={({ isActive }) =>
+                    isActive ? 'text-gray-200 font-bold' : 'hover:text-gray-200'
+                  }
+                >
+                  My Tasks
+                </NavLink>
+              </li>
+              <li>
+                <NavLink
+                  to="/task-list"
+                  className={({ isActive }) =>
+                    isActive ? 'text-gray-200 font-bold' : 'hover:text-gray-200'
+                  }
+                >
+                  All Tasks
+                </NavLink>
+              </li>
+            </>
+          )}
+
+          {auth.token ? (
             <>
               <li>
                 <NavLink
@@ -68,7 +101,7 @@ const Header = () => {
                 </button>
               </li>
             </>
-          ) : ( // If the user is not logged in
+          ) : (
             <>
               <li>
                 <NavLink

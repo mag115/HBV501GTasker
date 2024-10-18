@@ -38,9 +38,8 @@ public class User implements UserDetails {
     @Size(min = 8, message = "Password must be at least 8 characters")
     private String password;
 
-    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private Role role;  // Role field (Enum)
+    private String role;
 
     @CreationTimestamp
     @Column(updatable = false, name = "created_at")
@@ -57,7 +56,7 @@ public class User implements UserDetails {
     public User() {}
 
     // Constructor with fields
-    public User(String username, String password, String email, Role role) {
+    public User(String username, String password, String email, String role) {
         this.username = username;
         this.password = password;
         this.email = email;

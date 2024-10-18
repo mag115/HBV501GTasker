@@ -3,7 +3,6 @@ package hi.is.tasker.services;
 import hi.is.tasker.dto.LoginUserDto;
 import hi.is.tasker.dto.RegisterUserDto;
 import hi.is.tasker.entities.User;
-import hi.is.tasker.entities.Role;  // Import the Role enum
 import hi.is.tasker.repositories.UserRepository;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -28,12 +27,16 @@ public class AuthenticationService {
 
     // Sign up a new user
     public User signup(RegisterUserDto input) {
-        // Set the user role during registration (from the DTO)
+        // Assign the default role as a string, or get it from the input DTO
+        String defaultRole = (input.getRole() != null && !input.getRole().isEmpty())
+                ? input.getRole()
+                : "TEAM_MEMBER";  // Set default role to TEAM_MEMBER if not provided
+
         User user = new User()
                 .setUsername(input.getUsername())
                 .setEmail(input.getEmail())
                 .setPassword(passwordEncoder.encode(input.getPassword()))
-                .setRole(input.getRole());  // Set role from the RegisterUserDto
+                .setRole(defaultRole);  // Assign role as a string
 
         return userRepository.save(user);
     }
@@ -50,6 +53,7 @@ public class AuthenticationService {
             throw new RuntimeException("Password is required");
         }
 
+        // Authenticate using the AuthenticationManager
         try {
             authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(
@@ -61,7 +65,7 @@ public class AuthenticationService {
             throw new RuntimeException("Invalid credentials");
         }
 
-        // Find the user and return it (the role is part of the User entity)
+        // Find the user and return it (role is stored as a string in User entity)
         return userRepository.findByUsername(input.getUsername())
                 .orElseThrow(() -> new RuntimeException("User not found"));
     }

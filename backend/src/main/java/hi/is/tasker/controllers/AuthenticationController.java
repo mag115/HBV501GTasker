@@ -33,11 +33,12 @@ public class AuthenticationController {
         // Generate JWT token
         String jwtToken = jwtService.generateToken(registeredUser);
 
-        // Create response, include role in LoginResponse
-        LoginResponse loginResponse = new LoginResponse()
-                .setToken(jwtToken)
-                .setExpiresIn(jwtService.getExpirationTime())
-                .setRole(registeredUser.getRole());  // Include the role
+        // Use constructor with 3 arguments (token, expiresIn, role) for LoginResponse
+        LoginResponse loginResponse = new LoginResponse(
+                jwtToken,                              // JWT token
+                jwtService.getExpirationTime(),         // Expiration time
+                registeredUser.getRole()                // User role as enum
+        );
 
         return ResponseEntity.ok(loginResponse);
     }
@@ -51,11 +52,12 @@ public class AuthenticationController {
         // Generate JWT token
         String jwtToken = jwtService.generateToken(authenticatedUser);
 
-        // Create response, include role in LoginResponse
-        LoginResponse loginResponse = new LoginResponse()
-                .setToken(jwtToken)
-                .setExpiresIn(jwtService.getExpirationTime())
-                .setRole(authenticatedUser.getRole());  // Include the role
+        // Use constructor with 3 arguments (token, expiresIn, role) for LoginResponse
+        LoginResponse loginResponse = new LoginResponse(
+                jwtToken,                              // JWT token
+                jwtService.getExpirationTime(),         // Expiration time
+                authenticatedUser.getRole()             // User role as enum
+        );
 
         return ResponseEntity.ok(loginResponse);
     }

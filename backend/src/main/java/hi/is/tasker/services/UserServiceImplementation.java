@@ -1,10 +1,10 @@
 package hi.is.tasker.services;
 
 import hi.is.tasker.entities.User;
-import hi.is.tasker.entities.Role;
 import hi.is.tasker.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 import java.util.Optional;
 
 @Service
@@ -46,8 +46,8 @@ public class UserServiceImplementation implements UserService {
         Optional<User> userOptional = userRepository.findById(id);
         if (userOptional.isPresent()) {
             User user = userOptional.get();
-            user.setRole(Role.valueOf(role));  // Convert string role to enum
-            return userRepository.save(user);  // Save updated user
+            user.setRole(role);  // Directly set role as a string
+            return userRepository.save(user);  // Save updated user with string role
         }
         throw new RuntimeException("User not found");
     }

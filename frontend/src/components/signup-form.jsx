@@ -7,7 +7,7 @@ const SignupForm = () => {
   const [password, setPassword] = useState('');
   const [fullName, setFullName] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  const [role, setRole] = useState('TEAM_MEMBER'); // Default role
+  const [role, setRole] = useState('TEAM_MEMBER');  // Default role value
   const [errorMessage, setErrorMessage] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
 
@@ -19,7 +19,8 @@ const SignupForm = () => {
       return;
     }
 
-    const result = await handleSignup(username, email, password, fullName, role); // Pass the role
+    // Call handleSignup and pass the role as well
+    const result = await handleSignup(username, email, password, fullName, role);
 
     if (result.success) {
       setSuccessMessage('User registered successfully!');
@@ -28,7 +29,7 @@ const SignupForm = () => {
       setPassword('');
       setFullName('');
       setConfirmPassword('');
-      setRole('TEAM_MEMBER'); // Reset role to default
+      setRole('TEAM_MEMBER');  // Reset the role to default
     } else {
       setErrorMessage(result.error || 'Error registering user');
     }
@@ -112,7 +113,7 @@ const SignupForm = () => {
             />
           </div>
 
-          {/* Role Selection */}
+          {/* Role Selection Dropdown */}
           <div className="mb-4">
             <label className="block text-gray-700 text-sm font-bold mb-2">
               Role
@@ -140,4 +141,3 @@ const SignupForm = () => {
 };
 
 export { SignupForm };
-
