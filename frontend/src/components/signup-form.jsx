@@ -7,6 +7,7 @@ const SignupForm = () => {
   const [password, setPassword] = useState('');
   const [fullName, setFullName] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [role, setRole] = useState('TEAM_MEMBER'); // Default role
   const [errorMessage, setErrorMessage] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
 
@@ -18,7 +19,7 @@ const SignupForm = () => {
       return;
     }
 
-    const result = await handleSignup(username, email, password, fullName);
+    const result = await handleSignup(username, email, password, fullName, role); // Pass the role
 
     if (result.success) {
       setSuccessMessage('User registered successfully!');
@@ -27,6 +28,7 @@ const SignupForm = () => {
       setPassword('');
       setFullName('');
       setConfirmPassword('');
+      setRole('TEAM_MEMBER'); // Reset role to default
     } else {
       setErrorMessage(result.error || 'Error registering user');
     }
@@ -110,6 +112,21 @@ const SignupForm = () => {
             />
           </div>
 
+          {/* Role Selection */}
+          <div className="mb-4">
+            <label className="block text-gray-700 text-sm font-bold mb-2">
+              Role
+            </label>
+            <select
+              value={role}
+              onChange={(e) => setRole(e.target.value)}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-300"
+            >
+              <option value="TEAM_MEMBER">Team Member</option>
+              <option value="PROJECT_MANAGER">Project Manager</option>
+            </select>
+          </div>
+
           <button
             type="submit"
             className="bg-black text-white px-4 py-2 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-50 w-full"
@@ -123,3 +140,4 @@ const SignupForm = () => {
 };
 
 export { SignupForm };
+

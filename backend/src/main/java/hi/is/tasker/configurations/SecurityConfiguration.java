@@ -38,10 +38,12 @@ public class SecurityConfiguration {
                 .csrf(AbstractHttpConfigurer::disable)  // Disable CSRF
                 .authorizeHttpRequests((authorize) -> authorize
                         .requestMatchers("/auth/**").permitAll()  // Allow public access to /auth/**
+                        // Role-based access control for specific endpoints
+                        .requestMatchers("/tasks/create").hasAuthority("PROJECT_MANAGER")
                         .anyRequest().authenticated())  // Protect all other endpoints
                 .sessionManagement((session) -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))  // Stateless session
-                .authenticationProvider(authenticationProvider)  // Your custom AuthenticationProvider
+                .authenticationProvider(authenticationProvider)  // Custom AuthenticationProvider
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }

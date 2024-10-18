@@ -3,6 +3,7 @@ package hi.is.tasker.services;
 import hi.is.tasker.dto.LoginUserDto;
 import hi.is.tasker.dto.RegisterUserDto;
 import hi.is.tasker.entities.User;
+import hi.is.tasker.entities.Role;  // Import the Role enum
 import hi.is.tasker.repositories.UserRepository;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -12,9 +13,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class AuthenticationService {
     private final UserRepository userRepository;
-
     private final PasswordEncoder passwordEncoder;
-
     private final AuthenticationManager authenticationManager;
 
     public AuthenticationService(
@@ -27,15 +26,19 @@ public class AuthenticationService {
         this.passwordEncoder = passwordEncoder;
     }
 
+    // Sign up a new user
     public User signup(RegisterUserDto input) {
+        // Set the user role during registration (from the DTO)
         User user = new User()
                 .setUsername(input.getUsername())
                 .setEmail(input.getEmail())
-                .setPassword(passwordEncoder.encode(input.getPassword()));
+                .setPassword(passwordEncoder.encode(input.getPassword()))
+                .setRole(input.getRole());  // Set role from the RegisterUserDto
 
         return userRepository.save(user);
     }
 
+    // Authenticate an existing user
     public User authenticate(LoginUserDto input) {
         System.out.println("Username received: " + input.getUsername());
         System.out.println("Password received: " + input.getPassword());
@@ -58,6 +61,7 @@ public class AuthenticationService {
             throw new RuntimeException("Invalid credentials");
         }
 
+        // Find the user and return it (the role is part of the User entity)
         return userRepository.findByUsername(input.getUsername())
                 .orElseThrow(() -> new RuntimeException("User not found"));
     }
