@@ -36,7 +36,7 @@ const MyInfo = () => {
 
   return (
     <div className="container mx-auto p-4">
-      <h1 className="text-3xl font-bold mb-6">Tasks Assigned to You</h1>
+      <h1 className="text-3xl font-bold mb-6 text-white">Tasks Assigned to You</h1>
       <div className="mb-6">
         <input
           type="text"
@@ -55,20 +55,20 @@ const MyInfo = () => {
 
       {filteredTask ? (
         <div className="bg-white p-4 shadow-md rounded-lg mb-4">
-          <h2 className="text-xl font-bold">Task: {filteredTask.title}</h2>
-          <p>{filteredTask.description}</p>
+          <h2 className="text-xl font-bold text-white">Task: {filteredTask.title}</h2>
+          <p className="text-white">{filteredTask.description}</p>
         </div>
       ) : (
         <>
           {tasks.length > 0 ? (
             tasks.map((task) => (
               <div key={task.id} className="bg-white p-4 shadow-md rounded-lg mb-4">
-                <h2 className="text-xl font-bold">{task.title}</h2>
-                <p>{task.description}</p>
+                <h2 className="text-xl font-bold text-white">{task.title}</h2>
+                <p className="text-white">{task.description}</p>
               </div>
             ))
           ) : (
-            <p>No tasks assigned to you yet.</p>
+            <p className="text-white">No tasks assigned to you yet.</p>
           )}
         </>
       )}

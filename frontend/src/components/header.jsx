@@ -39,7 +39,7 @@ const Header = () => {
           </li>
           <li>
             <NavLink
-              to="/tasklist"
+              to="/task-list"
               className={({ isActive }) =>
                 isActive ? 'text-gray-200 font-bold' : 'hover:text-gray-200'
               }
