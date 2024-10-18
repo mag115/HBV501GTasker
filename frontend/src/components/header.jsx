@@ -51,7 +51,7 @@ const Header = () => {
             <>
               <li>
                 <NavLink
-                  to="/my-pages"
+                  to="/myinfo"
                   className={({ isActive }) =>
                     isActive ? 'text-gray-200 font-bold' : 'hover:text-gray-200'
                   }

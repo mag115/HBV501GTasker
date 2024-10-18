@@ -32,7 +32,7 @@ const router = createBrowserRouter([
     ),
   },
   {
-    path: '/tasklist',
+    path: '/task-list',
     element: (
       <ProtectedRoute>
         <TaskListPage />
