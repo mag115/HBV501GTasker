@@ -15,11 +15,17 @@ build/
 # Compiled class files
 *.class
 
+# macOS specific
+**/.DS_Store
+.DS_Store
+
+
 # Backend
 backend/.gradle/
 backend/build/
 backend/out/
 backend/taskerDB.db
+backend/.idea/
 
 
 # Frontend
@@ -28,6 +34,8 @@ frontend/build/
 frontend/dist/
 frontend/.cache/
 frontend/node_modules/.cache/
+frontend/.idea/
+frontend/.DS_Store
 
 # Maven specific
 target/
@@ -89,7 +97,11 @@ yarn-error.log*
 # Gradle additional outputs
 .gradle/**
 *.bin
-*.lock
 
 # Cache directories
 **/.cache/
+
+# Lock files
+*.lock
+package-lock.json
+yarn.lock
