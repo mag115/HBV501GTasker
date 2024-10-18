@@ -6,6 +6,7 @@ const SignupForm = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [fullName, setFullName] = useState('');
+  const [role, setRole] = useState('TEAM_MEMBER');  // Default role
   const [confirmPassword, setConfirmPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
@@ -27,6 +28,7 @@ const SignupForm = () => {
       setPassword('');
       setFullName('');
       setConfirmPassword('');
+      setRole('TEAM_MEMBER');
     } else {
       setErrorMessage(result.error || 'Error registering user');
     }
@@ -108,6 +110,21 @@ const SignupForm = () => {
               required
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-300"
             />
+          </div>
+
+          <div className="mb-4">
+            <label className="block text-gray-700 text-sm font-bold mb-2">
+              Role
+            </label>
+            <select
+              value={role}
+              onChange={(e) => setRole(e.target.value)}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md"
+              required
+            >
+              <option value="TEAM_MEMBER">Team Member</option>
+              <option value="PROJECT_MANAGER">Project Manager</option>
+            </select>
           </div>
 
           <button
