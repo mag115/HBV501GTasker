@@ -1,12 +1,14 @@
 import { request } from './http';
 
-export const handleSignup = async (username, email, password, fullName) => {
+// Handle user signup
+export const handleSignup = async (username, email, password, fullName, role) => {
   try {
     const response = await request('post', '/auth/signup', {
       username,
       email,
       password,
       fullName,
+      role,  // Send role as a string directly
     });
 
     return { success: true, data: response.data };
@@ -19,15 +21,17 @@ export const handleSignup = async (username, email, password, fullName) => {
   }
 };
 
+// Handle user login
 export const handleLogin = async (data) => {
   try {
     const response = await request('post', '/auth/login', {
-      ...data, // Sending username and password as payload
+      ...data,
     });
 
-    const { token, user } = response.data;
+    const { token, role } = response.data;  // Extract role as a string from the response
+    console.log('Login response:', response.data);
 
-    return { success: true, data: { token, user } };
+    return { success: true, data: { token, role } };  // Return both token and role as strings
   } catch (error) {
     console.error('Error during login:', error);
     return {

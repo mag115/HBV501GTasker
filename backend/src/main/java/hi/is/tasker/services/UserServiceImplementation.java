@@ -4,11 +4,8 @@ import hi.is.tasker.entities.User;
 import hi.is.tasker.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 import java.util.Optional;
-
-
-import java.time.LocalDateTime;
-import java.util.List;
 
 @Service
 public class UserServiceImplementation implements UserService {
@@ -47,5 +44,15 @@ public class UserServiceImplementation implements UserService {
     @Override
     public List<User> getAllUsers() {
         return List.of();
+    }
+}
+    public User updateUserRole(Long id, String role) {
+        Optional<User> userOptional = userRepository.findById(id);
+        if (userOptional.isPresent()) {
+            User user = userOptional.get();
+            user.setRole(role);  // Directly set role as a string
+            return userRepository.save(user);  // Save updated user with string role
+        }
+        throw new RuntimeException("User not found");
     }
 }

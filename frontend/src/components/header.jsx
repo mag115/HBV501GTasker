@@ -1,7 +1,11 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
+import { useAuth } from '../context/auth-context'; // Import the useAuth hook
 
 const Header = () => {
+  const { auth, logout } = useAuth(); // Access authentication state and logout function
+  const { role } = auth; // Extract role from auth context
+
   return (
     <header className="bg-blue-600 text-white p-4">
       <nav className="container mx-auto flex justify-between">
@@ -24,46 +28,103 @@ const Header = () => {
               Home
             </NavLink>
           </li>
-          <li>
-            <NavLink
-              to="/tasks"
-              className={({ isActive }) =>
-                isActive ? 'text-gray-200 font-bold' : 'hover:text-gray-200'
-              }
-            >
-              Add Task
-            </NavLink>
-          </li>
-          <li>
-            <NavLink
-              to="/tasklist"
-              className={({ isActive }) =>
-                isActive ? 'text-gray-200 font-bold' : 'hover:text-gray-200'
-              }
-            >
-              Task List
-            </NavLink>
-          </li>
-          <li>
-            <NavLink
-              to="/login"
-              className={({ isActive }) =>
-                isActive ? 'text-gray-200 font-bold' : 'hover:text-gray-200'
-              }
-            >
-              Login
-            </NavLink>
-          </li>
-          <li>
-            <NavLink
-              to="/signup"
-              className={({ isActive }) =>
-                isActive ? 'text-gray-200 font-bold' : 'hover:text-gray-200'
-              }
-            >
-              Signup
-            </NavLink>
-          </li>
+
+          {/* Show different options based on the user's role */}
+          {role === 'PROJECT_MANAGER' && (
+            <>
+              <li>
+                <NavLink
+                  to="/tasks"
+                  className={({ isActive }) =>
+                    isActive ? 'text-gray-200 font-bold' : 'hover:text-gray-200'
+                  }
+                >
+                  Create Task
+                </NavLink>
+              </li>
+              <li>
+                <NavLink
+                  to="/task-list"
+                  className={({ isActive }) =>
+                    isActive ? 'text-gray-200 font-bold' : 'hover:text-gray-200'
+                  }
+                >
+                  All Tasks
+                </NavLink>
+              </li>
+            </>
+          )}
+
+          {role === 'TEAM_MEMBER' && (
+            <>
+              <li>
+                <NavLink
+                  to="/my-tasks"
+                  className={({ isActive }) =>
+                    isActive ? 'text-gray-200 font-bold' : 'hover:text-gray-200'
+                  }
+                >
+                  My Tasks
+                </NavLink>
+              </li>
+              <li>
+                <NavLink
+                  to="/task-list"
+                  className={({ isActive }) =>
+                    isActive ? 'text-gray-200 font-bold' : 'hover:text-gray-200'
+                  }
+                >
+                  All Tasks
+                </NavLink>
+              </li>
+            </>
+          )}
+
+          {auth.token ? (
+            <>
+              <li>
+                <NavLink
+                  to="/myinfo"
+                  className={({ isActive }) =>
+                    isActive ? 'text-gray-200 font-bold' : 'hover:text-gray-200'
+                  }
+                >
+                  My Info
+                </NavLink>
+              </li>
+              <li>
+                <button
+                  onClick={logout}
+                  className="text-white hover:text-gray-200"
+                >
+                  Sign Out
+                </button>
+              </li>
+            </>
+          ) : (
+            <>
+              <li>
+                <NavLink
+                  to="/login"
+                  className={({ isActive }) =>
+                    isActive ? 'text-gray-200 font-bold' : 'hover:text-gray-200'
+                  }
+                >
+                  Login
+                </NavLink>
+              </li>
+              <li>
+                <NavLink
+                  to="/signup"
+                  className={({ isActive }) =>
+                    isActive ? 'text-gray-200 font-bold' : 'hover:text-gray-200'
+                  }
+                >
+                  Signup
+                </NavLink>
+              </li>
+            </>
+          )}
         </ul>
       </nav>
     </header>

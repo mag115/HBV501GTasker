@@ -9,9 +9,7 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 public class RegisterUserDto {
     private String email;
-
     private String password;
-
     private String username;
-
+    private String role;  // Add role to the registration DTO
 }
