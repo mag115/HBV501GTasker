@@ -1,9 +1,8 @@
-package hi.is.tasker.services.implementation;
+package hi.is.tasker.services;
 
 import hi.is.tasker.entities.Notification;
 import hi.is.tasker.entities.User;
 import hi.is.tasker.repositories.NotificationRepository;
-import hi.is.tasker.services.NotificationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

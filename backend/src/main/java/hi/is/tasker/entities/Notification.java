@@ -47,5 +47,4 @@ public class Notification {
         this.timestamp = LocalDateTime.now();
     }
 
-    // Getters and Setters
 }

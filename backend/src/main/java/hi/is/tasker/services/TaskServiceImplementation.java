@@ -62,7 +62,7 @@ public class TaskServiceImplementation implements TaskService {
 
     @Override
     public void sendReminder(Long taskId) {
-        // TODO: Implement sendReminder method
+
     }
 
     @Override

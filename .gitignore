@@ -19,7 +19,6 @@ build/
 backend/.gradle/
 backend/build/
 backend/out/
-backend/taskerDB.db
 
 
 # Frontend

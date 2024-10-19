@@ -28,5 +28,6 @@ Task {
     private String status;  // Example values: "To Do", "In Progress", "Completed"
     private String priority;  // Example values: "Low", "Medium", "High"
 
+
     // Getters and Setters (Lombok handles these)
 }
