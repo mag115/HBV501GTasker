@@ -22,7 +22,9 @@ public class NotificationServiceImplementation implements NotificationService {
     @Override
     public Notification createNotification(String message, User recipient) {
         Notification notification = new Notification(message, recipient);
-        return notificationRepository.save(notification);
+        Notification savedNotification = notificationRepository.save(notification);
+        System.out.println("Saved notification with ID: " + savedNotification.getId());
+        return savedNotification;
     }
 
     @Override

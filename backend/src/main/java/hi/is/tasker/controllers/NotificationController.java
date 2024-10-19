@@ -28,6 +28,7 @@ public class NotificationController {
         String message = "A new task has been assigned to your team.";
 
         for (User user : allUsers) {
+            System.out.println("Created notification for user: " + user.getId());
             notificationService.createNotification(message, user);
         }
 

@@ -93,6 +93,16 @@ const Header = () => {
                 </NavLink>
               </li>
               <li>
+                <NavLink
+                  to="/notifications"
+                  className={({ isActive }) =>
+                    isActive ? 'text-gray-200 font-bold' : 'hover:text-gray-200'
+                  }
+                >
+                  Notifications
+                </NavLink>
+              </li>
+              <li>
                 <button
                   onClick={logout}
                   className="text-white hover:text-gray-200"

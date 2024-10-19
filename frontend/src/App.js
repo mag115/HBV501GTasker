@@ -9,6 +9,7 @@ import { AuthProvider } from './context/auth-context';
 import { TaskListPage } from './pages/task-list';
 import { MyInfoPage } from './pages/myinfo';
 import { MyTasksPage } from './pages/mytasks';
+import { NotificationPage } from './pages/notification';
 
 const router = createBrowserRouter([
   {
@@ -44,6 +45,14 @@ const router = createBrowserRouter([
     element: (
       <ProtectedRoute>
         <MyInfoPage />
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: '/notifications',
+    element: (
+      <ProtectedRoute>
+        <NotificationPage />
       </ProtectedRoute>
     ),
   },

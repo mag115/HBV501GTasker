@@ -5,6 +5,7 @@ import hi.is.tasker.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -45,7 +46,7 @@ public class UserServiceImplementation implements UserService {
     public List<User> getAllUsers() {
         return List.of();
     }
-}
+
     public User updateUserRole(Long id, String role) {
         Optional<User> userOptional = userRepository.findById(id);
         if (userOptional.isPresent()) {
@@ -55,4 +56,6 @@ public class UserServiceImplementation implements UserService {
         }
         throw new RuntimeException("User not found");
     }
+
 }
+

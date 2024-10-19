@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { handleSignup } from '../api/auth';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/auth-context';
 
 const SignupForm = () => {
   const [username, setUsername] = useState('');
@@ -7,9 +9,11 @@ const SignupForm = () => {
   const [password, setPassword] = useState('');
   const [fullName, setFullName] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  const [role, setRole] = useState('TEAM_MEMBER');  // Default role value
+  const [role, setRole] = useState('TEAM_MEMBER'); // Default role value
   const [errorMessage, setErrorMessage] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
+  const { login } = useAuth();
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -20,7 +24,13 @@ const SignupForm = () => {
     }
 
     // Call handleSignup and pass the role as well
-    const result = await handleSignup(username, email, password, fullName, role);
+    const result = await handleSignup(
+      username,
+      email,
+      password,
+      fullName,
+      role
+    );
 
     if (result.success) {
       setSuccessMessage('User registered successfully!');
@@ -29,7 +39,9 @@ const SignupForm = () => {
       setPassword('');
       setFullName('');
       setConfirmPassword('');
-      setRole('TEAM_MEMBER');  // Reset the role to default
+      setRole('TEAM_MEMBER');
+      login(result.data);
+      navigate('/tasks');
     } else {
       setErrorMessage(result.error || 'Error registering user');
     }
