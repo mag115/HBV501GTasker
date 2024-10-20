@@ -1,22 +1,20 @@
 package hi.is.tasker.controllers;
 
 import hi.is.tasker.entities.Task;
+import hi.is.tasker.entities.User;
+import hi.is.tasker.services.NotificationService;
 import hi.is.tasker.services.TaskService;
+import hi.is.tasker.services.UserService;
+import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
-import jakarta.validation.Valid;
+
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
-import hi.is.tasker.entities.User;
-import hi.is.tasker.services.UserService;
-import hi.is.tasker.services.NotificationService;
-import org.springframework.http.HttpStatus;
 
-
+@CrossOrigin(origins = "http://localhost:3000")
 @RestController
 @RequestMapping("/tasks")
 public class TaskController {
@@ -30,6 +28,7 @@ public class TaskController {
         this.userService = userService;
         this.notificationService = notificationService;
     }
+
 
     @GetMapping
     public ResponseEntity<List<Task>> getAllTasks() {
@@ -57,13 +56,21 @@ public class TaskController {
     }
 
     @PatchMapping("/{taskId}/status")
-    public ResponseEntity<Task> updateTaskStatus(@PathVariable Long taskId, @RequestBody String status) {
+    public ResponseEntity<Task> updateTaskStatus(@PathVariable Long taskId, @RequestBody Map<String, String> requestBody) {
+        String status = requestBody.get("status");  // Extract the status from the request body
         Task updatedTask = taskService.updateTaskStatus(taskId, status);
         return ResponseEntity.ok(updatedTask);
     }
 
+    // @PatchMapping("/{taskId}/priority")
+    //public ResponseEntity<Task> updateTaskPriority(@PathVariable Long taskId, @RequestBody String priority) {
+    //  Task updatedTask = taskService.updateTaskPriority(taskId, priority);
+    // return ResponseEntity.ok(updatedTask);
+    //}
+
     @PatchMapping("/{taskId}/priority")
-    public ResponseEntity<Task> updateTaskPriority(@PathVariable Long taskId, @RequestBody String priority) {
+    public ResponseEntity<Task> updateTaskPriority(@PathVariable Long taskId, @RequestBody Map<String, String> requestBody) {
+        String priority = requestBody.get("priority");
         Task updatedTask = taskService.updateTaskPriority(taskId, priority);
         return ResponseEntity.ok(updatedTask);
     }
