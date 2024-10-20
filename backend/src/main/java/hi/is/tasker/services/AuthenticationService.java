@@ -32,11 +32,12 @@ public class AuthenticationService {
                 ? input.getRole()
                 : "TEAM_MEMBER";  // Set default role to TEAM_MEMBER if not provided
 
-        User user = new User()
-                .setUsername(input.getUsername())
-                .setEmail(input.getEmail())
-                .setPassword(passwordEncoder.encode(input.getPassword()))
-                .setRole(defaultRole);
+        User user = new User(
+                input.getUsername(),
+                passwordEncoder.encode(input.getPassword()),
+                input.getEmail(),
+                defaultRole
+        );
 
 
         return userRepository.save(user);
