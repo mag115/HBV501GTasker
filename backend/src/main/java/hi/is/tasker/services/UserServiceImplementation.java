@@ -44,7 +44,7 @@ public class UserServiceImplementation implements UserService {
 
     @Override
     public List<User> getAllUsers() {
-        return List.of();
+        return userRepository.findAll();
     }
 
     public User updateUserRole(Long id, String role) {

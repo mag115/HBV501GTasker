@@ -10,6 +10,7 @@ import { TaskListPage } from './pages/task-list';
 import { MyInfoPage } from './pages/myinfo';
 import { MyTasksPage } from './pages/mytasks';
 import { NotificationPage } from './pages/notification';
+import { ProjectReportPage } from './pages/projectReport';
 
 const router = createBrowserRouter([
   {
@@ -29,6 +30,14 @@ const router = createBrowserRouter([
     element: (
       <ProtectedRoute requiredRole="PROJECT_MANAGER">
         <Tasks />
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: '/project',
+    element: (
+      <ProtectedRoute requiredRole="PROJECT_MANAGER">
+        <ProjectReportPage />
       </ProtectedRoute>
     ),
   },

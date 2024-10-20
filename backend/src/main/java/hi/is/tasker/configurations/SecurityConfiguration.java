@@ -38,12 +38,10 @@ public class SecurityConfiguration {
                 .csrf(AbstractHttpConfigurer::disable)  // Disable CSRF
                 .authorizeHttpRequests((authorize) -> authorize
                         .requestMatchers("/auth/**").permitAll()  // Allow public access to /auth/**
-                        // Role-based access control for specific endpoints
-                        .requestMatchers("/tasks/create").hasAuthority("PROJECT_MANAGER")
                         .anyRequest().authenticated())  // Protect all other endpoints
                 .sessionManagement((session) -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))  // Stateless session
-                .authenticationProvider(authenticationProvider)  // Custom AuthenticationProvider
+                .authenticationProvider(authenticationProvider)  // Your custom AuthenticationProvider
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
@@ -51,7 +49,6 @@ public class SecurityConfiguration {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-
         configuration.setAllowedOrigins(List.of("http://localhost:3000"));  // React frontend origin
         configuration.setAllowedMethods(List.of("GET", "POST"));  // Allow POST method
         configuration.setAllowedHeaders(List.of("Authorization", "Content-Type"));  // Allow necessary headers

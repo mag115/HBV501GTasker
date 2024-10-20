@@ -11,6 +11,7 @@ import java.util.Optional;
 
 @Repository
 public interface ProjectReportRepository extends JpaRepository<ProjectReport, Long> {
+
     // Random methods hugmyndir...???
     List<ProjectReport> findByReportDate(LocalDateTime reportDate);
     List<ProjectReport> findAllByReportDateBetween(LocalDateTime startDate, LocalDateTime endDate);

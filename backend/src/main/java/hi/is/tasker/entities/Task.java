@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @Setter
@@ -27,6 +28,11 @@ Task {
 
     private String status;  // Example values: "To Do", "In Progress", "Completed"
     private String priority;  // Example values: "Low", "Medium", "High"
+    private  String project_name;
+    private String project_id;
+
+    @OneToMany(mappedBy = "task", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<TimeTracking> timeTrackings;
 
 
     // Getters and Setters (Lombok handles these)

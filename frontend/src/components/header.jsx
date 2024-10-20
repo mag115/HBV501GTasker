@@ -52,6 +52,16 @@ const Header = () => {
                   All Tasks
                 </NavLink>
               </li>
+              <li>
+                <NavLink
+                  to="/project"
+                  className={({ isActive }) =>
+                    isActive ? 'text-gray-200 font-bold' : 'hover:text-gray-200'
+                  }
+                >
+                  Project report
+                </NavLink>
+              </li>
             </>
           )}
 

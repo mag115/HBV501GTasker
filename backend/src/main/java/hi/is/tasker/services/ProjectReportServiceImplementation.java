@@ -10,6 +10,8 @@ import hi.is.tasker.services.ProjectReportService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -31,19 +33,45 @@ public class ProjectReportServiceImplementation implements ProjectReportService 
     }
 
     @Override
-    public ProjectReport generateReport(List<Long> taskIds) {
-        List<Task> tasks = taskRepository.findAllById(taskIds);
+    public List<ProjectReport> getAllReports() {
+        return projectReportRepository.findAll();  // Fetch all project reports
+    }
 
-        long totalTimeSpent = (long) tasks.stream()
-                .flatMap(task -> timeTrackingRepository.findByTaskId(task.getId()).stream())
-                .mapToDouble(TimeTracking::getTimeSpent)
+    public ProjectReport generateProjectReport() {
+        // Fetch all tasks
+        List<Task> tasks = taskRepository.findAll();
+
+        // Calculate total time spent on tasks using TimeTracking
+        long totalTimeSpent = tasks.stream()
+                .mapToLong(this::calculateTotalTimeSpentForTask)
                 .sum();
 
-        String overallPerformance = totalTimeSpent > 100 ? "Behind Schedule" : "On Track";
+        // Determine overall performance based on deadlines
+        String overallPerformance = calculateOverallPerformance(tasks);
 
+        // Create a ProjectReport entity
         ProjectReport report = new ProjectReport(tasks, totalTimeSpent, overallPerformance);
-        return projectReportRepository.save(report);
+        projectReportRepository.save(report);
+
+        return report;
     }
+
+    private long calculateTotalTimeSpentForTask(Task task) {
+        // Sum up all the time spent for each time tracking entry related to the task
+        return task.getTimeTrackings().stream()
+                .mapToLong(tt -> (long) tt.getTimeSpent())  // Assuming timeSpent is in hours, adapt if necessary
+                .sum();
+    }
+
+    private String calculateOverallPerformance(List<Task> tasks) {
+        LocalDateTime now = LocalDateTime.now();
+        long tasksBehindSchedule = tasks.stream()
+                .filter(task -> task.getDeadline() != null && task.getDeadline().isBefore(now) && !task.getStatus().equals("Completed"))
+                .count();
+
+        return tasksBehindSchedule > 0 ? "Behind Schedule" : "On Track";
+    }
+
 
     @Override
     public ProjectReport getReportById(Long id) {

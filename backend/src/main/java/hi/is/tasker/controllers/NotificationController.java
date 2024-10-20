@@ -26,7 +26,15 @@ public class NotificationController {
     public ResponseEntity<Void> sendTaskAssignmentNotification() {
         List<User> allUsers = userService.getAllUsers();
         String message = "A new task has been assigned to your team.";
-
+        System.out.println("TRY TO CREATE NOTIFIACTION");
+        if (allUsers.isEmpty()) {
+            System.out.println("No users found in the system.");
+        } else {
+            System.out.println("Found users: " + allUsers.size());
+            for (User user : allUsers) {
+                System.out.println("User ID: " + user.getId() + ", Username: " + user.getUsername());
+            }
+        }
         for (User user : allUsers) {
             System.out.println("Created notification for user: " + user.getId());
             notificationService.createNotification(message, user);

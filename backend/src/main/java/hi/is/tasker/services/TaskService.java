@@ -10,6 +10,7 @@ public interface TaskService {
     Task save(Task task);
     void delete(Task task);
 
+
     // TODO: Eigum eftir að implementa eftirfarandi:
     Task assignTask(Long taskId, Long userId);
     Task updateTaskStatus(Long taskId, String status);

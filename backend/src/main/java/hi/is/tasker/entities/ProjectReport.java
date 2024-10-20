@@ -23,6 +23,10 @@ public class ProjectReport {
 
     private String overallPerformance; // "On Track" or "Behind Schedule"
 
+    // Default constructor
+    public ProjectReport() {
+    }
+
     public ProjectReport(List<Task> tasks, long totalTimeSpent, String overallPerformance) {
         this.tasks = tasks;
         this.totalTimeSpent = totalTimeSpent;

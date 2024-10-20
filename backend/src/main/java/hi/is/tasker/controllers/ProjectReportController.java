@@ -19,9 +19,20 @@ public class ProjectReportController {
         this.projectReportService = projectReportService;
     }
 
-    @PostMapping("/generate")
-    public void generateProjectReport() {
+
+    @GetMapping()
+    public ResponseEntity<List<ProjectReport>> getAllReports() {
+        List<ProjectReport> reports = projectReportService.getAllReports();
+        return ResponseEntity.ok(reports);
     }
+
+
+    @PostMapping("/generate")
+    public ResponseEntity<ProjectReport> generateProjectReport() {
+        ProjectReport report = projectReportService.generateProjectReport();
+        return ResponseEntity.ok(report);  // Return the generated report in the response
+    }
+
 
     @GetMapping("/{reportId}")
     public ResponseEntity<ProjectReport> getProjectReport(@PathVariable Long reportId) {

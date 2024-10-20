@@ -75,23 +75,26 @@ public class TaskController {
 
     @PostMapping("/{taskId}/reminder")
     public ResponseEntity<Void> sendTaskDeadlineReminder(@PathVariable Long taskId) {
+        // Fetch task details based on the provided taskId
         Optional<Task> taskOptional = Optional.ofNullable(taskService.findById(taskId));
 
-        if (taskOptional.isPresent()) {
-            Task task = taskOptional.get();
-            List<User> allUsers = userService.getAllUsers();
-
-            String message = "Reminder: The deadline for the task '" + task.getTitle() + "' is approaching.";
-
-            for (User user : allUsers) {
-                notificationService.createNotification(message, user);
-            }
-
-            return ResponseEntity.ok().build();
+        if (taskOptional.isEmpty()) {
+            // If no task is found, return a 404 response
+            return ResponseEntity.notFound().build();
         }
 
-        // Return 404 if the task is not found
-        return ResponseEntity.notFound().build();
+        Task task = taskOptional.get();
+        String message = "Reminder: The deadline for task '" + task.getTitle() + "' is approaching. It is on " + task.getDeadline();
+
+        // Assuming you want to notify all users (or adjust logic as needed)
+        List<User> allUsers = userService.getAllUsers();
+
+        for (User user : allUsers) {
+            notificationService.createNotification(message, user);
+        }
+
+        return ResponseEntity.ok().build();
     }
+
 }
 
