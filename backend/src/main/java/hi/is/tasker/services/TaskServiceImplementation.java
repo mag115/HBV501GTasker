@@ -23,7 +23,7 @@ public class TaskServiceImplementation implements TaskService {
 
     @Override
     public Task findById(Long id) {
-        return taskRepository.findById(id).orElseThrow(() -> new RuntimeException("Task not found"));
+        return taskRepository.findById(id).orElseThrow(() -> new RuntimeException("Task not found with id: " + id));
     }
 
     @Override

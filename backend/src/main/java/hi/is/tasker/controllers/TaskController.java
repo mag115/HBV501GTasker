@@ -14,6 +14,8 @@ import java.util.Optional;
 import hi.is.tasker.entities.User;
 import hi.is.tasker.services.UserService;
 import hi.is.tasker.services.NotificationService;
+import org.springframework.http.HttpStatus;
+
 
 @RestController
 @RequestMapping("/tasks")
@@ -38,7 +40,7 @@ public class TaskController {
     @GetMapping("/{id}")
     public ResponseEntity<Task> getTaskById(@PathVariable Long id) {
         Task task = taskService.findById(id);
-        return ResponseEntity.ok(task);
+        return new ResponseEntity<>(task, HttpStatus.OK);
     }
 
     @PostMapping
