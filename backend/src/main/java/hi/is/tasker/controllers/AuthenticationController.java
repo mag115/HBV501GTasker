@@ -30,11 +30,10 @@ public class AuthenticationController {
 
         String jwtToken = jwtService.generateToken(registeredUser);
 
-        // Use constructor with 3 arguments (token, expiresIn, role) for LoginResponse
         LoginResponse loginResponse = new LoginResponse(
-                jwtToken,                              // JWT token
-                jwtService.getExpirationTime(),         // Expiration time
-                registeredUser.getRole()                // User role as enum
+                jwtToken,
+                jwtService.getExpirationTime(),
+                registeredUser.getRole()
         );
 
         return ResponseEntity.ok(loginResponse);
@@ -46,11 +45,10 @@ public class AuthenticationController {
 
         String jwtToken = jwtService.generateToken(authenticatedUser);
 
-        // Use constructor with 3 arguments (token, expiresIn, role) for LoginResponse
         LoginResponse loginResponse = new LoginResponse(
-                jwtToken,                              // JWT token
-                jwtService.getExpirationTime(),         // Expiration time
-                authenticatedUser.getRole()             // User role as enum
+                jwtToken,
+                jwtService.getExpirationTime(),
+                authenticatedUser.getRole()
         );
 
         return ResponseEntity.ok(loginResponse);

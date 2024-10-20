@@ -1,77 +1,75 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/auth-context';
 import { request } from '../api/http';
+import userImage from '../images/user.png'; // Ensure the correct path to your image
 
 const MyInfo = () => {
-  const { auth } = useAuth();
-  const [tasks, setTasks] = useState([]);
-  const [searchId, setSearchId] = useState('');
-  const [filteredTask, setFilteredTask] = useState(null);
+  const { auth, setAuth } = useAuth(); // Access token and role from auth
+  const [role, setRole] = useState(auth.role || ''); // Initialize with the role from auth
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState('');
 
-  useEffect(() => {
-    const fetchAssignedTasks = async () => {
+  // Function to handle role change
+  const handleRoleChange = async (newRole) => {
       try {
-        const response = await request('get', `/tasks?assignedTo=${auth.user.id}`);
-        setTasks(response.data);
-      } catch (error) {
-        console.error('Error fetching tasks:', error);
+          setIsLoading(true);
+          const response = await request('patch', `/users/role`, { role: newRole });
+
+          // Ensure the response contains the correct data
+          console.log('Response:', response.data);
+
+          setRole(response.data.role);
+
+          // Update auth state
+          setAuth((prevAuth) => ({
+              ...prevAuth,
+              user: { ...prevAuth.user, role: newRole },
+          }));
+      } catch (err) {
+          // Log the error for debugging
+          console.error('Error while updating role:', err);
+
+          setError('Error updating role. Please try again.');
+      } finally {
+          setIsLoading(false);
       }
-    };
-
-    if (auth.user) {
-      fetchAssignedTasks();
-    }
-  }, [auth.user]);
-
-  const handleSearchById = async () => {
-    if (!searchId) return;
-
-    try {
-      const response = await request('get', `/tasks/${searchId}`);
-      setFilteredTask(response.data);
-    } catch (error) {
-      console.error('Error fetching task by ID:', error);
-    }
   };
 
+
+  // Display loading text if role is not yet available
+  if (!role) {
+    return <div className="text-white">Loading user information...</div>;
+  }
+
   return (
-    <div className="container mx-auto p-4">
-      <h1 className="text-3xl font-bold mb-6 text-white">Tasks Assigned to You</h1>
-      <div className="mb-6">
-        <input
-          type="text"
-          placeholder="Search by Task ID"
-          value={searchId}
-          onChange={(e) => setSearchId(e.target.value)}
-          className="px-3 py-2 border border-gray-300 rounded-md"
-        />
-        <button
-          onClick={handleSearchById}
-          className="ml-2 px-4 py-2 bg-blue-600 text-white rounded-md"
-        >
-          Search
-        </button>
+    <div className="container mx-auto p-4 text-white">
+      <h1 className="text-3xl font-bold mb-6">My Role</h1>
+
+      {/* Display user image and role */}
+      <div className="flex items-center mb-6">
+        <img src={userImage} alt="User" className="w-24 h-24 rounded-full mr-4" />
+        <div>
+          <p><strong>Role:</strong> {role}</p>
+        </div>
       </div>
 
-      {filteredTask ? (
-        <div className="bg-white p-4 shadow-md rounded-lg mb-4">
-          <h2 className="text-xl font-bold text-white">Task: {filteredTask.title}</h2>
-          <p className="text-white">{filteredTask.description}</p>
-        </div>
-      ) : (
-        <>
-          {tasks.length > 0 ? (
-            tasks.map((task) => (
-              <div key={task.id} className="bg-white p-4 shadow-md rounded-lg mb-4">
-                <h2 className="text-xl font-bold text-white">{task.title}</h2>
-                <p className="text-white">{task.description}</p>
-              </div>
-            ))
-          ) : (
-            <p className="text-white">No tasks assigned to you yet.</p>
-          )}
-        </>
-      )}
+      {/* Allow role change */}
+      <div className="mb-6">
+        <label className="block text-sm font-bold mb-2" htmlFor="role">Change Role</label>
+        <select
+          id="role"
+          value={role}
+          onChange={(e) => handleRoleChange(e.target.value)}
+          className="bg-gray-800 text-white p-2 rounded"
+          disabled={isLoading}
+        >
+          <option value="TEAM_MEMBER">Team Member</option>
+          <option value="PROJECT_MANAGER">Project Manager</option>
+        </select>
+        {error && <p className="text-red-500 mt-2">{error}</p>}
+      </div>
+
+      {isLoading && <p>Updating role...</p>}
     </div>
   );
 };

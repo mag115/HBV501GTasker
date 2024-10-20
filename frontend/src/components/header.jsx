@@ -4,7 +4,6 @@ import { useAuth } from '../context/auth-context'; // Import the useAuth hook
 
 const Header = () => {
   const { auth, logout } = useAuth(); // Access authentication state and logout function
-  const { role } = auth; // Extract role from auth context
 
   return (
     <header className="bg-blue-600 text-white p-4">
@@ -29,8 +28,7 @@ const Header = () => {
             </NavLink>
           </li>
 
-          {/* Show different options based on the user's role */}
-          {role === 'PROJECT_MANAGER' && (
+          {auth?.user?.role === 'PROJECT_MANAGER' && (
             <>
               <li>
                 <NavLink
@@ -59,13 +57,13 @@ const Header = () => {
                     isActive ? 'text-gray-200 font-bold' : 'hover:text-gray-200'
                   }
                 >
-                  Project report
+                  Project Report
                 </NavLink>
               </li>
             </>
           )}
 
-          {role === 'TEAM_MEMBER' && (
+          {auth?.user?.role === 'TEAM_MEMBER' && (
             <>
               <li>
                 <NavLink
@@ -90,7 +88,7 @@ const Header = () => {
             </>
           )}
 
-          {auth.token ? (
+          {auth?.token ? (
             <>
               <li>
                 <NavLink

@@ -22,14 +22,14 @@ const TaskForm = () => {
       deadline: new Date(deadline),
       reminderSent,
       priority,
-      status:'To-do',
+      status: 'To-do',
     };
 
     try {
       const res = await request('post', '/tasks', newTask);
       if (res.status === 200) {
         setResponseMessage('Task successfully created!');
-        setIsTaskCreated(true); // Set task creation status
+        setIsTaskCreated(true);
         // Clear the form fields
         setTitle('');
         setDescription('');
@@ -45,12 +45,10 @@ const TaskForm = () => {
     }
   };
 
-  // Handler for "View in Task List" button
   const handleViewTaskList = () => {
-    navigate('/tasklist');
+    navigate('/task-list');
   };
 
-  // Handler for "Back to Home Page" button
   const handleBackToHome = () => {
     navigate('/');
   };
@@ -60,7 +58,6 @@ const TaskForm = () => {
       <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
         <h2 className="text-2xl font-bold mb-6 text-center">Add Task</h2>
 
-        {/* Show success message and buttons if task is created */}
         {isTaskCreated ? (
           <div>
             <p className="text-green-500 text-center mb-6">{responseMessage}</p>
@@ -81,12 +78,8 @@ const TaskForm = () => {
           </div>
         ) : (
           <form onSubmit={handleSubmit}>
-            {/* Form fields */}
             <div className="mb-4">
-              <label
-                className="block text-gray-700 text-sm font-bold mb-2"
-                htmlFor="title"
-              >
+              <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="title">
                 Title
               </label>
               <input
@@ -100,10 +93,7 @@ const TaskForm = () => {
             </div>
 
             <div className="mb-4">
-              <label
-                className="block text-gray-700 text-sm font-bold mb-2"
-                htmlFor="description"
-              >
+              <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="description">
                 Description
               </label>
               <textarea
@@ -116,10 +106,7 @@ const TaskForm = () => {
             </div>
 
             <div className="mb-4">
-              <label
-                className="block text-gray-700 text-sm font-bold mb-2"
-                htmlFor="deadline"
-              >
+              <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="deadline">
                 Deadline
               </label>
               <input

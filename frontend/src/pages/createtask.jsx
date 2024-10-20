@@ -2,11 +2,12 @@ import React from 'react';
 import { TaskForm } from '../components/task-form';
 import { Page } from '../components/page';
 
-const Tasks = () => {
+const TaskFormPage = () => {
   return (
     <Page>
       <TaskForm />
     </Page>
   );
 };
-export { Tasks };
+
+export { TaskFormPage };

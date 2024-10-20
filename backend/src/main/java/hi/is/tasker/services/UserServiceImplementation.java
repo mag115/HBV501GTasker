@@ -57,5 +57,8 @@ public class UserServiceImplementation implements UserService {
         throw new RuntimeException("User not found");
     }
 
+    public User save(User user) {
+        return userRepository.save(user);
+    }
 }
 

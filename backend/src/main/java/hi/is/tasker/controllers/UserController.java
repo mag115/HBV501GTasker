@@ -5,8 +5,11 @@ import hi.is.tasker.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
 import java.util.Optional;
 
 @RestController
@@ -31,12 +34,31 @@ public class UserController {
         return new ResponseEntity<>("Authentication success", HttpStatus.OK);
     }
 
-    @PatchMapping("/{userId}/role")
-    public ResponseEntity<User> updateUserRole(@PathVariable Long userId, @RequestBody String role) {
+   /* @PatchMapping("/{userId}/role")
+    public ResponseEntity<User> updateUserRole(@PathVariable Long userId, @RequestBody Map<String, String> requestBody) {
+        String role = requestBody.get("role");
         User updatedUser = userService.updateUserRole(userId, role);
         return new ResponseEntity<>(updatedUser, HttpStatus.OK);
-    }
+    }*/
 
+    @PatchMapping("/role")
+    public ResponseEntity<User> updateAuthenticatedUserRole(@RequestBody Map<String, String> requestBody) {
+        String role = requestBody.get("role");
+
+        // Get the authenticated user from the security context
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+
+        // Fetch the user by their username
+        User user = userService.getUserByUsername(username)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        // Update the user's role
+        user.setRole(role);
+        User updatedUser = userService.save(user); // Save the updated user
+
+        return ResponseEntity.ok(updatedUser);
+    }
     @GetMapping("/username/{username}")
     public ResponseEntity<User> getUserByUsername(@PathVariable String username) {
         Optional<User> userOptional = userService.getUserByUsername(username);
