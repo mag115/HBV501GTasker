@@ -53,7 +53,8 @@ public class User implements UserDetails {
     private List<Task> tasks;
 
     // Default constructor
-    public User() {}
+    public User() {
+    }
 
     // Constructor with fields
     public User(String username, String password, String email, String role) {
@@ -97,5 +98,9 @@ public class User implements UserDetails {
     @Override
     public boolean isEnabled() {
         return true;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
     }
 }
