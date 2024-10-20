@@ -47,7 +47,7 @@ const TaskForm = () => {
 
   // Handler for "View in Task List" button
   const handleViewTaskList = () => {
-    navigate('/tasklist');
+    navigate('/task-list');
   };
 
   // Handler for "Back to Home Page" button

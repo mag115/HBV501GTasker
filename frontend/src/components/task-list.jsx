@@ -11,7 +11,6 @@ const TaskList = () => {
       try {
         const response = await request('get', '/tasks');
         setTasks(response.data);
-        console.log(response.data);
       } catch (err) {
         console.error('Error fetching tasks:', err);
         setError('Failed to load tasks');
@@ -35,12 +34,46 @@ const TaskList = () => {
     return <p>No tasks available yet. Add a task!</p>;
   }
 
-  const handleStatusChange = (taskId, newStatus) => {
-    setTasks((prevTasks) =>
-      prevTasks.map((task) =>
-        task.id === taskId ? { ...task, status: newStatus } : task
-      )
-    );
+  const handleStatusChange = async (taskId, newStatus) => {
+      try {
+          // Update the task status in the state
+          setTasks((prevTasks) =>
+              prevTasks.map((task) =>
+                  task.id === taskId ? { ...task, status: newStatus } : task
+              )
+          );
+
+          // Send the updated status to the server
+          await request('patch', `/tasks/${taskId}/status`, { status: newStatus });
+
+          // Re-fetch tasks to ensure the latest data from the server
+          //const updatedResponse = await request('get', '/tasks');
+          //setTasks(updatedResponse.data);
+
+          console.log(`Updated task ${taskId} status to ${newStatus}`);
+      } catch (error) {
+          console.error('Failed to update status:', error);
+          alert('Failed to update status. Please try again.');
+      }
+  };
+
+
+
+  const handlePriorityChange = async (taskId, newPriority) => {
+      try {
+          await request('patch', `/tasks/${taskId}/priority`, { priority: newPriority });
+
+          setTasks((prevTasks) =>
+              prevTasks.map((task) =>
+                  task.id === taskId ? { ...task, priority: newPriority } : task
+              )
+          );
+
+          console.log(`Updated task ${taskId} priority to ${newPriority}`);
+      } catch (error) {
+          console.error('Failed to update priority:', error);
+          alert('Failed to update priority. Please try again.');
+      }
   };
 
   const toDoTasks = tasks.filter((task) => task.status === 'To-do');
@@ -63,9 +96,9 @@ const TaskList = () => {
       className="max-w-sm rounded overflow-hidden shadow-lg bg-white mb-4"
     >
       <div className="px-6 py-4">
-        <div className="font-bold text-xl mb-2">{task.title}</div>
-        <p className="text-gray-700 text-base">{task.description}</p>
-        <label className="text-gray-500">Status: </label>
+        <div className="font-bold capitalize text-2xl mb-2">{task.title}</div>
+        <p className="text-gray-700 text-base mb-5">{task.description}</p>
+        <label className="text-black-500">Status: </label>
         <select
           className="text-black-500"
           value={task.status}
@@ -78,7 +111,15 @@ const TaskList = () => {
         <p className="text-black-500">
           Deadline: {new Date(task.deadline).toLocaleString()}
         </p>
-        <p className="text-black-500">Priority: {task.priority}</p>
+        <select
+            className="text-black-500 mr-20"
+            value={task.priority}
+            onChange={(e) => handlePriorityChange(task.id, e.target.value)}
+            >
+                <option value="low">Low priority</option>
+                <option value="medium">Medium priority</option>
+                <option value="high">High priority</option>
+        </select>
         <button
           className="mt-2 bg-black text-white py-1 px-4 rounded"
           onClick={() => handleSendReminder(task.id)}
@@ -92,7 +133,7 @@ const TaskList = () => {
   return (
     <div className="flex space-x-8 m-4">
       <div className="w-1/3">
-        <h2 className="text-white text-center font-bold mb-4">To-do</h2>
+        <h2 className="text-white  text-center font-bold mb-4 ">To-do</h2>
         {toDoTasks.map(geraTask)}
       </div>
       <div className="w-1/3">
