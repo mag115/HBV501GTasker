@@ -35,8 +35,7 @@ public class AuthenticationService {
         User user = new User()
                 .setUsername(input.getUsername())
                 .setEmail(input.getEmail())
-                .setPassword(passwordEncoder.encode(input.getPassword()))
-                .setRole(defaultRole);  // Assign role as a string
+                .setPassword(passwordEncoder.encode(input.getPassword()));  // Assign role as a string
 
         return userRepository.save(user);
     }
