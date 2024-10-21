@@ -28,7 +28,7 @@ Task {
 
     private String status;  // Example values: "To Do", "In Progress", "Completed"
     private String priority;  // Example values: "Low", "Medium", "High"
-    private  String project_name;
+    private String project_name;
     private String project_id;
 
     @OneToMany(mappedBy = "task", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
@@ -36,4 +36,19 @@ Task {
 
 
     // Getters and Setters (Lombok handles these)
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public String getPriority() {
+        return priority;
+    }
+
+    public void setPriority(String priority) {
+        this.priority = priority;
+    }
 }

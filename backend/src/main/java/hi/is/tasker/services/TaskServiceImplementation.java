@@ -44,14 +44,20 @@ public class TaskServiceImplementation implements TaskService {
 
     @Override
     public Task updateTaskStatus(Long taskId, String status) {
-        // TODO: Implement updateTaskStatus method
-        return null;
+        Task task = taskRepository.findById(taskId)
+                .orElseThrow(() -> new RuntimeException("Task not found with id: " + taskId));
+
+        task.setStatus(status);
+        return taskRepository.save(task);
     }
 
     @Override
     public Task updateTaskPriority(Long taskId, String priority) {
-        // TODO: Implement updateTaskPriority method
-        return null;
+        Task task = taskRepository.findById(taskId)
+                .orElseThrow(() -> new RuntimeException("Task not found with id: " + taskId));
+
+        task.setPriority(priority);
+        return taskRepository.save(task);
     }
 
     @Override
