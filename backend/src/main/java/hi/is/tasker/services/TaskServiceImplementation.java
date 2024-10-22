@@ -1,7 +1,9 @@
 package hi.is.tasker.services;
 
 import hi.is.tasker.entities.Task;
+import hi.is.tasker.entities.User;
 import hi.is.tasker.repositories.TaskRepository;
+import hi.is.tasker.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -10,10 +12,12 @@ import java.util.List;
 @Service
 public class TaskServiceImplementation implements TaskService {
     private final TaskRepository taskRepository;
+    private final UserRepository userRepository;
 
     @Autowired
-    public TaskServiceImplementation(TaskRepository taskRepository) {
+    public TaskServiceImplementation(TaskRepository taskRepository, UserRepository userRepository) {
         this.taskRepository = taskRepository;
+        this.userRepository = userRepository;
     }
 
     @Override
@@ -21,6 +25,10 @@ public class TaskServiceImplementation implements TaskService {
         return taskRepository.findAll();
     }
 
+    @Override
+    public List<Task> getTasksAssignedToUser(String username) {
+        return taskRepository.findByAssignedUserUsername(username);
+    }
     @Override
     public Task findById(Long id) {
         return taskRepository.findById(id).orElseThrow(() -> new RuntimeException("Task not found with id: " + id));
@@ -38,8 +46,10 @@ public class TaskServiceImplementation implements TaskService {
 
     @Override
     public Task assignTask(Long taskId, Long userId) {
-        // TODO: Implement assignTask method
-        return null;
+        Task task = taskRepository.findById(taskId).orElseThrow(() -> new RuntimeException("Task not found"));
+        User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
+        task.setAssignedUser(user);
+        return taskRepository.save(task);
     }
 
     @Override

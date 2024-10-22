@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { request } from '../api/http';
 
@@ -8,10 +8,26 @@ const TaskForm = () => {
   const [deadline, setDeadline] = useState('');
   const [reminderSent, setReminderSent] = useState(false);
   const [priority, setPriority] = useState('');
+  const [users, setUsers] = useState([]);  // List of users fetched from the backend
+  const [assignedUser, setAssignedUser] = useState('');  // Selected user for task assignment
   const [isTaskCreated, setIsTaskCreated] = useState(false);
   const [responseMessage, setResponseMessage] = useState('');
 
   const navigate = useNavigate();
+
+  // Fetch the list of users from the backend when the component mounts
+  useEffect(() => {
+    const fetchUsers = async () => {
+      try {
+        const response = await request('get', '/users');  // Adjust the API path as needed
+        setUsers(response.data);
+      } catch (error) {
+        console.error('Error fetching users:', error);
+      }
+    };
+
+    fetchUsers();
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -23,6 +39,7 @@ const TaskForm = () => {
       reminderSent,
       priority,
       status: 'To-do',
+      assignedUser,  // Include the assigned user ID in the request
     };
 
     try {
@@ -36,6 +53,7 @@ const TaskForm = () => {
         setDeadline('');
         setReminderSent(false);
         setPriority('');
+        setAssignedUser('');  // Clear the assigned user
       } else {
         setResponseMessage('Failed to create task.');
       }
@@ -137,10 +155,24 @@ const TaskForm = () => {
               </select>
             </div>
 
+            {/* Dropdown to select the user to assign the task to */}
             <div className="mb-4">
-              <label className="block text-gray-700 text-sm font-bold mb-2">
-                Reminder Sent
-              </label>
+              <label className="block text-gray-700 text-sm font-bold mb-2">Assign User</label>
+              <select
+                value={assignedUser}
+                onChange={(e) => setAssignedUser(e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-300"
+                required
+              >
+                <option value="">Select a User</option>
+                {users.map((user) => (
+                  <option key={user.id} value={user.id}>{user.username}</option>
+                ))}
+              </select>
+            </div>
+
+            <div className="mb-4">
+              <label className="block text-gray-700 text-sm font-bold mb-2">Reminder Sent</label>
               <input
                 type="checkbox"
                 className="mr-2 leading-tight"

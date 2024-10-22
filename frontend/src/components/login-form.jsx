@@ -23,7 +23,7 @@ const LoginForm = () => {
     const res = await handleLogin(loginData);
     if (res.success) {
       login(res.data); // Set the authenticated user
-      navigate('/tasks'); // Redirect to tasks page
+      navigate('/'); // Redirect to tasks page
     } else {
       setErrorMessage(res.error || 'Error registering user');
     }

@@ -13,13 +13,14 @@ public interface TaskService {
     Task save(Task task);
 
     void delete(Task task);
-    
-    // TODO: Eigum eftir að implementa eftirfarandi:
+
     Task assignTask(Long taskId, Long userId);
 
     Task updateTaskStatus(Long taskId, String status);
 
     Task updateTaskPriority(Long taskId, String priority);
+
+    List<Task> getTasksAssignedToUser(String username);
 
     List<Task> filterTasksByStatus(String status);
 

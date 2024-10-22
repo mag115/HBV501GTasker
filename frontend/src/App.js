@@ -1,6 +1,6 @@
 import React from 'react';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
-import { TaskFormPage } from './pages/createtask';  // Fix this import
+import { TaskFormPage } from './pages/create-task';
 import { Login } from './pages/login';
 import { Signup } from './pages/signup';
 import { ProtectedRoute } from './components/protected-route';
@@ -26,10 +26,10 @@ const router = createBrowserRouter([
     element: <Signup />,
   },
   {
-    path: '/tasks',
+    path: '/create-task',
     element: (
       <ProtectedRoute requiredRole="PROJECT_MANAGER">
-        <TaskFormPage />  {/* Ensure this points to the correct page */}
+        <TaskFormPage />
       </ProtectedRoute>
     ),
   },

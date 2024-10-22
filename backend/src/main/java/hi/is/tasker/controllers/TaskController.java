@@ -10,6 +10,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -36,6 +38,13 @@ public class TaskController {
         return ResponseEntity.ok(tasks);
     }
 
+    @GetMapping("/assigned")
+    public ResponseEntity<List<Task>> getTasksAssignedToUser(Principal principal) {
+        String username = principal.getName(); // Assuming the username is part of the logged-in user's identity
+        List<Task> tasks = taskService.getTasksAssignedToUser(username); // This method should return tasks assigned to this user
+        return ResponseEntity.ok(tasks);
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<Task> getTaskById(@PathVariable Long id) {
         Task task = taskService.findById(id);
@@ -43,8 +52,22 @@ public class TaskController {
     }
 
     @PostMapping
-    public ResponseEntity<Task> createTask(@Valid @RequestBody Task task) {
-        task.setAssignedUser(null); // assignedUser is initially null
+    public ResponseEntity<Task> createTask(@Valid @RequestBody Map<String, Object> taskData) {
+        Task task = new Task();
+        task.setTitle((String) taskData.get("title"));
+        task.setDescription((String) taskData.get("description"));
+        task.setPriority((String) taskData.get("priority"));
+        task.setStatus("To-do");
+        task.setDeadline(LocalDateTime.parse((String) taskData.get("deadline")));
+
+        // Assign user if userId is provided in taskData
+        Long userId = ((Integer) taskData.get("assignedUser")).longValue();  // Assuming userId is sent in request
+        if (userId != null) {
+            User assignedUser = userService.getUserById(userId)
+                    .orElseThrow(() -> new RuntimeException("User not found"));
+            task.setAssignedUser(assignedUser);
+        }
+
         Task savedTask = taskService.save(task);
         return ResponseEntity.ok(savedTask);
     }

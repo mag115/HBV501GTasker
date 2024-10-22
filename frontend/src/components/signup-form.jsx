@@ -41,7 +41,7 @@ const SignupForm = () => {
       setConfirmPassword('');
       setRole('TEAM_MEMBER');
       login(result.data);
-      navigate('/tasks');
+      navigate('/');
     } else {
       setErrorMessage(result.error || 'Error registering user');
     }

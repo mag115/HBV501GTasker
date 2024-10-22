@@ -9,6 +9,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -40,6 +41,12 @@ public class UserController {
         User updatedUser = userService.updateUserRole(userId, role);
         return new ResponseEntity<>(updatedUser, HttpStatus.OK);
     }*/
+
+    @GetMapping
+    public ResponseEntity<List<User>> getAllUsers() {
+        List<User> users = userService.findAll();  // Assuming you have a service method that fetches all users
+        return ResponseEntity.ok(users);
+    }
 
     @PatchMapping("/role")
     public ResponseEntity<User> updateAuthenticatedUserRole(@RequestBody Map<String, String> requestBody) {

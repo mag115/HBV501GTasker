@@ -1,9 +1,12 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { NavLink } from 'react-router-dom';
 import { useAuth } from '../context/auth-context'; // Import the useAuth hook
 
 const Header = () => {
   const { auth, logout } = useAuth(); // Access authentication state and logout function
+
+  // Use effect to trigger a re-render when the auth state changes
+  useEffect(() => {}, [auth]);
 
   return (
     <header className="bg-blue-600 text-white p-4">
@@ -32,7 +35,7 @@ const Header = () => {
             <>
               <li>
                 <NavLink
-                  to="/tasks"
+                  to="/create-task"
                   className={({ isActive }) =>
                     isActive ? 'text-gray-200 font-bold' : 'hover:text-gray-200'
                   }

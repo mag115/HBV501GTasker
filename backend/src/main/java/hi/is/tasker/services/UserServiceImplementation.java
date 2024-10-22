@@ -47,6 +47,11 @@ public class UserServiceImplementation implements UserService {
         return userRepository.findAll();
     }
 
+    @Override
+    public List<User> findAll() {
+        return userRepository.findAll();  // Returns all users from the database
+    }
+
     public User updateUserRole(Long id, String role) {
         Optional<User> userOptional = userRepository.findById(id);
         if (userOptional.isPresent()) {
