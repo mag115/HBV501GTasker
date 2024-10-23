@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useAuth } from '../context/auth-context';
 import { request } from '../api/http';
-import userImage from '../images/user.png'; // Ensure the correct path to your image
+import userImage from '../images/user.png';
 
 const MyInfo = () => {
   const { auth, setAuth } = useAuth(); // Access token and role from auth
@@ -9,34 +9,37 @@ const MyInfo = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
 
-  // Function to handle role change
+  // Handles the role change
   const handleRoleChange = async (newRole) => {
-      try {
-          setIsLoading(true);
-          const response = await request('patch', `/users/role`, { role: newRole });
+    try {
+      setIsLoading(true);
 
-          // Ensure the response contains the correct data
-          console.log('Response:', response.data);
+      // Request to BE to update role
+      const response = await request('patch', `/users/role`, { role: newRole });
 
-          setRole(response.data.role);
+      console.log('Response:', response.data);
 
-          // Update auth state
-          setAuth((prevAuth) => ({
-              ...prevAuth,
-              user: { ...prevAuth.user, role: newRole },
-          }));
-      } catch (err) {
-          // Log the error for debugging
-          console.error('Error while updating role:', err);
+      // Update role in the component's state
+      setRole(response.data.role);
 
-          setError('Error updating role. Please try again.');
-      } finally {
-          setIsLoading(false);
-      }
+      // Update auth state and persist the new role in localStorage
+      setAuth((prevAuth) => ({
+        ...prevAuth,
+        role: newRole,  // Update the role in the auth context
+      }));
+
+      // Persist the new role in localStorage
+      localStorage.setItem('role', newRole);
+
+    } catch (err) {
+      console.error('Error while updating role:', err);
+      setError('Error updating role. Please try again.');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
-
-  // Display loading text if role is not yet available
+  // Loading if role not available
   if (!role) {
     return <div className="text-white">Loading user information...</div>;
   }
@@ -45,7 +48,6 @@ const MyInfo = () => {
     <div className="container mx-auto p-4 text-white">
       <h1 className="text-3xl font-bold mb-6">My Role</h1>
 
-      {/* Display user image and role */}
       <div className="flex items-center mb-6">
         <img src={userImage} alt="User" className="w-24 h-24 rounded-full mr-4" />
         <div>
@@ -53,7 +55,6 @@ const MyInfo = () => {
         </div>
       </div>
 
-      {/* Allow role change */}
       <div className="mb-6">
         <label className="block text-sm font-bold mb-2" htmlFor="role">Change Role</label>
         <select

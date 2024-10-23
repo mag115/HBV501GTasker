@@ -46,3 +46,11 @@ npm start
 ```
 
 Go to your browser and to localhost:3000
+
+### Það sem þarf að gera:
+* Laga header þannig að allir takkar virka, fara á réttan stað, og þannig að hann breytist strax þegar þú loggar þig inn based á role
+* Bæta við time tracking í frontendann
+* Notifications og reminder -- hvernig virkar í frontend?
+* Hvernig á project report að virka í frontend?
+* Implementa getTaskById í frontenda ehv staðar
+* Assign task to team member - frontend? hvernig

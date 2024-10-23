@@ -5,44 +5,38 @@ const AuthContext = createContext();
 export const AuthProvider = ({ children }) => {
   const [auth, setAuth] = useState({
     token: null,
-    role: null,  // Store role as a string
+    role: null,
   });
 
   useEffect(() => {
     const token = localStorage.getItem('token');
-    const role = localStorage.getItem('role');  // Retrieve role from localStorage as a string
+    const role = localStorage.getItem('role');
     if (token && role) {
-      setAuth({ token, role });  // Set both token and role in state
+      setAuth({ token, role });
     }
   }, []);
 
   const login = (data) => {
-    const { token, role } = data;  // Extract token and role from the data object
-    console.log('token', token);   // Debug token
-    console.log('role', role);     // Debug role
+    const { token, role } = data;
 
-    // Set both token and role in auth state
     setAuth({ token, role });
 
-    // Store token and role in localStorage
     localStorage.setItem('token', token);
     localStorage.setItem('role', role);
   };
 
   const logout = () => {
-    setAuth({ token: null, role: null });  // Clear both token and role from state
+    setAuth({ token: null, role: null });
+
     localStorage.removeItem('token');
-    localStorage.removeItem('role');  // Clear role from localStorage
+    localStorage.removeItem('role');
   };
 
   return (
-    <AuthContext.Provider value={{ auth, login, logout, setAuth }}>  {/* Pass setAuth here */}
+    <AuthContext.Provider value={{ auth, login, logout, setAuth }}>
       {children}
     </AuthContext.Provider>
   );
 };
 
-// Use the AuthContext
-export const useAuth = () => {
-  return useContext(AuthContext);
-};
+export const useAuth = () => useContext(AuthContext);
