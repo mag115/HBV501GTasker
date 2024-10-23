@@ -8,8 +8,8 @@ const TaskForm = () => {
   const [deadline, setDeadline] = useState('');
   const [reminderSent, setReminderSent] = useState(false);
   const [priority, setPriority] = useState('');
-  const [users, setUsers] = useState([]);  // List of users fetched from the backend
-  const [assignedUser, setAssignedUser] = useState('');  // Selected user for task assignment
+  const [users, setUsers] = useState([]);
+  const [assignedUser, setAssignedUser] = useState('');
   const [isTaskCreated, setIsTaskCreated] = useState(false);
   const [responseMessage, setResponseMessage] = useState('');
 
@@ -19,7 +19,7 @@ const TaskForm = () => {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const response = await request('get', '/users');  // Adjust the API path as needed
+        const response = await request('get', '/users');
         setUsers(response.data);
       } catch (error) {
         console.error('Error fetching users:', error);
@@ -53,7 +53,7 @@ const TaskForm = () => {
         setDeadline('');
         setReminderSent(false);
         setPriority('');
-        setAssignedUser('');  // Clear the assigned user
+        setAssignedUser('');
       } else {
         setResponseMessage('Failed to create task.');
       }

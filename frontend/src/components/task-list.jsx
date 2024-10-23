@@ -15,7 +15,7 @@ const TaskList = () => {
         if (Array.isArray(response.data)) {
           setTasks(response.data);  // Only set if it's an array
         } else {
-          throw new Error('Invalid response format');  // Handle unexpected format
+          throw new Error('Invalid response format');
         }
       } catch (err) {
         console.error('Error fetching tasks:', err);
@@ -49,10 +49,8 @@ const TaskList = () => {
               )
           );
 
-          // Send the updated status to the server
           await request('patch', `/tasks/${taskId}/status`, { status: newStatus });
 
-          // Re-fetch tasks to ensure the latest data from the server
           //const updatedResponse = await request('get', '/tasks');
           //setTasks(updatedResponse.data);
 

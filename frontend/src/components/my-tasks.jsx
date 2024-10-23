@@ -2,21 +2,21 @@ import React, { useEffect, useState } from 'react';
 import { request } from '../api/http';
 
 const MyTasks = () => {
-  const [myTasks, setMyTasks] = useState([]);  // Tasks assigned to the current user
-  const [loading, setLoading] = useState(true); // Loading state
-  const [error, setError] = useState(null);     // Error state
+  const [myTasks, setMyTasks] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     // Fetch tasks assigned to the logged-in user
     const fetchMyTasks = async () => {
       try {
-        const response = await request('get', '/tasks/assigned'); // Fetch tasks assigned to the user
+        const response = await request('get', '/tasks/assigned');
         setMyTasks(response.data);
       } catch (error) {
         console.error('Error fetching my tasks:', error);
         setError('Failed to fetch tasks assigned to you.');
       } finally {
-        setLoading(false);  // Stop loading once fetch is complete
+        setLoading(false);
       }
     };
 
