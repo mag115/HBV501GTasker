@@ -1,6 +1,8 @@
 import React from 'react';
 
 const NotificationsList = ({ notifications, onMarkAsRead }) => {
+  console.log("Notifications:", notifications); // Add this log for debugging
+
   return (
     <div className="w-full max-w-lg mx-auto p-4">
       {notifications.length === 0 ? (
@@ -31,6 +33,5 @@ const NotificationsList = ({ notifications, onMarkAsRead }) => {
     </div>
   );
 };
-
 
 export { NotificationsList };

@@ -13,6 +13,7 @@ const TaskForm = () => {
   const [isTaskCreated, setIsTaskCreated] = useState(false);
   const [responseMessage, setResponseMessage] = useState('');
   const [taskId, setTaskId] = useState(null); // State for the task ID
+  const[timeSpent, setTimeSpent]=useState('');
 
   const navigate = useNavigate();
 
@@ -40,6 +41,8 @@ const TaskForm = () => {
       reminderSent,
       priority,
       status: 'To-do',
+      timeSpent:0,
+      elapsedTime:0,
     };
 
     try {

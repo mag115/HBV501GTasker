@@ -5,13 +5,11 @@ import hi.is.tasker.entities.User;
 import hi.is.tasker.services.NotificationService;
 import hi.is.tasker.services.TaskService;
 import hi.is.tasker.services.UserService;
-import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -64,17 +62,9 @@ public class TaskController {
     }
 
 
-
     @PostMapping("/{taskId}/assign")
     public ResponseEntity<Task> assignTask(@PathVariable Long taskId, @RequestBody Long userId) {
         Task assignedTask = taskService.assignTask(taskId, userId);
-
-        // Fetch the assigned user and create a notification
-        User user = userService.getUserById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found"));
-        String message = "You were assigned a new task: '" + assignedTask.getTitle() + "'";
-        notificationService.createNotification(message, user);
-
         return ResponseEntity.ok(assignedTask);
     }
 
@@ -106,24 +96,35 @@ public class TaskController {
     }
 
     @PostMapping("/{taskId}/reminder")
-    public ResponseEntity<String> sendTaskDeadlineReminder(@PathVariable Long taskId) {
+    public ResponseEntity<Void> sendTaskDeadlineReminder(@PathVariable Long taskId) {
         // Fetch task details based on the provided taskId
         Optional<Task> taskOptional = Optional.ofNullable(taskService.findById(taskId));
 
         if (taskOptional.isEmpty()) {
+            // If no task is found, return a 404 response
             return ResponseEntity.notFound().build();
         }
 
         Task task = taskOptional.get();
-        User assignedUser = task.getAssignedUser();
+        String message = "Reminder: The deadline for task '" + task.getTitle() + "' is approaching. It is on " + task.getDeadline();
 
-        if (assignedUser != null) {
-            String message = "Reminder: The deadline for task '" + task.getTitle() + "' is approaching. It is on " + task.getDeadline();
-            notificationService.createNotification(message, assignedUser);
-            return ResponseEntity.ok("Reminder sent to user.");
+        // Assuming you want to notify all users (or adjust logic as needed)
+        List<User> allUsers = userService.getAllUsers();
+
+        for (User user : allUsers) {
+            notificationService.createNotification(message, user);
         }
 
-        return ResponseEntity.badRequest().body("No user assigned to this task.");
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/updateTime")
+    public ResponseEntity<Task> updateTaskTime(@RequestBody Map<String, Object> request) {
+        Long taskId = ((Number) request.get("taskId")).longValue();
+        Double timeSpent = ((Number) request.get("timeSpent")).doubleValue();
+
+        Task task = taskService.updateTimeSpent(taskId, timeSpent);
+        return ResponseEntity.ok(task);
     }
 
 
