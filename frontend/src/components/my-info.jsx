@@ -13,23 +13,22 @@ const MyInfo = () => {
   const handleRoleChange = async (newRole) => {
     try {
       setIsLoading(true);
+      setError('');
 
-      // Request to BE to update role
+      // Request to update role
       const response = await request('patch', `/users/role`, { role: newRole });
 
-      console.log('Response:', response.data);
-
-      // Update role in the component's state
+      // Update role in component's state
       setRole(response.data.role);
 
-      // Update auth state and persist the new role in localStorage
+      // Update the auth context
       setAuth((prevAuth) => ({
         ...prevAuth,
-        role: newRole,  // Update the role in the auth context
+        role: response.data.role,  // Make sure to use the role from the response
       }));
 
       // Persist the new role in localStorage
-      localStorage.setItem('role', newRole);
+      localStorage.setItem('role', response.data.role);
 
     } catch (err) {
       console.error('Error while updating role:', err);
