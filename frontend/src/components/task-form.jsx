@@ -12,6 +12,7 @@ const TaskForm = () => {
   const [assignedUser, setAssignedUser] = useState('');
   const [isTaskCreated, setIsTaskCreated] = useState(false);
   const [responseMessage, setResponseMessage] = useState('');
+  const [taskId, setTaskId] = useState(null); // State for the task ID
 
   const navigate = useNavigate();
 
@@ -47,6 +48,7 @@ const TaskForm = () => {
       if (res.status === 200) {
         setResponseMessage('Task successfully created!');
         setIsTaskCreated(true);
+        setTaskId(res.data.id); // Set the task ID from the response
         // Clear the form fields
         setTitle('');
         setDescription('');
@@ -79,6 +81,7 @@ const TaskForm = () => {
         {isTaskCreated ? (
           <div>
             <p className="text-green-500 text-center mb-6">{responseMessage}</p>
+            <p className="text-center">Task ID: {taskId}</p> {/* Display the task ID */}
             <div className="flex justify-between">
               <button
                 onClick={handleBackToHome}
