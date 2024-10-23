@@ -1,5 +1,6 @@
 package hi.is.tasker.entities;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -24,6 +25,7 @@ Task {
     // New fields:
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = true)  // Allows for the assignedUser to be null
+    @JsonBackReference
     private User assignedUser;  // Reference to the User entity instead of a Long ID
 
     private String status;  // Example values: "To Do", "In Progress", "Completed"

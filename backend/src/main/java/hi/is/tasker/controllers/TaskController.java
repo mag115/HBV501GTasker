@@ -52,25 +52,18 @@ public class TaskController {
     }
 
     @PostMapping
-    public ResponseEntity<Task> createTask(@Valid @RequestBody Map<String, Object> taskData) {
-        Task task = new Task();
-        task.setTitle((String) taskData.get("title"));
-        task.setDescription((String) taskData.get("description"));
-        task.setPriority((String) taskData.get("priority"));
-        task.setStatus("To-do");
-        task.setDeadline(LocalDateTime.parse((String) taskData.get("deadline")));
-
-        // Assign user if userId is provided in taskData
-        Long userId = ((Integer) taskData.get("assignedUser")).longValue();  // Assuming userId is sent in request
-        if (userId != null) {
-            User assignedUser = userService.getUserById(userId)
+    public ResponseEntity<Task> createTask(@RequestBody Task task, @RequestParam(required = false) Long assignedUserId) {
+        if (assignedUserId != null) {
+            User assignedUser = userService.getUserById(assignedUserId)
                     .orElseThrow(() -> new RuntimeException("User not found"));
             task.setAssignedUser(assignedUser);
         }
-
+        task.setStatus("To-do");
         Task savedTask = taskService.save(task);
         return ResponseEntity.ok(savedTask);
     }
+
+
 
     @PostMapping("/{taskId}/assign")
     public ResponseEntity<Task> assignTask(@PathVariable Long taskId, @RequestBody Long userId) {

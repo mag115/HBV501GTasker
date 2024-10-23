@@ -1,5 +1,6 @@
 package hi.is.tasker.entities;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Size;
@@ -50,6 +51,7 @@ public class User implements UserDetails {
     private Date updatedAt;
 
     @OneToMany(mappedBy = "assignedUser", cascade = CascadeType.ALL)
+    @JsonManagedReference
     private List<Task> tasks;
 
     // Default constructor

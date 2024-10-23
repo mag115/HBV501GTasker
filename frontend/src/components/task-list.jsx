@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { request } from '../api/http';
 
 const TaskList = () => {
@@ -6,11 +7,16 @@ const TaskList = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+
   useEffect(() => {
     const fetchTasks = async () => {
       try {
         const response = await request('get', '/tasks');
-        setTasks(response.data);
+        if (Array.isArray(response.data)) {
+          setTasks(response.data);  // Only set if it's an array
+        } else {
+          throw new Error('Invalid response format');  // Handle unexpected format
+        }
       } catch (err) {
         console.error('Error fetching tasks:', err);
         setError('Failed to load tasks');
@@ -30,9 +36,9 @@ const TaskList = () => {
     return <p className="text-red-500">{error}</p>;
   }
 
-  if (tasks.length === 0) {
-    return <p>No tasks available yet. Add a task!</p>;
-  }
+  if (!Array.isArray(tasks) || tasks.length === 0) {
+      return <p>No tasks available yet. Add a task!</p>;
+    }
 
   const handleStatusChange = async (taskId, newStatus) => {
       try {
@@ -109,7 +115,7 @@ const TaskList = () => {
           <option value="Done">Done</option>
         </select>
         <p className="text-black-500">
-          Deadline: {new Date(task.deadline).toLocaleString()}
+          Deadline: {task.deadline ? new Date(task.deadline).toLocaleString() : "No deadline set"}
         </p>
         <select
             className="text-black-500 mr-20"

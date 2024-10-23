@@ -39,11 +39,11 @@ const TaskForm = () => {
       reminderSent,
       priority,
       status: 'To-do',
-      assignedUser,  // Include the assigned user ID in the request
     };
 
     try {
-      const res = await request('post', '/tasks', newTask);
+      // Include the selected assignedUser ID in the query params
+      const res = await request('post', `/tasks?assignedUserId=${assignedUser}`, newTask);
       if (res.status === 200) {
         setResponseMessage('Task successfully created!');
         setIsTaskCreated(true);
@@ -96,6 +96,7 @@ const TaskForm = () => {
           </div>
         ) : (
           <form onSubmit={handleSubmit}>
+            {/* Form fields */}
             <div className="mb-4">
               <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="title">
                 Title
