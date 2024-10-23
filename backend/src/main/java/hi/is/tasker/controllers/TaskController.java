@@ -5,13 +5,11 @@ import hi.is.tasker.entities.User;
 import hi.is.tasker.services.NotificationService;
 import hi.is.tasker.services.TaskService;
 import hi.is.tasker.services.UserService;
-import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -62,7 +60,6 @@ public class TaskController {
         Task savedTask = taskService.save(task);
         return ResponseEntity.ok(savedTask);
     }
-
 
 
     @PostMapping("/{taskId}/assign")
@@ -119,6 +116,15 @@ public class TaskController {
         }
 
         return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/updateTime")
+    public ResponseEntity<Task> updateTaskTime(@RequestBody Map<String, Object> request) {
+        Long taskId = ((Number) request.get("taskId")).longValue();
+        Double timeSpent = ((Number) request.get("timeSpent")).doubleValue();
+
+        Task task = taskService.updateTimeSpent(taskId, timeSpent);
+        return ResponseEntity.ok(task);
     }
 
 }

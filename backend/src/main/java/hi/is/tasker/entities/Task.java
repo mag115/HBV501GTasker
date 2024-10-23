@@ -32,6 +32,8 @@ Task {
     private String priority;  // Example values: "Low", "Medium", "High"
     private String project_name;
     private String project_id;
+    private double timeSpent;
+    private double elapsedTime;
 
     @OneToMany(mappedBy = "task", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<TimeTracking> timeTrackings;
@@ -45,6 +47,23 @@ Task {
     public void setStatus(String status) {
         this.status = status;
     }
+
+    public double getTimeSpent() {
+        return timeSpent;
+    }
+
+    public void setTimeSpent(double timeSpent) {
+        this.timeSpent = timeSpent;
+    }
+
+    public double getElapsedTime() {
+        return elapsedTime;
+    }
+
+    public void setElapsedTime(double elapsedTimes) {
+        this.elapsedTime = elapsedTime;
+    }
+
 
     public String getPriority() {
         return priority;
