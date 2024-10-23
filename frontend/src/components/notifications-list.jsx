@@ -4,7 +4,7 @@ const NotificationsList = ({ notifications, onMarkAsRead }) => {
   return (
     <div className="w-full max-w-lg mx-auto p-4">
       {notifications.length === 0 ? (
-        <p className="text-gray-500 text-center">No notifications available.</p>
+        <p className="text-gray-500 text-center">You have no new notifications!</p>
       ) : (
         notifications.map((notification) => (
           <div
@@ -31,5 +31,6 @@ const NotificationsList = ({ notifications, onMarkAsRead }) => {
     </div>
   );
 };
+
 
 export { NotificationsList };
