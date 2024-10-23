@@ -73,6 +73,10 @@ public class TaskController {
         User user = userService.getUserById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
         String message = "You were assigned a new task: '" + assignedTask.getTitle() + "'";
+
+        // Add this log for debugging
+        System.out.println("Creating notification for user: " + user.getUsername());
+
         notificationService.createNotification(message, user);
 
         return ResponseEntity.ok(assignedTask);
@@ -107,25 +111,20 @@ public class TaskController {
 
     @PostMapping("/{taskId}/reminder")
     public ResponseEntity<String> sendTaskDeadlineReminder(@PathVariable Long taskId) {
-        // Fetch task details based on the provided taskId
-        Optional<Task> taskOptional = Optional.ofNullable(taskService.findById(taskId));
-
-        if (taskOptional.isEmpty()) {
+        Task task = taskService.findById(taskId);
+        if (task == null) {
             return ResponseEntity.notFound().build();
         }
 
-        Task task = taskOptional.get();
         User assignedUser = task.getAssignedUser();
-
         if (assignedUser != null) {
-            String message = "Reminder: The deadline for task '" + task.getTitle() + "' is approaching. It is on " + task.getDeadline();
+            String message = "Reminder: The deadline for task '" + task.getTitle() + "' is approaching. It's on " + task.getDeadline();
             notificationService.createNotification(message, assignedUser);
             return ResponseEntity.ok("Reminder sent to user.");
         }
 
         return ResponseEntity.badRequest().body("No user assigned to this task.");
     }
-
 
 }
 

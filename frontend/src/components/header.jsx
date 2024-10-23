@@ -9,9 +9,10 @@ const Header = () => {
 
   useEffect(() => {
     const fetchUnreadNotifications = async () => {
-      if (auth?.token) {
+      if (auth?.token && auth.user?.id) {
         try {
-          const response = await request('get', '/notifications/unread'); // Adjust the endpoint if necessary
+          // Pass the userId and filter unread notifications with a query parameter
+          const response = await request('get', `/notifications/${auth.user.id}?filter=unread`);
           setUnreadCount(response.data.length); // Assuming response.data contains the unread notifications array
         } catch (error) {
           console.error('Error fetching unread notifications:', error);
