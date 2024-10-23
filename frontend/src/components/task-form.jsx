@@ -12,6 +12,7 @@ const TaskForm = () => {
   const [assignedUser, setAssignedUser] = useState('');
   const [isTaskCreated, setIsTaskCreated] = useState(false);
   const [responseMessage, setResponseMessage] = useState('');
+  const[timeSpent, setTimeSpent]=useState('');
 
   const navigate = useNavigate();
 
@@ -39,6 +40,8 @@ const TaskForm = () => {
       reminderSent,
       priority,
       status: 'To-do',
+      timeSpent:0,
+      elapsedTime:0,
     };
 
     try {
@@ -54,6 +57,7 @@ const TaskForm = () => {
         setReminderSent(false);
         setPriority('');
         setAssignedUser('');
+
       } else {
         setResponseMessage('Failed to create task.');
       }

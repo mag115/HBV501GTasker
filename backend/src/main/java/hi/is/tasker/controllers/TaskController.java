@@ -5,13 +5,11 @@ import hi.is.tasker.entities.User;
 import hi.is.tasker.services.NotificationService;
 import hi.is.tasker.services.TaskService;
 import hi.is.tasker.services.UserService;
-import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -31,7 +29,6 @@ public class TaskController {
         this.notificationService = notificationService;
     }
 
-
     @GetMapping
     public ResponseEntity<List<Task>> getAllTasks() {
         List<Task> tasks = taskService.findAll();
@@ -40,8 +37,8 @@ public class TaskController {
 
     @GetMapping("/assigned")
     public ResponseEntity<List<Task>> getTasksAssignedToUser(Principal principal) {
-        String username = principal.getName(); // Assuming the username is part of the logged-in user's identity
-        List<Task> tasks = taskService.getTasksAssignedToUser(username); // This method should return tasks assigned to this user
+        String username = principal.getName();
+        List<Task> tasks = taskService.getTasksAssignedToUser(username);
         return ResponseEntity.ok(tasks);
     }
 
@@ -63,8 +60,6 @@ public class TaskController {
         return ResponseEntity.ok(savedTask);
     }
 
-
-
     @PostMapping("/{taskId}/assign")
     public ResponseEntity<Task> assignTask(@PathVariable Long taskId, @RequestBody Long userId) {
         Task assignedTask = taskService.assignTask(taskId, userId);
@@ -74,9 +69,6 @@ public class TaskController {
                 .orElseThrow(() -> new RuntimeException("User not found"));
         String message = "You were assigned a new task: '" + assignedTask.getTitle() + "'";
 
-        // Add this log for debugging
-        System.out.println("Creating notification for user: " + user.getUsername());
-
         notificationService.createNotification(message, user);
 
         return ResponseEntity.ok(assignedTask);
@@ -84,16 +76,10 @@ public class TaskController {
 
     @PatchMapping("/{taskId}/status")
     public ResponseEntity<Task> updateTaskStatus(@PathVariable Long taskId, @RequestBody Map<String, String> requestBody) {
-        String status = requestBody.get("status");  // Extract the status from the request body
+        String status = requestBody.get("status");
         Task updatedTask = taskService.updateTaskStatus(taskId, status);
         return ResponseEntity.ok(updatedTask);
     }
-
-    // @PatchMapping("/{taskId}/priority")
-    //public ResponseEntity<Task> updateTaskPriority(@PathVariable Long taskId, @RequestBody String priority) {
-    //  Task updatedTask = taskService.updateTaskPriority(taskId, priority);
-    // return ResponseEntity.ok(updatedTask);
-    //}
 
     @PatchMapping("/{taskId}/priority")
     public ResponseEntity<Task> updateTaskPriority(@PathVariable Long taskId, @RequestBody Map<String, String> requestBody) {
@@ -111,14 +97,18 @@ public class TaskController {
 
     @PostMapping("/{taskId}/reminder")
     public ResponseEntity<String> sendTaskDeadlineReminder(@PathVariable Long taskId) {
-        Task task = taskService.findById(taskId);
-        if (task == null) {
+        // Fetch task details based on the provided taskId
+        Optional<Task> taskOptional = Optional.ofNullable(taskService.findById(taskId));
+
+        if (taskOptional.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
 
+        Task task = taskOptional.get();
         User assignedUser = task.getAssignedUser();
+
         if (assignedUser != null) {
-            String message = "Reminder: The deadline for task '" + task.getTitle() + "' is approaching. It's on " + task.getDeadline();
+            String message = "Reminder: The deadline for task '" + task.getTitle() + "' is approaching. It is on " + task.getDeadline();
             notificationService.createNotification(message, assignedUser);
             return ResponseEntity.ok("Reminder sent to user.");
         }
@@ -126,5 +116,12 @@ public class TaskController {
         return ResponseEntity.badRequest().body("No user assigned to this task.");
     }
 
-}
+    @PostMapping("/updateTime")
+    public ResponseEntity<Task> updateTaskTime(@RequestBody Map<String, Object> request) {
+        Long taskId = ((Number) request.get("taskId")).longValue();
+        Double timeSpent = ((Number) request.get("timeSpent")).doubleValue();
 
+        Task task = taskService.updateTimeSpent(taskId, timeSpent);
+        return ResponseEntity.ok(task);
+    }
+}

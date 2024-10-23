@@ -20,6 +20,7 @@ public class TaskServiceImplementation implements TaskService {
         this.userRepository = userRepository;
     }
 
+
     @Override
     public List<Task> findAll() {
         return taskRepository.findAll();  // returns a List<Task>
@@ -29,6 +30,7 @@ public class TaskServiceImplementation implements TaskService {
     public List<Task> getTasksAssignedToUser(String username) {
         return taskRepository.findByAssignedUserUsername(username);
     }
+
     @Override
     public Task findById(Long id) {
         return taskRepository.findById(id).orElseThrow(() -> new RuntimeException("Task not found with id: " + id));
@@ -36,6 +38,15 @@ public class TaskServiceImplementation implements TaskService {
 
     @Override
     public Task save(Task task) {
+        return taskRepository.save(task);
+    }
+
+    @Override
+    public Task updateTimeSpent(Long taskId, double timeSpent) {
+        Task task = taskRepository.findById(taskId)
+                .orElseThrow(() -> new RuntimeException("Task not found with id: " + taskId));
+
+        task.setTimeSpent(task.getTimeSpent() + timeSpent);
         return taskRepository.save(task);
     }
 

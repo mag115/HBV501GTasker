@@ -27,5 +27,7 @@ public interface TaskService {
     void sendReminder(Long taskId);
 
     String generateProjectReport(Long projectId);
+    
+    Task updateTimeSpent(Long taskId, double timeSpent);
 
 }
