@@ -180,6 +180,22 @@ const TaskForm = () => {
               />
             </div>
 
+            {/* Dropdown to select the user to assign the task to */}
+            <div className="mb-4">
+              <label className="block text-gray-700 text-sm font-bold mb-2">Assign User</label>
+              <select
+                value={assignedUser}
+                onChange={(e) => setAssignedUser(e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-300"
+                required
+              >
+                <option value="">Select a User</option>
+                {users.map((user) => (
+                  <option key={user.id} value={user.id}>{user.username}</option>
+                ))}
+              </select>
+            </div>
+
             <div className="mb-4">
               <label className="block text-gray-700 text-sm font-bold mb-2">Reminder Sent</label>
               <input
