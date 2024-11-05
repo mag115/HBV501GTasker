@@ -38,8 +38,8 @@ const TaskList = () => {
     }
 
     if (!Array.isArray(tasks) || tasks.length === 0) {
-      return <p>No tasks available yet. Add a task!</p>;
-    }
+        return <p className="text-center text-white">No tasks available yet. Add a task!</p>;
+      }
 
   const handleStatusChange = async (taskId, newStatus) => {
     try {
@@ -81,91 +81,110 @@ const TaskList = () => {
     }
   };
 
+  const getPriorityColor = (priority) => {
+    switch (priority) {
+      case 'low':
+        return 'text-yellow-500';
+      case 'medium':
+        return 'text-orange-500';
+      case 'high':
+        return 'text-red-500';
+      default:
+        return 'text-gray-500';
+    }
+  };
+
   const renderTask = (task) => (
-    <div key={task.id} className="max-w-sm rounded overflow-hidden shadow-lg bg-white mb-4">
-      <div className="px-6 py-4">
-        <div className="font-bold capitalize text-2xl mb-2">{task.title}</div>
-        <p className="text-gray-700 text-base mb-5">{task.description}</p>
+      <div
+        key={task.id}
+        className="max-w-sm rounded-lg overflow-hidden shadow-lg bg-white mb-4 transition-transform transform hover:scale-105"
+      >
+        <div className="p-6">
+          <h3 className="font-bold capitalize text-2xl text-indigo-600 mb-2">{task.title}</h3>
+          <p className="text-gray-700 mb-4">{task.description}</p>
 
-        {/* Display Assigned User */}
-        <p className="text-sm mb-2">
-          <strong>Assigned User:</strong> {task.assignedUser ? task.assignedUser.username : 'Unassigned'}
+          {/* Display Assigned User */}
+          <p className="text-gray-500 mb-2">
+            <strong>Assigned User:</strong> {task.assignedUser ? task.assignedUser.username : 'Unassigned'}
+          </p>
+
+          {/* Task Status (non-editable) */}
+          <p className="text-gray-500 mb-2">
+            <strong>Task Status:</strong> {task.status}
+          </p>
+
+          {/* Progress Status */}
+          <p className="text-gray-500 mb-2">
+            <strong>Progress Status:</strong>{" "}
+            {task.progressStatus === "Completed" ? (
+              <span className="text-green-500">Completed</span>
+            ) : task.progressStatus === "On Track" ? (
+              <span className="text-blue-500">On Track</span>
+            ) : (
+              <span className="text-red-500">Behind Schedule</span>
+            )}
+          </p>
+
+          {/* Due Date */}
+          <p className="text-gray-500 mb-2">
+            <strong>Due Date:</strong> {task.deadline ? new Date(task.deadline).toLocaleString() : "No deadline set"}
+          </p>
+
+        {/* Priority with color based on value */}
+        <p className="text-gray-500 mb-2">
+          <strong>Priority:</strong>{" "}
+          <span className={getPriorityColor(task.priority)}>{task.priority}</span>
         </p>
 
-        {/* Task Status */}
-        <label className="text-black-500">Task Status: </label>
-        <select
-          className="text-black-500 mb-2"
-          value={task.status}
-          onChange={(e) => handleStatusChange(task.id, e.target.value)}
-        >
-          <option value="To-do">To-do</option>
-          <option value="Ongoing">Ongoing</option>
-          <option value="Done">Done</option>
-        </select>
-
-        {/* Progress Status */}
-        <p className="text-sm mb-2">
-          <strong>Progress Status:</strong>{" "}
-          {task.progressStatus === "Completed" ? (
-            <span className="text-green-500">Completed</span>
-          ) : task.progressStatus === "On Track" ? (
-            <span className="text-blue-500">On Track</span>
-          ) : (
-            <span className="text-red-500">Behind Schedule</span>
-          )}
-        </p>
-
-        {/* Due Date */}
-        <p className="text-black-500">
-          Due Date: {task.deadline ? new Date(task.deadline).toLocaleString() : "No deadline set"}
-        </p>
-
-        {/* Priority */}
-        <label className="text-black-500 mt-2">Priority: </label>
-        <select
-          className="text-black-500 mb-2"
-          value={task.priority}
-          onChange={(e) => handlePriorityChange(task.id, e.target.value)}
-        >
-          <option value="low">Low</option>
-          <option value="medium">Medium</option>
-          <option value="high">High</option>
-        </select>
-
-        {/* Send Reminder Button for Project Managers */}
+        {/* Priority select dropdown (only for Project Manager) */}
         {auth.role === 'PROJECT_MANAGER' && (
-          <button
-            className="mt-2 bg-black text-white py-1 px-4 rounded"
-            onClick={() => handleSendReminder(task.id)}
-          >
-            Send Reminder
-          </button>
+          <>
+            <label className="block text-gray-600 mb-1">Update Priority:</label>
+            <select
+              className="w-full border-gray-300 mb-4 p-2 rounded focus:outline-none"
+              value={task.priority}
+              onChange={(e) => handlePriorityChange(task.id, e.target.value)}
+            >
+              <option value="low">Low</option>
+              <option value="medium">Medium</option>
+              <option value="high">High</option>
+            </select>
+          </>
         )}
-      </div>
-    </div>
-  );
 
-  const toDoTasks = tasks.filter((task) => task.status === 'To-do');
-  const ongoingTasks = tasks.filter((task) => task.status === 'Ongoing');
-  const doneTasks = tasks.filter((task) => task.status === 'Done');
+          {/* Send Reminder Button for Project Managers */}
+          {auth.role === 'PROJECT_MANAGER' && (
+            <button
+              className="mt-3 w-full py-2 bg-indigo-500 text-white rounded hover:bg-indigo-600 transition"
+              onClick={() => handleSendReminder(task.id)}
+            >
+              Send Reminder
+            </button>
+          )}
+        </div>
+      </div>
+    );
 
-  return (
-    <div className="flex space-x-8 m-4">
-      <div className="w-1/3">
-        <h2 className="text-white text-center font-bold mb-4">To-do</h2>
-        {toDoTasks.map(renderTask)}
-      </div>
-      <div className="w-1/3">
-        <h2 className="text-white text-center font-bold mb-4">Ongoing</h2>
-        {ongoingTasks.map(renderTask)}
-      </div>
-      <div className="w-1/3">
-        <h2 className="text-white text-center font-bold mb-4">Done</h2>
-        {doneTasks.map(renderTask)}
-      </div>
-    </div>
-  );
-};
+    const toDoTasks = tasks.filter((task) => task.status === 'To-do');
+    const ongoingTasks = tasks.filter((task) => task.status === 'Ongoing');
+    const doneTasks = tasks.filter((task) => task.status === 'Done');
 
-export { TaskList };
+    return (
+      <div className="flex space-x-8 m-4">
+        <div className="w-1/3">
+          <h2 className="text-indigo-500 text-center font-bold mb-4 text-xl">To-do</h2>
+          {toDoTasks.map(renderTask)}
+        </div>
+        <div className="w-1/3">
+          <h2 className="text-indigo-500 text-center font-bold mb-4 text-xl">Ongoing</h2>
+          {ongoingTasks.map(renderTask)}
+        </div>
+        <div className="w-1/3">
+          <h2 className="text-indigo-500 text-center font-bold mb-4 text-xl">Done</h2>
+          {doneTasks.map(renderTask)}
+        </div>
+      </div>
+    );
+  };
+
+  export { TaskList };

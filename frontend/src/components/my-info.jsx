@@ -44,34 +44,34 @@ const MyInfo = () => {
   }
 
   return (
-    <div className="container mx-auto p-4 text-white">
-      <h1 className="text-3xl font-bold mb-6">My Role</h1>
+       <div className="container mx-auto p-8 bg-gray-900 rounded-lg shadow-lg text-white max-w-lg">
+         <h1 className="text-3xl font-bold mb-6 text-indigo-500">My Role</h1>
 
-      <div className="flex items-center mb-6">
-        <img src={userImage} alt="User" className="w-24 h-24 rounded-full mr-4" />
-        <div>
-          <p><strong>Role:</strong> {role}</p>
-        </div>
-      </div>
+         <div className="flex items-center mb-6">
+           <img src={userImage} alt="User" className="w-24 h-24 rounded-full border-4 border-indigo-500 mr-4" />
+           <div>
+             <p className="text-xl"><strong>Role:</strong> {role}</p>
+           </div>
+         </div>
 
-      <div className="mb-6">
-        <label className="block text-sm font-bold mb-2" htmlFor="role">Change Role</label>
-        <select
-          id="role"
-          value={role}
-          onChange={(e) => handleRoleChange(e.target.value)}
-          className="bg-gray-800 text-white p-2 rounded"
-          disabled={isLoading}
-        >
-          <option value="TEAM_MEMBER">Team Member</option>
-          <option value="PROJECT_MANAGER">Project Manager</option>
-        </select>
-        {error && <p className="text-red-500 mt-2">{error}</p>}
-      </div>
+         <div className="mb-6">
+           <label className="block text-sm font-bold mb-2 text-indigo-400" htmlFor="role">Change Role</label>
+           <select
+             id="role"
+             value={role}
+             onChange={(e) => handleRoleChange(e.target.value)}
+             className="w-full bg-gray-800 text-white p-3 rounded-md border border-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-400"
+             disabled={isLoading}
+           >
+             <option value="TEAM_MEMBER">Team Member</option>
+             <option value="PROJECT_MANAGER">Project Manager</option>
+           </select>
+           {error && <p className="text-red-500 mt-2">{error}</p>}
+         </div>
 
-      {isLoading && <p>Updating role...</p>}
-    </div>
-  );
-};
+         {isLoading && <p className="text-indigo-400">Updating role...</p>}
+       </div>
+     );
+   };
 
-export { MyInfo };
+   export { MyInfo };

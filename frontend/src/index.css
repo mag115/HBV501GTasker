@@ -7,4 +7,68 @@ body,
 #root {
   height: 100%;
   margin: 0;
+  background-color: #1E293B;
+}
+
+:root {
+  --primary-color: #4F46E5; /* Indigo */
+  --secondary-color: #FBBF24; /* Golden Yellow */
+  --background-color: #F3F4F6; /* Light Gray */
+  --card-background: #FFFFFF; /* White */
+  --text-color: #1F2937; /* Dark Gray */
+  --secondary-text-color: #6B7280; /* Medium Gray */
+}
+
+body {
+  background-color: var(--background-color);
+  color: var(--text-color);
+  font-family: 'Inter', sans-serif;
+}
+
+.btn {
+  background-color: var(--primary-color);
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  font-weight: 500;
+  transition: background-color 0.3s ease;
+}
+
+.btn:hover {
+  background-color: #4338CA;
+}
+
+.card {
+  background-color: var(--card-background);
+  color: var(--text-color);
+  border-radius: 8px;
+  padding: 1rem;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.card-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--primary-color);
+}
+
+.card-text {
+  color: var(--secondary-text-color);
+}
+
+.header {
+  background-color: var(--primary-color);
+  color: white;
+  padding: 1rem;
+  font-size: 1.25rem;
+}
+
+.header a {
+  color: var(--secondary-color);
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.header a:hover {
+  color: #F59E0B;
 }

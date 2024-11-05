@@ -3,7 +3,7 @@ import { Header } from './header';
 
 const Page = ({ children }) => {
   return (
-    <div className="bg-black flex-1 h-full">
+    <div className="min-h-screen">
       <Header />
       {children}
     </div>
