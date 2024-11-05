@@ -21,6 +21,7 @@ Task {
     private String description;
     private LocalDateTime deadline;
     private Boolean reminderSent;
+    private Double estimatedDuration;
 
     // New fields:
     @ManyToOne

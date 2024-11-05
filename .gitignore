@@ -105,3 +105,14 @@ yarn-error.log*
 *.lock
 package-lock.json
 yarn.lock
+
+# Other env files
+**/.env*
+
+# Temporary files
+tmp/
+.tmp/
+
+# Test coverage
+coverage/
+frontend/coverage/

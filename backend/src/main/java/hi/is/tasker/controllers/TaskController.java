@@ -127,6 +127,16 @@ public class TaskController {
         return ResponseEntity.ok(task);
     }
 
+    //Asign predicted task duration (we use this to evaluate progress)
+    @PostMapping("/{taskId}/duration")
+    public ResponseEntity<Task> assignTaskDuration(
+            @PathVariable Long taskId,
+            @RequestBody Map<String, Object> requestBody
+    ) {
+        Double duration = ((Number) requestBody.get("estimatedDuration")).doubleValue();
+        Task updatedTask = taskService.assignDuration(taskId, duration);
+        return ResponseEntity.ok(updatedTask);
+    }
 
 }
 

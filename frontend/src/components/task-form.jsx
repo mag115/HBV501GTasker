@@ -16,6 +16,7 @@ const TaskForm = () => {
   const[timeSpent, setTimeSpent]=useState('');
 
   const navigate = useNavigate();
+  const [estimatedDuration, setEstimatedDuration] = useState('');
 
   // Fetch the list of users from the backend when the component mounts
   useEffect(() => {
@@ -43,6 +44,7 @@ const TaskForm = () => {
       status: 'To-do',
       timeSpent:0,
       elapsedTime:0,
+      estimatedDuration: parseFloat(estimatedDuration),
     };
 
     try {
@@ -59,6 +61,7 @@ const TaskForm = () => {
         setReminderSent(false);
         setPriority('');
         setAssignedUser('');
+        setEstimatedDuration('');
       } else {
         setResponseMessage('Failed to create task.');
       }
@@ -176,6 +179,22 @@ const TaskForm = () => {
                   <option key={user.id} value={user.id}>{user.username}</option>
                 ))}
               </select>
+            </div>
+
+            <div className="mb-4">
+              <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="estimatedDuration">
+                Estimated Duration (hours)
+              </label>
+              <input
+                id="estimatedDuration"
+                type="number"
+                step="0.1"
+                min="0"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-300"
+                value={estimatedDuration}
+                onChange={(e) => setEstimatedDuration(e.target.value)}
+                required
+              />
             </div>
 
             <div className="mb-4">

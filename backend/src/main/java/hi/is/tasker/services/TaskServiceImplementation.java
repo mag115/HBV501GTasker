@@ -97,4 +97,13 @@ public class TaskServiceImplementation implements TaskService {
         // TODO: Implement generateProjectReport method
         return "Project Report";
     }
+
+    @Override
+    public Task assignDuration(Long taskId, Double duration) {
+        Task task = taskRepository.findById(taskId)
+                .orElseThrow(() -> new RuntimeException("Task not found with id: " + taskId));
+        task.setEstimatedDuration(duration);
+        return taskRepository.save(task);
+    }
+
 }
