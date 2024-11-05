@@ -31,7 +31,9 @@ public class TaskServiceImplementation implements TaskService {
 
     @Override
     public List<Task> findAll() {
-        return taskRepository.findAll();  // returns a List<Task>
+        List<Task> tasks = taskRepository.findAll();
+        tasks.forEach(task -> System.out.println("Task: " + task.getTitle() + ", Assigned User: " + (task.getAssignedUser() != null ? task.getAssignedUser().getUsername() : "Unassigned")));
+        return tasks;
     }
 
     @Override

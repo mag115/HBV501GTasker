@@ -35,6 +35,9 @@ public class TaskController {
     @GetMapping
     public ResponseEntity<List<Task>> getAllTasks() {
         List<Task> tasks = taskService.findAll();
+        for (Task task : tasks) {
+            System.out.println("Task ID: " + task.getId() + ", Assigned User: " + (task.getAssignedUser() != null ? task.getAssignedUser().getUsername() : "Unassigned"));
+        }
         return ResponseEntity.ok(tasks);
     }
 
@@ -53,10 +56,12 @@ public class TaskController {
 
     @PostMapping
     public ResponseEntity<Task> createTask(@RequestBody Task task, @RequestParam(required = false) Long assignedUserId) {
+        System.out.println("Received assignedUserId: " + assignedUserId);
         if (assignedUserId != null) {
             User assignedUser = userService.getUserById(assignedUserId)
                     .orElseThrow(() -> new RuntimeException("User not found"));
             task.setAssignedUser(assignedUser);
+            System.out.println("Assigned User set with username: " + assignedUser.getUsername());
         }
         task.setStatus("To-do");
         Task savedTask = taskService.save(task);

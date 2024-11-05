@@ -12,6 +12,7 @@ const TaskList = () => {
     const fetchTasks = async () => {
       try {
         const response = await request('get', '/tasks');
+        console.log('Tasks fetched:', response.data);  // Log all tasks and their assigned users
         if (Array.isArray(response.data)) {
           setTasks(response.data);
         } else {
@@ -86,9 +87,26 @@ const TaskList = () => {
         <div className="font-bold capitalize text-2xl mb-2">{task.title}</div>
         <p className="text-gray-700 text-base mb-5">{task.description}</p>
 
-        {/* Display the task's progress status */}
+        {/* Display Assigned User */}
         <p className="text-sm mb-2">
-          <strong>Status:</strong>{" "}
+          <strong>Assigned User:</strong> {task.assignedUser ? task.assignedUser.username : 'Unassigned'}
+        </p>
+
+        {/* Task Status */}
+        <label className="text-black-500">Task Status: </label>
+        <select
+          className="text-black-500 mb-2"
+          value={task.status}
+          onChange={(e) => handleStatusChange(task.id, e.target.value)}
+        >
+          <option value="To-do">To-do</option>
+          <option value="Ongoing">Ongoing</option>
+          <option value="Done">Done</option>
+        </select>
+
+        {/* Progress Status */}
+        <p className="text-sm mb-2">
+          <strong>Progress Status:</strong>{" "}
           {task.progressStatus === "Completed" ? (
             <span className="text-green-500">Completed</span>
           ) : task.progressStatus === "On Track" ? (
@@ -98,37 +116,30 @@ const TaskList = () => {
           )}
         </p>
 
-        <label className="text-black-500">Update Status: </label>
-        <select
-          className="text-black-500"
-          value={task.status}
-          onChange={(e) => handleStatusChange(task.id, e.target.value)}
-        >
-          <option value="To-do">To-do</option>
-          <option value="Ongoing">Ongoing</option>
-          <option value="Done">Done</option>
-        </select>
-
+        {/* Due Date */}
         <p className="text-black-500">
-          Deadline: {task.deadline ? new Date(task.deadline).toLocaleString() : "No deadline set"}
+          Due Date: {task.deadline ? new Date(task.deadline).toLocaleString() : "No deadline set"}
         </p>
 
+        {/* Priority */}
+        <label className="text-black-500 mt-2">Priority: </label>
         <select
-          className="text-black-500 mr-20"
+          className="text-black-500 mb-2"
           value={task.priority}
           onChange={(e) => handlePriorityChange(task.id, e.target.value)}
         >
-          <option value="low">Low priority</option>
-          <option value="medium">Medium priority</option>
-          <option value="high">High priority</option>
+          <option value="low">Low</option>
+          <option value="medium">Medium</option>
+          <option value="high">High</option>
         </select>
 
+        {/* Send Reminder Button for Project Managers */}
         {auth.role === 'PROJECT_MANAGER' && (
           <button
             className="mt-2 bg-black text-white py-1 px-4 rounded"
             onClick={() => handleSendReminder(task.id)}
           >
-            Send reminder
+            Send Reminder
           </button>
         )}
       </div>
