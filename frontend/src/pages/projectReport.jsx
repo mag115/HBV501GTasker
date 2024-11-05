@@ -41,6 +41,35 @@ const ProjectReportPage = () => {
     }
   };
 
+  // Handle downloading the report as a PDF
+  const handleDownloadReport = async (reportId) => {
+    try {
+      const response = await fetch(`/projects/${reportId}/report/export`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/pdf',
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to download PDF');
+      }
+
+      // Create a blob and download the file
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', `project_report_${reportId}.pdf`);
+      document.body.appendChild(link);
+      link.click();
+      link.parentNode.removeChild(link);
+    } catch (err) {
+      console.error('Error downloading report:', err);
+      setError('Failed to download project report.');
+    }
+  };
+
   if (loading) {
     return <p>Loading...</p>;
   }
@@ -81,6 +110,12 @@ const ProjectReportPage = () => {
               <p className="text-gray-700">
                 Overall Performance: {report.overallPerformance}
               </p>
+              <button
+                onClick={() => handleDownloadReport(report.id)}
+                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-4"
+              >
+                Download PDF
+              </button>
             </div>
           ))}
         </div>
@@ -88,5 +123,6 @@ const ProjectReportPage = () => {
     </Page>
   );
 };
+
 
 export { ProjectReportPage };
