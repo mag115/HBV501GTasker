@@ -21,9 +21,10 @@ Task {
     private String description;
     private LocalDateTime deadline;
     private Boolean reminderSent;
-    private Double estimatedDuration; // In hours
-    private Integer estimatedWeeks;   // Weeks estimation if applicable
-    private Double effortPercentage;  // Percentage of available time if applicable
+    private Double estimatedDuration;  // in hours
+    private Integer estimatedWeeks;    // in weeks if applicable
+    private Double effortPercentage;   // percentage of total time until deadline if applicable
+    private String progressStatus;     // "On Track", "Behind Schedule", or "Completed"
 
     // New fields:
     @ManyToOne
@@ -74,5 +75,37 @@ Task {
 
     public void setPriority(String priority) {
         this.priority = priority;
+    }
+
+    public Double getEstimatedDuration() {
+        return estimatedDuration;
+    }
+
+    public void setEstimatedDuration(Double estimatedDuration) {
+        this.estimatedDuration = estimatedDuration;
+    }
+
+    public String getProgressStatus() {
+        return progressStatus;
+    }
+
+    public void setProgressStatus(String progressStatus) {
+        this.progressStatus = progressStatus;
+    }
+
+    public Integer getEstimatedWeeks() {
+        return estimatedWeeks;
+    }
+
+    public void setEstimatedWeeks(Integer estimatedWeeks) {
+        this.estimatedWeeks = estimatedWeeks;
+    }
+
+    public Double getEffortPercentage() {
+        return effortPercentage;
+    }
+
+    public void setEffortPercentage(Double effortPercentage) {
+        this.effortPercentage = effortPercentage;
     }
 }

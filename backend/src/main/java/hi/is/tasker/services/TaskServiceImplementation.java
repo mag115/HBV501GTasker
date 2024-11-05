@@ -1,25 +1,31 @@
 package hi.is.tasker.services;
 
 import hi.is.tasker.entities.Task;
+import hi.is.tasker.entities.TimeTracking;
 import hi.is.tasker.entities.User;
 import hi.is.tasker.repositories.TaskRepository;
+import hi.is.tasker.repositories.TimeTrackingRepository;
 import hi.is.tasker.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class TaskServiceImplementation implements TaskService {
     private final TaskRepository taskRepository;
     private final UserRepository userRepository;
+    private final TimeTrackingRepository timeTrackingRepository;
 
     @Autowired
-    public TaskServiceImplementation(TaskRepository taskRepository, UserRepository userRepository) {
+    public TaskServiceImplementation(TaskRepository taskRepository, UserRepository userRepository, TimeTrackingRepository timeTrackingRepository) {
         this.taskRepository = taskRepository;
         this.userRepository = userRepository;
+        this.timeTrackingRepository = timeTrackingRepository;
     }
 
 
@@ -102,38 +108,57 @@ public class TaskServiceImplementation implements TaskService {
 
     @Override
     public Task assignDuration(Long taskId, Integer estimatedWeeks, Double effortPercentage) {
-        Task task = taskRepository.findById(taskId)
-                .orElseThrow(() -> new RuntimeException("Task not found with id: " + taskId));
+        Task task = taskRepository.findById(taskId).orElseThrow(() -> new RuntimeException("Task not found"));
 
-        // Calculate estimated duration
         Double estimatedDuration = null;
-
         if (estimatedWeeks != null) {
-            // Assume a 40-hour work week
-            estimatedDuration = estimatedWeeks * 40.0;
+            estimatedDuration = estimatedWeeks * 40.0;  // Assuming a 40-hour work week
         } else if (effortPercentage != null && task.getDeadline() != null) {
-            // Calculate hours until deadline
             LocalDateTime now = LocalDateTime.now();
             long hoursUntilDeadline = ChronoUnit.HOURS.between(now, task.getDeadline());
             estimatedDuration = hoursUntilDeadline * (effortPercentage / 100.0);
         }
 
-        // Update task with calculated values
         task.setEstimatedDuration(estimatedDuration);
         task.setEstimatedWeeks(estimatedWeeks);
         task.setEffortPercentage(effortPercentage);
-
         return taskRepository.save(task);
     }
 
     @Override
     public double calculateTaskProgress(Long taskId) {
-        Task task = taskRepository.findById(taskId)
-                .orElseThrow(() -> new RuntimeException("Task not found with id: " + taskId));
+        Task task = taskRepository.findById(taskId).orElseThrow(() -> new RuntimeException("Task not found"));
+        List<TimeTracking> timeLogs = timeTrackingRepository.findByTaskId(taskId);
+
+        double totalTimeSpent = timeLogs.stream().mapToDouble(TimeTracking::getTimeSpent).sum();
+        task.setTimeSpent(totalTimeSpent);
 
         if (task.getEstimatedDuration() == null || task.getEstimatedDuration() == 0) {
-            return 0; // Avoid division by zero
+            return 0;
         }
-        return (task.getTimeSpent() / task.getEstimatedDuration()) * 100; // Progress in percentage
+
+        double progressPercentage = (totalTimeSpent / task.getEstimatedDuration()) * 100;
+        task.setProgressStatus(progressPercentage >= 100 ? "Completed" : "In Progress");
+        taskRepository.save(task);
+
+        return progressPercentage;
+    }
+
+    @Override
+    public String getProgressStatus(Long taskId) {
+        Task task = taskRepository.findById(taskId).orElseThrow(() -> new RuntimeException("Task not found"));
+        double progressPercentage = calculateTaskProgress(taskId);
+        LocalDateTime now = LocalDateTime.now();
+        long hoursUntilDeadline = task.getDeadline() != null ? ChronoUnit.HOURS.between(now, task.getDeadline()) : 0;
+
+        if (progressPercentage >= 100) {
+            return "Completed";
+        } else if (progressPercentage < 100 && hoursUntilDeadline <= 0) {
+            return "Behind Schedule";
+        } else if (progressPercentage < 100 && hoursUntilDeadline > 0) {
+            return "On Track";
+        } else {
+            return "Unknown";
+        }
     }
 }

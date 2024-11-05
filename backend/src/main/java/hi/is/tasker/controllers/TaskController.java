@@ -129,7 +129,7 @@ public class TaskController {
         return ResponseEntity.ok(task);
     }
 
-    //Asign predicted task duration (we use this to evaluate progress)
+    // Assign predicted task duration (we use this to evaluate progress)
     @PostMapping("/{taskId}/duration")
     public ResponseEntity<Task> assignTaskDuration(
             @PathVariable Long taskId,
@@ -142,22 +142,18 @@ public class TaskController {
         return ResponseEntity.ok(updatedTask);
     }
 
-    //Getting a tasks progress
+    // Get a task's progress
     @GetMapping("/{taskId}/tracking")
     public ResponseEntity<Map<String, Object>> getTaskProgress(@PathVariable Long taskId) {
         Task task = taskService.findById(taskId);
-
-        // Calculate progress based on time spent vs. estimated duration
-        double progress = task.getEstimatedDuration() > 0
-                ? (task.getTimeSpent() / task.getEstimatedDuration()) * 100
-                : 0;
+        double progress = taskService.calculateTaskProgress(taskId);
 
         Map<String, Object> response = new HashMap<>();
         response.put("taskId", taskId);
         response.put("title", task.getTitle());
-        response.put("progress", progress); // Progress as a percentage
+        response.put("progress", progress);  // Progress as a percentage
+        response.put("status", task.getProgressStatus());  // "On Track", "Behind Schedule", or "Completed"
 
         return ResponseEntity.ok(response);
     }
 }
-

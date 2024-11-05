@@ -14,11 +14,9 @@ const TaskForm = () => {
   const [responseMessage, setResponseMessage] = useState('');
   const [taskId, setTaskId] = useState(null); // State for the task ID
   const[timeSpent, setTimeSpent]=useState('');
-
-  const navigate = useNavigate();
   const [estimatedDuration, setEstimatedDuration] = useState('');
-  const [estimatedWeeks, setEstimatedWeeks] = useState('');
-  const [effortPercentage, setEffortPercentage] = useState('');
+  const navigate = useNavigate();
+
 
   // Fetch the list of users from the backend when the component mounts
   useEffect(() => {
@@ -46,42 +44,32 @@ const TaskForm = () => {
       status: 'To-do',
       timeSpent:0,
       elapsedTime:0,
-      //estimatedDuration: parseFloat(estimatedDuration),
+      estimatedDuration: parseFloat(estimatedDuration),
     };
 
     try {
-        // Create the task first
-        const res = await request('post', `/tasks?assignedUserId=${assignedUser}`, newTask);
-        if (res.status === 200) {
-          const createdTaskId = res.data.id;
-          setTaskId(createdTaskId); // Set the task ID from the response
-
-          // Send the estimated duration info in a separate request
-          const durationData = {
-            estimatedWeeks: estimatedWeeks ? parseInt(estimatedWeeks) : null,
-            effortPercentage: effortPercentage ? parseFloat(effortPercentage) : null,
-          };
-          await request('post', `/tasks/${createdTaskId}/duration`, durationData);
-
-          setResponseMessage('Task successfully created!');
-          setIsTaskCreated(true);
-          // Clear the form fields
-          setTitle('');
-          setDescription('');
-          setDeadline('');
-          setReminderSent(false);
-          setPriority('');
-          setAssignedUser('');
-          setEstimatedWeeks('');
-          setEffortPercentage('');
-        } else {
-          setResponseMessage('Failed to create task.');
-        }
-      } catch (error) {
-        console.error('Error creating task:', error);
-        setResponseMessage('Error creating task.');
+      // Create the task with the assigned duration
+      const res = await request('post', `/tasks?assignedUserId=${assignedUser}`, newTask);
+      if (res.status === 200) {
+        setTaskId(res.data.id);
+        setResponseMessage('Task successfully created!');
+        setIsTaskCreated(true);
+        // Clear the form fields
+        setTitle('');
+        setDescription('');
+        setDeadline('');
+        setReminderSent(false);
+        setPriority('');
+        setAssignedUser('');
+        setEstimatedDuration('');
+      } else {
+        setResponseMessage('Failed to create task.');
       }
-    };
+    } catch (error) {
+      console.error('Error creating task:', error);
+      setResponseMessage('Error creating task.');
+    }
+  };
 
   const handleViewTaskList = () => {
     navigate('/task-list');
@@ -99,7 +87,7 @@ const TaskForm = () => {
         {isTaskCreated ? (
           <div>
             <p className="text-green-500 text-center mb-6">{responseMessage}</p>
-            <p className="text-center">Task ID: {taskId}</p> {/* Display the task ID */}
+            <p className="text-center">Task ID: {taskId}</p>
             <div className="flex justify-between">
               <button
                 onClick={handleBackToHome}
@@ -117,7 +105,6 @@ const TaskForm = () => {
           </div>
         ) : (
           <form onSubmit={handleSubmit}>
-            {/* Form fields */}
             <div className="mb-4">
               <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="title">
                 Title
@@ -177,55 +164,19 @@ const TaskForm = () => {
               </select>
             </div>
 
-            {/* Dropdown to select the user to assign the task to */}
             <div className="mb-4">
-              <label className="block text-gray-700 text-sm font-bold mb-2">Assign User</label>
-              <select
-                value={assignedUser}
-                onChange={(e) => setAssignedUser(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-300"
-                required
-              >
-                <option value="">Select a User</option>
-                {users.map((user) => (
-                  <option key={user.id} value={user.id}>{user.username}</option>
-                ))}
-              </select>
-            </div>
-
-            <div className="mb-4">
-              <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="estimatedWeeks">
-                Estimated Duration (weeks for 100% effort)
+              <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="estimatedDuration">
+                Estimated Duration (in hours)
               </label>
               <input
-                id="estimatedWeeks"
-                type="number"
-                min="0"
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-300"
-                value={estimatedWeeks}
-                onChange={(e) => {
-                  setEstimatedWeeks(e.target.value);
-                  setEffortPercentage(''); // Clear effortPercentage if estimatedWeeks is set
-                }}
-              />
-            </div>
-
-            <div className="mb-4">
-              <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="effortPercentage">
-                Effort Percentage (percentage of time until deadline)
-              </label>
-              <input
-                id="effortPercentage"
+                id="estimatedDuration"
                 type="number"
                 step="0.1"
                 min="0"
-                max="100"
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-300"
-                value={effortPercentage}
-                onChange={(e) => {
-                  setEffortPercentage(e.target.value);
-                  setEstimatedWeeks(''); // Clear estimatedWeeks if effortPercentage is set
-                }}
+                value={estimatedDuration}
+                onChange={(e) => setEstimatedDuration(e.target.value)}
+                required
               />
             </div>
 
