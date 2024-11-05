@@ -5,6 +5,7 @@ const MyTasks = () => {
   const [myTasks, setMyTasks] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [tasks, setTasks] = useState([]);
 
   const handleManualTimeChange = (taskId, value, event) => {
     if (event.key === 'Enter') {
@@ -76,7 +77,9 @@ const MyTasks = () => {
     const fetchMyTasks = async () => {
       try {
         const response = await request('get', '/tasks/assigned');
+        const response2= await request('get', '/tasks');
         setMyTasks(response.data);
+        setTasks(response2.data);
       } catch (error) {
         console.error('Error fetching my tasks:', error);
         setError('Failed to fetch tasks assigned to you.');
@@ -98,6 +101,15 @@ const MyTasks = () => {
     return <p>{error}</p>;
   }
 
+  const canStartTimer = (task) => {
+    if(!task.dependency){return true;}
+     if (task.dependency) {
+      const depTask=tasks.find(t => t.id === task.dependency);
+    if (depTask && depTask.status=='Done'){ return true;}
+
+    return false;
+  }}
+
   return (
     <div className="container mx-auto p-4">
       <h1 className="text-3xl text-white font-bold mb-6">My Tasks</h1>
@@ -110,6 +122,7 @@ const MyTasks = () => {
             <p>Description: {task.description}</p>
             <p>Priority: {task.priority}</p>
             <p>Status: {task.status}</p>
+            <p>Dependency: {task.dependency}</p>
             <p>Deadline: {new Date(task.deadline).toLocaleString()}</p>
 
             {/* Timer Display */}
@@ -120,10 +133,12 @@ const MyTasks = () => {
               <button
                 className="bg-black text-white px-4 py-2 rounded-md w-full hover:bg-blue-600"
                 onClick={() => handleTimer(task.id)}
+                 disabled={!canStartTimer(task)}
               >
                 {task.isTracking ? 'Stop Tracking' : 'Start Tracking'}
               </button>
-            </div>
+              </div>
+
 
             {/* Manual time input */}
             <div className="mb-4">
@@ -133,7 +148,13 @@ const MyTasks = () => {
                 className="w-full px-3 py-2 border border-gray-300 rounded-md"
                 type="text"
                 placeholder="Enter time and press Enter"
+                disabled={!canStartTimer(task)}
               />
+              {!canStartTimer(task) && (
+                                <p className="text-500 text-red mt-2">
+                                  The dependencies for this task are not finished. Work on this task can not start until they are.
+                                </p>
+                              )}
             </div>
           </div>
         ))

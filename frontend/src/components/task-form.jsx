@@ -63,7 +63,7 @@ const TaskForm = () => {
       estimatedDuration: parseFloat(estimatedDuration),
       dependency,
     };
-
+    console.log(dependency);
     try {
       // Create the task with the assigned duration
       const res = await request('post', `/tasks?assignedUserId=${assignedUser}`, newTask);
