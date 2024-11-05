@@ -44,6 +44,8 @@ dependencies {
 	implementation("jakarta.persistence:jakarta.persistence-api:3.1.0") // for JPA annotations
 	implementation("jakarta.validation:jakarta.validation-api:3.0.2")   // for validation annotations
 	implementation("javax.annotation:javax.annotation-api:1.3.2")
+	implementation("com.itextpdf:itextpdf:5.5.13.2")
+	implementation("org.apache.pdfbox:pdfbox:2.0.29")
 }
 
 tasks.withType<Test> {

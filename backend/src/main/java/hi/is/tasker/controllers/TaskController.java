@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -139,6 +140,24 @@ public class TaskController {
 
         Task updatedTask = taskService.assignDuration(taskId, estimatedWeeks, effortPercentage);
         return ResponseEntity.ok(updatedTask);
+    }
+
+    //Getting a tasks progress
+    @GetMapping("/{taskId}/tracking")
+    public ResponseEntity<Map<String, Object>> getTaskProgress(@PathVariable Long taskId) {
+        Task task = taskService.findById(taskId);
+
+        // Calculate progress based on time spent vs. estimated duration
+        double progress = task.getEstimatedDuration() > 0
+                ? (task.getTimeSpent() / task.getEstimatedDuration()) * 100
+                : 0;
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("taskId", taskId);
+        response.put("title", task.getTitle());
+        response.put("progress", progress); // Progress as a percentage
+
+        return ResponseEntity.ok(response);
     }
 }
 

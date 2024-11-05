@@ -9,10 +9,13 @@ import hi.is.tasker.repositories.TimeTrackingRepository;
 import hi.is.tasker.services.ProjectReportService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.pdmodel.PDPage;
+import org.apache.pdfbox.pdmodel.PDPageContentStream;
+import org.apache.pdfbox.pdmodel.font.PDType1Font;
 
 @Service
 public class ProjectReportServiceImplementation implements ProjectReportService {

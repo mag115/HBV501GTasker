@@ -31,5 +31,7 @@ public interface TaskService {
     Task updateTimeSpent(Long taskId, double timeSpent);
     Task assignDuration(Long taskId, Integer estimatedWeeks, Double effortPercentage);
 
+    double calculateTaskProgress(Long taskId);
+
 
 }

@@ -125,4 +125,15 @@ public class TaskServiceImplementation implements TaskService {
 
         return taskRepository.save(task);
     }
+
+    @Override
+    public double calculateTaskProgress(Long taskId) {
+        Task task = taskRepository.findById(taskId)
+                .orElseThrow(() -> new RuntimeException("Task not found with id: " + taskId));
+
+        if (task.getEstimatedDuration() == null || task.getEstimatedDuration() == 0) {
+            return 0; // Avoid division by zero
+        }
+        return (task.getTimeSpent() / task.getEstimatedDuration()) * 100; // Progress in percentage
+    }
 }
