@@ -98,24 +98,24 @@ const TaskForm = () => {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-100">
-      <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
-        <h2 className="text-2xl font-bold mb-6 text-center">Add Task</h2>
+    <div className="flex items-center justify-center min-h-screen bg-gradient-to-b from-indigo-500 via-purple-500 to-pink-500">
+      <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-lg">
+        <h2 className="text-3xl font-semibold text-center text-indigo-600 mb-6">Add Task</h2>
 
         {isTaskCreated ? (
-          <div>
-            <p className="text-green-500 text-center mb-6">{responseMessage}</p>
-            <p className="text-center">Task ID: {taskId}</p>
-            <div className="flex justify-between">
+          <div className="text-center">
+            <p className="text-green-600 font-medium mb-4">{responseMessage}</p>
+            <p className="text-gray-700 mb-6">Task ID: {taskId}</p>
+            <div className="flex gap-4 justify-center">
               <button
                 onClick={handleBackToHome}
-                className="bg-black text-white px-4 py-2 rounded-md hover:bg-gray-800 w-full ml-2"
+                className="bg-indigo-600 text-white px-5 py-2 rounded-md hover:bg-indigo-700 transition"
               >
                 Back to Home Page
               </button>
               <button
                 onClick={handleViewTaskList}
-                className="bg-black text-white px-4 py-2 rounded-md hover:bg-gray-800 w-full ml-2"
+                className="bg-indigo-600 text-white px-5 py-2 rounded-md hover:bg-indigo-700 transition"
               >
                 View in Task List
               </button>
@@ -124,13 +124,13 @@ const TaskForm = () => {
         ) : (
           <form onSubmit={handleSubmit}>
             <div className="mb-4">
-              <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="title">
+              <label className="block text-gray-700 text-sm font-semibold mb-1" htmlFor="title">
                 Title
               </label>
               <input
                 id="title"
                 type="text"
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-300"
+                className="w-full px-3 py-2 border rounded-md focus:ring focus:ring-indigo-300"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
                 required
@@ -138,12 +138,12 @@ const TaskForm = () => {
             </div>
 
             <div className="mb-4">
-              <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="description">
+              <label className="block text-gray-700 text-sm font-semibold mb-1" htmlFor="description">
                 Description
               </label>
               <textarea
                 id="description"
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-300"
+                className="w-full px-3 py-2 border rounded-md focus:ring focus:ring-indigo-300"
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
                 required
@@ -151,13 +151,13 @@ const TaskForm = () => {
             </div>
 
             <div className="mb-4">
-              <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="deadline">
+              <label className="block text-gray-700 text-sm font-semibold mb-1" htmlFor="deadline">
                 Deadline
               </label>
               <input
                 id="deadline"
                 type="datetime-local"
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-300"
+                className="w-full px-3 py-2 border rounded-md focus:ring focus:ring-indigo-300"
                 value={deadline}
                 onChange={(e) => setDeadline(e.target.value)}
                 required
@@ -165,12 +165,12 @@ const TaskForm = () => {
             </div>
 
             <div className="mb-4">
-              <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="priority">
+              <label className="block text-gray-700 text-sm font-semibold mb-1" htmlFor="priority">
                 Priority
               </label>
               <select
                 id="priority"
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-300"
+                className="w-full px-3 py-2 border rounded-md focus:ring focus:ring-indigo-300"
                 value={priority}
                 onChange={(e) => setPriority(e.target.value)}
                 required
@@ -183,7 +183,7 @@ const TaskForm = () => {
             </div>
 
             <div className="mb-4">
-              <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="estimatedDuration">
+              <label className="block text-gray-700 text-sm font-semibold mb-1" htmlFor="estimatedDuration">
                 Estimated Duration (in hours)
               </label>
               <input
@@ -191,20 +191,19 @@ const TaskForm = () => {
                 type="number"
                 step="0.1"
                 min="0"
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-300"
+                className="w-full px-3 py-2 border rounded-md focus:ring focus:ring-indigo-300"
                 value={estimatedDuration}
                 onChange={(e) => setEstimatedDuration(e.target.value)}
                 required
               />
             </div>
 
-            {/* Dropdown to select the user to assign the task to */}
             <div className="mb-4">
-              <label className="block text-gray-700 text-sm font-bold mb-2">Assign User</label>
+              <label className="block text-gray-700 text-sm font-semibold mb-1">Assign User</label>
               <select
                 value={assignedUser}
                 onChange={(e) => setAssignedUser(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-300"
+                className="w-full px-3 py-2 border rounded-md focus:ring focus:ring-indigo-300"
                 required
               >
                 <option value="">Select a User</option>
@@ -231,24 +230,23 @@ const TaskForm = () => {
                         </div>
 
             <div className="mb-4">
-              <label className="block text-gray-700 text-sm font-bold mb-2">Reminder Sent</label>
-              <input
-                type="checkbox"
-                className="mr-2 leading-tight"
-                checked={reminderSent}
-                onChange={(e) => setReminderSent(e.target.checked)}
-              />
-              <span className="text-sm">Send a reminder</span>
+              <label className="inline-flex items-center">
+                <input
+                  type="checkbox"
+                  className="form-checkbox h-5 w-5 text-indigo-600"
+                  checked={reminderSent}
+                  onChange={(e) => setReminderSent(e.target.checked)}
+                />
+                <span className="ml-2 text-gray-700">Send a reminder</span>
+              </label>
             </div>
 
-            <div className="flex items-center justify-between">
-              <button
-                type="submit"
-                className="bg-black text-white px-4 py-2 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-50 w-full"
-              >
-                Add Task
-              </button>
-            </div>
+            <button
+              type="submit"
+              className="bg-indigo-600 text-white px-4 py-2 rounded-md w-full hover:bg-indigo-700 focus:ring-2 focus:ring-indigo-400 transition"
+            >
+              Add Task
+            </button>
           </form>
         )}
       </div>
