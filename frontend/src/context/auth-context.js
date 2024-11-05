@@ -9,11 +9,7 @@ export const AuthProvider = ({ children }) => {
     // Clear stored auth data on app start to ensure a fresh session each time
     localStorage.removeItem('token');
     localStorage.removeItem('role');
-
-    // Optional: You can choose to log a message here for debugging
     console.log("Auth data cleared on application start");
-
-    // Further load of any auth data (if necessary) would go here
   }, []);
 
   const login = (data) => {
