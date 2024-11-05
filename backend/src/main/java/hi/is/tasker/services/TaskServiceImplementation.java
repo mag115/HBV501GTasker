@@ -11,9 +11,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @Service
 public class TaskServiceImplementation implements TaskService {
@@ -70,6 +68,14 @@ public class TaskServiceImplementation implements TaskService {
         task.setAssignedUser(user);
         return taskRepository.save(task);
     }
+
+    @Override
+    public Task setDependency(Long taskId) {
+        Task task = taskRepository.findById(taskId).orElseThrow(() -> new RuntimeException("Task not found"));
+        task.setDependency(taskId);
+        return taskRepository.save(task);
+    }
+
 
     @Override
     public Task updateTaskStatus(Long taskId, String status) {

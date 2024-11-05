@@ -11,6 +11,7 @@ import java.util.List;
 @Getter
 @Setter
 @Entity(name = "task")
+@Table(name = "tasks")
 public class
 Task {
     @Id
@@ -25,6 +26,7 @@ Task {
     private Integer estimatedWeeks;    // in weeks if applicable
     private Double effortPercentage;   // percentage of total time until deadline if applicable
     private String progressStatus;     // "On Track", "Behind Schedule", or "Completed"
+    private Long dependency;
 
     // New fields:
     @ManyToOne
@@ -107,5 +109,13 @@ Task {
 
     public void setEffortPercentage(Double effortPercentage) {
         this.effortPercentage = effortPercentage;
+    }
+
+    public void setAssignedUser(User user) {
+        this.assignedUser = user;
+    }
+
+    public void setDependency(Long taskId) {
+        this.dependency = taskId;
     }
 }

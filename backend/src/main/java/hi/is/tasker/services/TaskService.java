@@ -3,7 +3,6 @@ package hi.is.tasker.services;
 import hi.is.tasker.entities.Task;
 
 import java.util.List;
-import java.util.Map;
 
 public interface TaskService {
     //Task createTask(Task task);
@@ -28,11 +27,16 @@ public interface TaskService {
     void sendReminder(Long taskId);
 
     String generateProjectReport(Long projectId);
-    
+
     Task updateTimeSpent(Long taskId, double timeSpent);
+
     Task assignDuration(Long taskId, Integer estimatedWeeks, Double effortPercentage);
+
     double calculateTaskProgress(Long taskId);
+
     String getProgressStatus(Long taskId);
+
+    Task setDependency(Long taskId);
 
 
 }

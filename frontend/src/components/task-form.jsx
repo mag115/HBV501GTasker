@@ -16,6 +16,9 @@ const TaskForm = () => {
   const[timeSpent, setTimeSpent]=useState('');
   const [estimatedDuration, setEstimatedDuration] = useState('');
   const navigate = useNavigate();
+  const [tasks, setTasks] = useState([]);
+  const [task, setTask]=useState([]);
+  const [dependency, setDependency] = useState('');
 
 
   // Fetch the list of users from the backend when the component mounts
@@ -32,6 +35,19 @@ const TaskForm = () => {
     fetchUsers();
   }, []);
 
+  useEffect(() => {
+      const fetchTasks = async () => {
+        try {
+          const response = await request('get', '/tasks');
+          setTasks(response.data);
+        } catch (error) {
+          console.error('Error fetching tasks:', error);
+        }
+      };
+
+      fetchTasks();
+    }, []);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -45,6 +61,7 @@ const TaskForm = () => {
       timeSpent:0,
       elapsedTime:0,
       estimatedDuration: parseFloat(estimatedDuration),
+      dependency,
     };
 
     try {
@@ -62,6 +79,7 @@ const TaskForm = () => {
         setPriority('');
         setAssignedUser('');
         setEstimatedDuration('');
+        setDependency(null);
       } else {
         setResponseMessage('Failed to create task.');
       }
@@ -195,6 +213,22 @@ const TaskForm = () => {
                 ))}
               </select>
             </div>
+
+             {/* dependencies */}
+                        <div className="mb-4">
+                          <label className="block text-gray-700 text-sm font-bold mb-2">Dependencies</label>
+                          <select
+                            value={dependency}
+                            onChange={(e) => setDependency(e.target.value)}
+                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-300"
+
+                          >
+                            <option value="">Select a task that has to be completed before this one can begin</option>
+                            {tasks.map((task) => (
+                              <option key={task.id} value={task.id}>{task.title}</option>
+                            ))}
+                          </select>
+                        </div>
 
             <div className="mb-4">
               <label className="block text-gray-700 text-sm font-bold mb-2">Reminder Sent</label>
