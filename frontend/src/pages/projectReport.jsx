@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { request } from '../api/http';
 import { Page } from '../components/page';
+import { useAuth } from '../context/auth-context'; // Assuming you have an auth context
 
 const ProjectReportPage = () => {
   const [reports, setReports] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const { auth } = useAuth(); // Use auth context to get the authentication token
 
-  // Fetch project reports on component mount
   useEffect(() => {
     const fetchReports = async () => {
       try {
@@ -25,13 +26,11 @@ const ProjectReportPage = () => {
     fetchReports();
   }, []);
 
-  // Handle creating a new project report
   const handleCreateReport = async () => {
     try {
       setLoading(true);
       const response = await request('post', '/reports/generate');
       alert('Project report created successfully!');
-      // Refresh the report list after creation
       setReports((prevReports) => [...prevReports, response.data]);
     } catch (err) {
       console.error('Error creating report:', err);
@@ -41,13 +40,13 @@ const ProjectReportPage = () => {
     }
   };
 
-  // Handle downloading the report as a PDF
   const handleDownloadReport = async (reportId) => {
     try {
-      const response = await fetch(`/projects/${reportId}/report/export`, {
+      const response = await fetch(`/reports/${reportId}/export`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/pdf',
+          'Authorization': `Bearer ${auth.token}`, // Pass the auth token
         },
       });
 
@@ -55,7 +54,6 @@ const ProjectReportPage = () => {
         throw new Error('Failed to download PDF');
       }
 
-      // Create a blob and download the file
       const blob = await response.blob();
       const url = window.URL.createObjectURL(blob);
       const link = document.createElement('a');
@@ -69,6 +67,7 @@ const ProjectReportPage = () => {
       setError('Failed to download project report.');
     }
   };
+
 
   if (loading) {
     return <p>Loading...</p>;
@@ -112,7 +111,7 @@ const ProjectReportPage = () => {
               </p>
               <button
                 onClick={() => handleDownloadReport(report.id)}
-                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-4"
+                className="bg-black hover:bg-gray-800 text-white font-bold py-2 px-4 rounded mt-4"
               >
                 Download PDF
               </button>
@@ -123,6 +122,5 @@ const ProjectReportPage = () => {
     </Page>
   );
 };
-
 
 export { ProjectReportPage };
