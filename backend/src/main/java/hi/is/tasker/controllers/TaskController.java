@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -133,10 +134,11 @@ public class TaskController {
             @PathVariable Long taskId,
             @RequestBody Map<String, Object> requestBody
     ) {
-        Double duration = ((Number) requestBody.get("estimatedDuration")).doubleValue();
-        Task updatedTask = taskService.assignDuration(taskId, duration);
+        Integer estimatedWeeks = (Integer) requestBody.get("estimatedWeeks");
+        Double effortPercentage = (Double) requestBody.get("effortPercentage");
+
+        Task updatedTask = taskService.assignDuration(taskId, estimatedWeeks, effortPercentage);
         return ResponseEntity.ok(updatedTask);
     }
-
 }
 

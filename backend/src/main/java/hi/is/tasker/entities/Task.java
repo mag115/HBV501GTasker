@@ -21,7 +21,9 @@ Task {
     private String description;
     private LocalDateTime deadline;
     private Boolean reminderSent;
-    private Double estimatedDuration;
+    private Double estimatedDuration; // In hours
+    private Integer estimatedWeeks;   // Weeks estimation if applicable
+    private Double effortPercentage;  // Percentage of available time if applicable
 
     // New fields:
     @ManyToOne

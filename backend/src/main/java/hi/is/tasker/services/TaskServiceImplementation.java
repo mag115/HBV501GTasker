@@ -7,6 +7,8 @@ import hi.is.tasker.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 @Service
@@ -99,11 +101,28 @@ public class TaskServiceImplementation implements TaskService {
     }
 
     @Override
-    public Task assignDuration(Long taskId, Double duration) {
+    public Task assignDuration(Long taskId, Integer estimatedWeeks, Double effortPercentage) {
         Task task = taskRepository.findById(taskId)
                 .orElseThrow(() -> new RuntimeException("Task not found with id: " + taskId));
-        task.setEstimatedDuration(duration);
+
+        // Calculate estimated duration
+        Double estimatedDuration = null;
+
+        if (estimatedWeeks != null) {
+            // Assume a 40-hour work week
+            estimatedDuration = estimatedWeeks * 40.0;
+        } else if (effortPercentage != null && task.getDeadline() != null) {
+            // Calculate hours until deadline
+            LocalDateTime now = LocalDateTime.now();
+            long hoursUntilDeadline = ChronoUnit.HOURS.between(now, task.getDeadline());
+            estimatedDuration = hoursUntilDeadline * (effortPercentage / 100.0);
+        }
+
+        // Update task with calculated values
+        task.setEstimatedDuration(estimatedDuration);
+        task.setEstimatedWeeks(estimatedWeeks);
+        task.setEffortPercentage(effortPercentage);
+
         return taskRepository.save(task);
     }
-
 }

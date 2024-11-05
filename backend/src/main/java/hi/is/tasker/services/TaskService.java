@@ -29,7 +29,7 @@ public interface TaskService {
     String generateProjectReport(Long projectId);
     
     Task updateTimeSpent(Long taskId, double timeSpent);
-    Task assignDuration(Long taskId, Double duration);
+    Task assignDuration(Long taskId, Integer estimatedWeeks, Double effortPercentage);
 
 
 }
