@@ -8,6 +8,7 @@ const TasksReport = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const { auth } = useAuth();
+  const[comment, setComment]=useState("");
 
   useEffect(() => {
     const fetchTasks = async () => {
@@ -71,6 +72,10 @@ const TasksReport = () => {
     }
   };
 
+const enterHandler = async (taskId, assignedUser) => {
+setComment("");
+                                  };
+
   const handleSendReminder = async (taskId) => {
     try {
       await request('post', `/tasks/${taskId}/reminder`);
@@ -111,6 +116,12 @@ const TasksReport = () => {
           <option value="medium">Medium priority</option>
           <option value="high">High priority</option>
         </select>
+        <input type="text"  value={comment} onChange={(e) => setComment(e.target.value)} placeholder="Send a comment..." className=" p-1 mt-10 mb-5" style={{ border: '1px solid black' }} onKeyDown={(e) => {
+                                                                                                                          if (e.key === 'Enter') {
+                                                                                                                            enterHandler(task.assignedUser);
+                                                                                                                          }
+                                                                                                                        }}
+                                                                                                                      />
 
         {auth.role === 'PROJECT_MANAGER' && (
           <button
@@ -119,6 +130,7 @@ const TasksReport = () => {
           >
             Send reminder
           </button>
+
         )}
       </div>
     </div>
