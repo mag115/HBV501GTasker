@@ -89,6 +89,12 @@ const ProjectReportPage = () => {
         >
           Create Project Report
         </button>
+        <button
+            onClick={console.log("Button clicked! Implement your functionality here.")}
+            className="bg-white hover:bg-green-600 text-black font-semibold py-2 px-4 rounded"
+          >
+            Generate Custom Report
+          </button>
       </div>
       {reports.length === 0 ? (
         <p className="text-center">No project reports available.</p>
