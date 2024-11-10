@@ -1,14 +1,14 @@
-
 import React, { useState, useEffect } from 'react';
 import { request } from '../api/http';
 import { useAuth } from '../context/auth-context';
+import { CommentInput } from './comment-input';
 
 const TasksReport = () => {
   const [tasks, setTasks] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const { auth } = useAuth();
-  const[comment, setComment]=useState("");
+  const [comment, setComment] = useState('');
 
   useEffect(() => {
     const fetchTasks = async () => {
@@ -31,16 +31,16 @@ const TasksReport = () => {
   }, []);
 
   if (loading) {
-      return <p>Loading tasks...</p>;
-    }
+    return <p>Loading tasks...</p>;
+  }
 
-    if (error) {
-      return <p className="text-red-500">{error}</p>;
-    }
+  if (error) {
+    return <p className="text-red-500">{error}</p>;
+  }
 
-    if (!Array.isArray(tasks) || tasks.length === 0) {
-      return <p>No tasks available yet. Add a task!</p>;
-    }
+  if (!Array.isArray(tasks) || tasks.length === 0) {
+    return <p>No tasks available yet. Add a task!</p>;
+  }
 
   const handleStatusChange = async (taskId, newStatus) => {
     try {
@@ -59,7 +59,9 @@ const TasksReport = () => {
 
   const handlePriorityChange = async (taskId, newPriority) => {
     try {
-      await request('patch', `/tasks/${taskId}/priority`, { priority: newPriority });
+      await request('patch', `/tasks/${taskId}/priority`, {
+        priority: newPriority,
+      });
       setTasks((prevTasks) =>
         prevTasks.map((task) =>
           task.id === taskId ? { ...task, priority: newPriority } : task
@@ -72,9 +74,26 @@ const TasksReport = () => {
     }
   };
 
-const enterHandler = async (taskId, assignedUser) => {
-setComment("");
-                                  };
+  const enterHandler = async (taskId) => {
+    console.log('taks', taskId);
+    try {
+      const response = await request(
+        'post',
+        `/notifications/${taskId}/${auth.userId}/comment`,
+        {
+          comment: comment,
+        }
+      );
+
+      if (response.status === 200) {
+        alert('Comment posted successfully!');
+        setComment('');
+      }
+    } catch (error) {
+      console.error('Error posting comment:', error);
+      alert('Failed to post comment.');
+    }
+  };
 
   const handleSendReminder = async (taskId) => {
     try {
@@ -87,26 +106,32 @@ setComment("");
   };
 
   const renderTask = (task) => (
-    <div key={task.id} className="max-w-sm rounded overflow-hidden shadow-lg bg-white mb-4">
+    <div
+      key={task.id}
+      className="max-w-sm rounded overflow-hidden shadow-lg bg-white mb-4"
+    >
       <div className="px-6 py-4">
         <div className="font-bold capitalize text-2xl mb-2">{task.title}</div>
 
         {/* Display the task's progress status */}
         <p className="text-sm mb-2">
-          <strong>Status:</strong>{" "}
-          {task.progressStatus === "Completed" ? (
+          <strong>Status:</strong>{' '}
+          {task.progressStatus === 'Completed' ? (
             <span className="text-green-500">Completed</span>
-          ) : task.progressStatus === "On Track" ? (
+          ) : task.progressStatus === 'On Track' ? (
             <span className="text-blue-500">On Track</span>
           ) : (
             <span className="text-red-500">Behind Schedule</span>
           )}
         </p>
-        <p> Time spent on this task: {task.timeSpent/60} minutes</p>
+        <p> Time spent on this task: {task.timeSpent / 60} minutes</p>
         <p className="text-black-500">
-          Deadline: {task.deadline ? new Date(task.deadline).toLocaleString() : "No deadline set"}
+          Deadline:{' '}
+          {task.deadline
+            ? new Date(task.deadline).toLocaleString()
+            : 'No deadline set'}
         </p>
-<p> Status: Ongoing </p>
+        <p> Status: Ongoing </p>
         <select
           className="text-black-500 mr-20"
           value={task.priority}
@@ -116,13 +141,7 @@ setComment("");
           <option value="medium">Medium priority</option>
           <option value="high">High priority</option>
         </select>
-        <input type="text"  value={comment} onChange={(e) => setComment(e.target.value)} placeholder="Send a comment..." className=" p-1 mt-10 mb-5" style={{ border: '1px solid black' }} onKeyDown={(e) => {
-                                                                                                                          if (e.key === 'Enter') {
-                                                                                                                            enterHandler(task.assignedUser);
-                                                                                                                          }
-                                                                                                                        }}
-                                                                                                                      />
-
+        {auth.role === 'PROJECT_MANAGER' && <CommentInput taskId={task.id} />}
         {auth.role === 'PROJECT_MANAGER' && (
           <button
             className="mt-2 bg-black text-white py-1 px-4 rounded"
@@ -130,7 +149,6 @@ setComment("");
           >
             Send reminder
           </button>
-
         )}
       </div>
     </div>

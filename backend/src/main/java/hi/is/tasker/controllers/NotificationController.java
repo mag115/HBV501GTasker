@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/notifications")
@@ -86,6 +87,36 @@ public class NotificationController {
         notificationService.markAsRead(notificationId);
         return ResponseEntity.ok().build();
     }
+
+    @PostMapping("/{taskId}/{userId}/comment")
+    public ResponseEntity<String> sendTaskComment(@PathVariable Long taskId, @PathVariable Long userId, @RequestBody Map<String, String> requestBody) {
+        Task task = taskService.findById(taskId);
+        if (task == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        User assignedUser = task.getAssignedUser();
+        if (assignedUser == null) {
+            return ResponseEntity.badRequest().body("No user is assigned to this task.");
+        }
+
+        // Find the user who made the comment
+        User commentingUser = userService.getUserById(userId)
+                .orElseThrow(() -> new RuntimeException("Commenting user not found"));
+
+        // Retrieve the custom comment from the request body
+        String comment = requestBody.get("comment");
+        if (comment == null || comment.trim().isEmpty()) {
+            return ResponseEntity.badRequest().body("Comment text is required.");
+        }
+
+        // Create a notification message with the custom comment and sender's name
+        String message = "New comment on task '" + task.getTitle() + "' from " + commentingUser.getUsername() + ": " + comment;
+        notificationService.createNotification(message, assignedUser);
+
+        return ResponseEntity.ok("Notification sent with custom comment from " + commentingUser.getUsername() + ".");
+    }
+
 
     // Send a deadline reminder for a specific task to the assigned user
     @PostMapping("/tasks/{taskId}/reminder")
