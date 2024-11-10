@@ -29,7 +29,7 @@ public class TaskController {
         this.userService = userService;
         this.notificationService = notificationService;
     }
-    
+
     @GetMapping
     public ResponseEntity<List<Task>> getAllTasks() {
         List<Task> tasks = taskService.findAll();
@@ -127,7 +127,7 @@ public class TaskController {
     public ResponseEntity<Task> updateTaskTime(@RequestBody Map<String, Object> request) {
         Long taskId = ((Number) request.get("taskId")).longValue();
         Double timeSpent = ((Number) request.get("timeSpent")).doubleValue();
-
+        System.out.print(timeSpent);
         Task task = taskService.updateTimeSpent(taskId, timeSpent);
         return ResponseEntity.ok(task);
     }

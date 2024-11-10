@@ -1,20 +1,25 @@
 import React, { useEffect, useState } from 'react';
 import { request } from '../api/http';
 import { Page } from '../components/page';
-import { useAuth } from '../context/auth-context'; // Assuming you have an auth context
+import { useAuth } from '../context/auth-context';
+import { TasksReport } from '../components/tasks-report';
 
 const ProjectReportPage = () => {
   const [reports, setReports] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const { auth } = useAuth(); // Use auth context to get the authentication token
+  const { auth } = useAuth();
+  const [tasks, setTasks] = useState([]);
+
 
   useEffect(() => {
     const fetchReports = async () => {
       try {
         setLoading(true);
         const response = await request('get', '/reports');
-        setReports(response.data);
+         const response2=await request('get', '/tasks');
+                setReports(response.data);
+                setTasks(response2.data);
       } catch (err) {
         console.error('Error fetching reports:', err);
         setError('Failed to load project reports.');
@@ -97,7 +102,7 @@ const ProjectReportPage = () => {
           {reports.map((report) => (
             <div
               key={report.id}
-              className="max-w-sm rounded overflow-hidden shadow-lg bg-white mb-4 p-4"
+             className="rounded overflow-hidden shadow-lg bg-white m-4 p-4"
             >
               <h2 className="font-bold text-xl mb-2">Report #{report.id}</h2>
               <p className="text-gray-700">
@@ -109,6 +114,7 @@ const ProjectReportPage = () => {
               <p className="text-gray-700">
                 Overall Performance: {report.overallPerformance}
               </p>
+                < TasksReport />
               <button
                 onClick={() => handleDownloadReport(report.id)}
                 className="bg-black hover:bg-gray-800 text-white font-bold py-2 px-4 rounded mt-4"

@@ -55,6 +55,7 @@ public class TaskServiceImplementation implements TaskService {
                 .orElseThrow(() -> new RuntimeException("Task not found with id: " + taskId));
 
         task.setTimeSpent(task.getTimeSpent() + timeSpent);
+        timeSpent = 0;
         return taskRepository.save(task);
     }
 
