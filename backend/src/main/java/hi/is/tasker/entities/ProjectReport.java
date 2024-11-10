@@ -19,7 +19,7 @@ public class ProjectReport {
     @Column(nullable = false)
     private LocalDateTime reportDate;
 
-    private long totalTimeSpent; // Summary tíma
+    private Long totalTimeSpent; // Summary tíma
 
     private String overallPerformance; // "On Track" or "Behind Schedule"
 
@@ -27,7 +27,7 @@ public class ProjectReport {
     public ProjectReport() {
     }
 
-    public ProjectReport(List<Task> tasks, long totalTimeSpent, String overallPerformance) {
+    public ProjectReport(List<Task> tasks, Long totalTimeSpent, String overallPerformance) {
         this.tasks = tasks;
         this.totalTimeSpent = totalTimeSpent;
         this.overallPerformance = overallPerformance;
@@ -59,11 +59,11 @@ public class ProjectReport {
         this.reportDate = reportDate;
     }
 
-    public long getTotalTimeSpent() {
+    public Long getTotalTimeSpent() {
         return totalTimeSpent;
     }
 
-    public void setTotalTimeSpent(long totalTimeSpent) {
+    public void setTotalTimeSpent(Long totalTimeSpent) {
         this.totalTimeSpent = totalTimeSpent;
     }
 

@@ -1,5 +1,6 @@
 package hi.is.tasker.controllers;
 
+import hi.is.tasker.dto.ReportOptions;
 import hi.is.tasker.entities.ProjectReport;
 import hi.is.tasker.entities.Task;
 import hi.is.tasker.services.ProjectReportService;
@@ -40,6 +41,12 @@ public class ProjectReportController {
     public ResponseEntity<ProjectReport> generateProjectReport() {
         ProjectReport report = projectReportService.generateProjectReport();
         return ResponseEntity.ok(report);  // Return the generated report in the response
+    }
+
+    @PostMapping("/generate/custom")
+    public ResponseEntity<ProjectReport> generateCustomProjectReport(@RequestBody ReportOptions options) {
+        ProjectReport report = projectReportService.generateCustomProjectReport(options);
+        return ResponseEntity.ok(report);
     }
 
 

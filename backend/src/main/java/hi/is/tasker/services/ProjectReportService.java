@@ -1,7 +1,9 @@
 package hi.is.tasker.services;
 
 
+import hi.is.tasker.dto.ReportOptions;
 import hi.is.tasker.entities.ProjectReport;
+
 import java.util.List;
 public interface ProjectReportService {
     ProjectReport getReportById(Long id);
@@ -9,4 +11,6 @@ public interface ProjectReportService {
     List<ProjectReport> getAllReports();
 
     ProjectReport generateProjectReport();
+
+    ProjectReport generateCustomProjectReport(ReportOptions options);
 }
