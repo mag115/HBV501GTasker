@@ -135,17 +135,14 @@ public class TaskServiceImplementation implements TaskService {
 
     @Override
     public double calculateTaskProgress(Long taskId) {
-        Task task = taskRepository.findById(taskId).orElseThrow(() -> new RuntimeException("Task not found"));
-        List<TimeTracking> timeLogs = timeTrackingRepository.findByTaskId(taskId);
-
-        double totalTimeSpent = timeLogs.stream().mapToDouble(TimeTracking::getTimeSpent).sum();
-        task.setTimeSpent(totalTimeSpent);
+        Task task = taskRepository.findById(taskId)
+                .orElseThrow(() -> new RuntimeException("Task not found"));
 
         if (task.getEstimatedDuration() == null || task.getEstimatedDuration() == 0) {
             return 0;
         }
 
-        double progressPercentage = (totalTimeSpent / task.getEstimatedDuration()) * 100;
+        double progressPercentage = (task.getTimeSpent() / task.getEstimatedDuration()) * 100;
         task.setProgressStatus(progressPercentage >= 100 ? "Completed" : "In Progress");
         taskRepository.save(task);
 
