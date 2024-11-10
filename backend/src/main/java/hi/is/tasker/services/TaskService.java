@@ -38,5 +38,5 @@ public interface TaskService {
 
     Task setDependency(Long taskId);
 
-
+    Task updateTaskProgress(Long taskId, Double progress);
 }

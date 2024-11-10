@@ -1,7 +1,5 @@
 package hi.is.tasker.entities;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -29,6 +27,7 @@ Task {
     private Double effortPercentage;   // percentage of total time until deadline if applicable
     private String progressStatus;     // "On Track", "Behind Schedule", or "Completed"
     private Long dependency;
+    private Double progress; //ATH: geymir hvað user setur progress sem
 
     // New fields:
     @ManyToOne
