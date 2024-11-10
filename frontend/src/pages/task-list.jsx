@@ -63,29 +63,29 @@ const fetchTaskById = async (id) => {
       </h1>
 
       {/* Combined search section with identical look */}
-            <div className="flex flex-col md:flex-row justify-center items-center space-x-0 md:space-x-6 mb-6 w-full">
-              {/* Search by ID */}
-              <SearchBar onSearch={fetchTaskById} className="flex-grow" />
+      <div className="flex flex-col md:flex-row justify-center items-center space-x-0 md:space-x-6 mb-6 w-full">
+        {/* Search by ID */}
+        <SearchBar onSearch={fetchTaskById} className="flex-grow" />
 
-              {/* Upcoming tasks search (only for Project Managers) */}
-              {auth.role === 'PROJECT_MANAGER' && (
-                <div className="flex justify-center items-center mb-6">
-                  <input
+        {/* Upcoming tasks search (only for Project Managers) */}
+        {auth.role === 'PROJECT_MANAGER' && (
+            <div className="flex justify-center items-center mb-6">
+                <input
                     type="number"
                     placeholder="Days ahead"
                     value={days}
                     onChange={(e) => setDays(e.target.value)}
                     className="w-60 p-3 border border-gray-300 rounded-l-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                  />
-                  <button
+                />
+                <button
                     onClick={fetchUpcomingTasks}
                     className="p-3 bg-indigo-500 text-white rounded-r-lg hover:bg-indigo-600 transition duration-200 ease-in-out"
-                  >
+                >
                     Search Upcoming
-                  </button>
-                </div>
-              )}
+                </button>
             </div>
+        )}
+      </div>
 
       <TaskList />
 
