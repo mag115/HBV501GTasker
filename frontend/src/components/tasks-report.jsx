@@ -124,23 +124,15 @@ const TasksReport = () => {
             <span className="text-red-500">Behind Schedule</span>
           )}
         </p>
-        <p> Time spent on this task: {Math.floor(task.timeSpent / 60)} minutes and {task.timeSpent-Math.floor(task.timeSpent / 60)*60} seconds</p>
+        <p> Time spent: {Math.floor(task.timeSpent / 60)} minutes and {task.timeSpent-Math.floor(task.timeSpent / 60)*60} seconds</p>
         <p className="text-black-500">
           Deadline:{' '}
           {task.deadline
-            ? new Date(task.deadline).toLocaleString()
+            ? new Date(task.deadline).toLocaleDateString()
             : 'No deadline set'}
         </p>
         <p> Status: Ongoing </p>
-        <select
-          className="text-black-500 mr-20"
-          value={task.priority}
-          onChange={(e) => handlePriorityChange(task.id, e.target.value)}
-        >
-          <option value="low">Low priority</option>
-          <option value="medium">Medium priority</option>
-          <option value="high">High priority</option>
-        </select>
+
         {auth.role === 'PROJECT_MANAGER' && <CommentInput taskId={task.id} />}
         {auth.role === 'PROJECT_MANAGER' && (
           <button
