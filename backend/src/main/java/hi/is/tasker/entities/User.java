@@ -1,7 +1,6 @@
 package hi.is.tasker.entities;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Size;
@@ -105,5 +104,9 @@ public class User implements UserDetails {
 
     public void setRole(String role) {
         this.role = role;
+    }
+
+    public String getRole() {
+        return role;
     }
 }

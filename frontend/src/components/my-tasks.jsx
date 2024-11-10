@@ -58,8 +58,8 @@ const MyTasks = () => {
   const updateTimeSpent = async (taskId, timeSpent) => {
     try {
       await request('post', '/tasks/updateTime', {
-        taskId: taskId,
-        timeSpent: timeSpent,
+        taskId,
+        timeSpent
       });
     } catch (error) {
       console.error('Error updating time spent:', error);
@@ -144,7 +144,7 @@ const MyTasks = () => {
 
       <div className="mb-4">
         <p className="text-gray-700 mb-2">
-          <strong>Time Spent:</strong> {formatTime(task.isTracking ? task.elapsedTime + task.timeSpent : task.timeSpent)}
+          <strong>Time Spent:</strong> {formatTime(task.isTracking ? task.elapsedTime + task.timeSpent  : task.timeSpent)}
         </p>
         <button
           style={{
