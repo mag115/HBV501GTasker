@@ -2,11 +2,22 @@ import React, { useEffect, useState } from 'react';
 import { request } from '../api/http';
 import { Page } from '../components/page';
 import { useAuth } from '../context/auth-context'; // Assuming you have an auth context
+import CustomReportDialog from '../components/CustomReportDialog';
 
 const ProjectReportPage = () => {
   const [reports, setReports] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+
+  // State for custom report dialog
+  const [isCustomReportModalOpen, setIsCustomReportModalOpen] = useState(false);
+  const [reportOptions, setReportOptions] = useState({
+    includeTasks: true,
+    includeTimeSpent: true,
+    includePerformance: true,
+    // Add more options as needed
+  });
+
   const { auth } = useAuth(); // Use auth context to get the authentication token
 
   useEffect(() => {
@@ -68,6 +79,36 @@ const ProjectReportPage = () => {
     }
   };
 
+  const handleOpenCustomReportDialog = () => {
+    setIsCustomReportModalOpen(true);
+  };
+
+  const handleCloseCustomReportDialog = () => {
+    setIsCustomReportModalOpen(false);
+  };
+
+  const handleReportOptionChange = (e) => {
+    const { name, checked } = e.target;
+    setReportOptions((prevOptions) => ({
+        ...prevOptions,
+        [name]: checked,
+    }));
+  };
+
+  const handleGenerateCustomReport = async () => {
+    try {
+        setLoading(true);
+        const response = await request('post', '/reports/generate/custom', reportOptions);
+        alert('Custom project report created successfully!');
+        setReports((prevReports) => [...prevReports, response.data]);
+        setIsCustomReportModalOpen(false);
+    } catch (err) {
+        console.error('Error creating custom report:', err);
+        setError('Failed to create custom project report.');
+    } finally {
+        setLoading(false);
+    }
+  };
 
   if (loading) {
     return <p>Loading...</p>;
@@ -90,12 +131,21 @@ const ProjectReportPage = () => {
           Create Project Report
         </button>
         <button
-            onClick={console.log("Button clicked! Implement your functionality here.")}
+            onClick={handleOpenCustomReportDialog}
             className="bg-white hover:bg-green-600 text-black font-semibold py-2 px-4 rounded"
-          >
+        >
             Generate Custom Report
-          </button>
+        </button>
       </div>
+      {/* Include the customizedReportDialog component */}
+      <CustomReportDialog
+        isOpen={isCustomReportModalOpen}
+        onRequestClose={handleCloseCustomReportDialog}
+        onGenerateReport={handleGenerateCustomReport}
+        reportOptions={reportOptions}
+        onOptionChange={handleReportOptionChange}
+      />
+      {/* Rest of your component */}
       {reports.length === 0 ? (
         <p className="text-center">No project reports available.</p>
       ) : (
