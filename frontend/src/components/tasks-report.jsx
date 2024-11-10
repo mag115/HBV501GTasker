@@ -124,7 +124,7 @@ const TasksReport = () => {
             <span className="text-red-500">Behind Schedule</span>
           )}
         </p>
-        <p> Time spent on this task: {task.timeSpent / 60} minutes</p>
+        <p> Time spent on this task: {Math.floor(task.timeSpent / 60)} minutes and {task.timeSpent-Math.floor(task.timeSpent / 60)*60} seconds</p>
         <p className="text-black-500">
           Deadline:{' '}
           {task.deadline

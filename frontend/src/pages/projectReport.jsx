@@ -176,12 +176,17 @@ const ProjectReportPage = () => {
               </p>
               {reportOptions.includeTimeSpent && (
               <p className="text-gray-700">
-                Total Time Spent: {report.totalTimeSpent} hours
+                Total Time Spent: {Math.floor(tasks.reduce((total, task) => total + (task.timeSpent || 0), 0)/60)} minutes and {tasks.reduce((total, task) => total + (task.timeSpent || 0), 0)-Math.floor(tasks.reduce((total, task) => total + (task.timeSpent || 0), 0)/60)*60} seconds
               </p>)}
               {reportOptions.includePerformance && (
               <p className="text-gray-700">
                 Overall Performance: {report.overallPerformance}
               </p>)}
+               <div className=" mb-6">
+                          <p className="font-bold">
+                            Number of Completed Tasks: {tasks.filter(task => task.status === 'Done').length} out of {tasks.length}
+                          </p>
+                        </div>
 
               <button
                 onClick={() => handleDownloadReport(report.id)}
