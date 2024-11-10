@@ -160,4 +160,9 @@ public class TaskController {
         return ResponseEntity.ok(updatedTask);
     }
 
+    @GetMapping("/upcoming")
+    public ResponseEntity<List<Task>> getUpcomingTasks(@RequestParam("days") int days) {
+        List<Task> tasks = taskService.findTasksWithUpcomingDeadlines(days);
+        return ResponseEntity.ok(tasks);
+    }
 }

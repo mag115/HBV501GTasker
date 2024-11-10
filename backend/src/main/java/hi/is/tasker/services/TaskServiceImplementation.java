@@ -193,4 +193,10 @@ public class TaskServiceImplementation implements TaskService {
         return taskRepository.save(task);
     }
 
+    @Override
+    public List<Task> findTasksWithUpcomingDeadlines(int days) {
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime deadlineThreshold = now.plusDays(days);
+        return taskRepository.findByDeadlineBetween(now, deadlineThreshold);
+    }
 }

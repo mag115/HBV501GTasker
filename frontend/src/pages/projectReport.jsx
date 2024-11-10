@@ -3,7 +3,7 @@ import { request } from '../api/http';
 import { Page } from '../components/page';
 import { useAuth } from '../context/auth-context';
 import { TasksReport } from '../components/tasks-report';
-import CustomReportDialog from '../components/CustomReportDialog';
+import CustomReportDialog from '../components/custom-report-dialog';
 
 const ProjectReportPage = () => {
   const [reports, setReports] = useState([]);
