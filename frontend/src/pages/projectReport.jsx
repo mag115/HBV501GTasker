@@ -144,7 +144,7 @@ const ProjectReportPage = () => {
       <div className="text-center mb-6">
         <button
           onClick={handleCreateReport}
-          className="bg-white hover:bg-blue-600 text-black font-semibold py-2 px-4 rounded"
+          className="mr-2 bg-white hover:bg-blue-600 text-black font-semibold py-2 px-4 rounded"
         >
           Create Project Report
         </button>
