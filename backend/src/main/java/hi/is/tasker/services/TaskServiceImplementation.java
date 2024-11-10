@@ -166,4 +166,14 @@ public class TaskServiceImplementation implements TaskService {
             return "Unknown";
         }
     }
+
+    @Override
+    public Task updateTaskProgress(Long taskId, Double progress) {
+        Task task = taskRepository.findById(taskId)
+                .orElseThrow(() -> new RuntimeException("Task not found with id: " + taskId));
+
+        task.setProgress(progress);
+        return taskRepository.save(task);
+    }
+
 }

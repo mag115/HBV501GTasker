@@ -99,6 +99,27 @@ const MyTasks = () => {
     return depTask && depTask.status === 'Done';
   };
 
+  const handleProgressChange = async (taskId, value) => {
+    const parsedValue = parseFloat(value);
+        if (isNaN(parsedValue) || parsedValue < 0 || parsedValue > 100) {
+          alert('Please enter a valid progress percentage between 0 and 100.');
+          return;
+        }
+        try {
+          await request('patch', `/tasks/${taskId}/progress`, { progress: parsedValue });
+          setMyTasks((prevTasks) =>
+            prevTasks.map((task) =>
+              task.id === taskId ? { ...task, progress: parsedValue } : task
+            )
+          );
+          // Optionally, display a success message
+          // alert('Task progress updated successfully.');
+        } catch (error) {
+          console.error('Error updating task progress:', error);
+          alert('Failed to update task progress.');
+        }
+  };
+
   useEffect(() => {
     const fetchMyTasks = async () => {
       try {
@@ -174,8 +195,22 @@ const MyTasks = () => {
           disabled={!canStartTimer(task)}
         />
       </div>
+
+      <div className="mt-4">
+        <label className="block text-sm font-bold text-indigo-500 mb-1">Progress (%)</label>
+        <input
+          type="number"
+          min="0"
+          max="100"
+          value={task.progress !== null && task.progress !== undefined ? task.progress : ''}
+          onChange={(e) => handleProgressChange(task.id, e.target.value)}
+          className="w-full px-3 py-2 border border-gray-300 rounded-md"
+          placeholder="Enter progress percentage"
+        />
+      </div>
     </div>
   );
+
 
   if (loading) {
     return <p>Loading tasks...</p>;

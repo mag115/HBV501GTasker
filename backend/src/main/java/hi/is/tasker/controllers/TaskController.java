@@ -159,4 +159,19 @@ public class TaskController {
 
         return ResponseEntity.ok(response);
     }
+
+    // In TaskController.java
+    @PatchMapping("/{taskId}/progress")
+    public ResponseEntity<Task> updateTaskProgress(
+            @PathVariable Long taskId,
+            @RequestBody Map<String, Double> requestBody
+    ) {
+        Double progress = requestBody.get("progress");
+        if (progress == null || progress < 0 || progress > 100) {
+            return ResponseEntity.badRequest().build(); // Progress should be between 0 and 100
+        }
+        Task updatedTask = taskService.updateTaskProgress(taskId, progress);
+        return ResponseEntity.ok(updatedTask);
+    }
+
 }
