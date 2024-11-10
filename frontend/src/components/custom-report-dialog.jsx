@@ -17,7 +17,7 @@ const CustomReportDialog = ({
       contentLabel="Select Report Options"
       ariaHideApp={false} // Set to false if you haven't set up the root app element
     >
-      <h2>Select Report Options</h2>
+      <h2 className="text-indigo-600">What information do you want in your report?</h2>
       <form>
         <label>
           <input
@@ -25,6 +25,7 @@ const CustomReportDialog = ({
             name="includeTasks"
             checked={reportOptions.includeTasks}
             onChange={onOptionChange}
+            className="m-2"
           />
           Include Tasks
         </label>
@@ -35,6 +36,7 @@ const CustomReportDialog = ({
             name="includeTimeSpent"
             checked={reportOptions.includeTimeSpent}
             onChange={onOptionChange}
+             className="m-2"
           />
           Include Total Time Spent
         </label>
@@ -45,15 +47,16 @@ const CustomReportDialog = ({
             name="includePerformance"
             checked={reportOptions.includePerformance}
             onChange={onOptionChange}
+             className="m-2"
           />
           Include Overall Performance
         </label>
         {/* Add more options as needed */}
         <br />
-        <button type="button" onClick={onGenerateReport}>
+        <button type="button" className="bg-indigo-600 text-white m-2 ml-0 px-4 py-2 rounded-md  hover:bg-indigo-700 focus:ring-2 focus:ring-indigo-400 transition" onClick={onGenerateReport}>
           Generate Report
         </button>
-        <button type="button" onClick={onRequestClose}>
+        <button type="button" className="bg-indigo-600 text-white m-2 px-4 py-2 rounded-md  hover:bg-indigo-700 focus:ring-2 focus:ring-indigo-400 transition" onClick={onRequestClose}>
           Cancel
         </button>
       </form>
