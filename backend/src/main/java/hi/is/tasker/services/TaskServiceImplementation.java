@@ -18,12 +18,14 @@ public class TaskServiceImplementation implements TaskService {
     private final TaskRepository taskRepository;
     private final UserRepository userRepository;
     private final TimeTrackingRepository timeTrackingRepository;
+    private final NotificationService notificationService;
 
     @Autowired
-    public TaskServiceImplementation(TaskRepository taskRepository, UserRepository userRepository, TimeTrackingRepository timeTrackingRepository) {
+    public TaskServiceImplementation(TaskRepository taskRepository, UserRepository userRepository, TimeTrackingRepository timeTrackingRepository, NotificationService notificationService) {
         this.taskRepository = taskRepository;
         this.userRepository = userRepository;
         this.timeTrackingRepository = timeTrackingRepository;
+        this.notificationService = notificationService;
     }
 
 
@@ -105,7 +107,22 @@ public class TaskServiceImplementation implements TaskService {
 
     @Override
     public void sendReminder(Long taskId) {
+        // Fetch the task by taskId
+        Task task = taskRepository.findById(taskId)
+                .orElseThrow(() -> new RuntimeException("Task not found with id: " + taskId));
 
+        // Check if a user is assigned to the task
+        User assignedUser = task.getAssignedUser();
+        if (assignedUser == null) {
+            System.out.println("No user assigned to the task with id: " + taskId);
+            return;
+        }
+
+        // Create a reminder notification for the assigned user
+        String message = "Reminder: You have a pending task: " + task.getTitle();
+        notificationService.createNotification(message, assignedUser);
+
+        System.out.println("Reminder notification sent to " + assignedUser.getUsername());
     }
 
     @Override

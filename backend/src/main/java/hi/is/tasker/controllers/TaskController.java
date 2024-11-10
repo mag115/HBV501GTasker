@@ -13,7 +13,6 @@ import java.security.Principal;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 @CrossOrigin(origins = "http://localhost:3000")
 @RestController
@@ -99,29 +98,16 @@ public class TaskController {
         taskService.delete(task);
         return ResponseEntity.noContent().build();
     }
-
     @PostMapping("/{taskId}/reminder")
-    public ResponseEntity<Void> sendTaskDeadlineReminder(@PathVariable Long taskId) {
-        // Fetch task details based on the provided taskId
-        Optional<Task> taskOptional = Optional.ofNullable(taskService.findById(taskId));
-
-        if (taskOptional.isEmpty()) {
-            // If no task is found, return a 404 response
-            return ResponseEntity.notFound().build();
+    public ResponseEntity<String> sendTaskDeadlineReminder(@PathVariable Long taskId) {
+        try {
+            taskService.sendReminder(taskId);
+            return ResponseEntity.ok().build();
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body("Error: " + e.getMessage());
         }
-
-        Task task = taskOptional.get();
-        String message = "Reminder: The deadline for task '" + task.getTitle() + "' is approaching. It is on " + task.getDeadline();
-
-        // Assuming you want to notify all users (or adjust logic as needed)
-        List<User> allUsers = userService.getAllUsers();
-
-        for (User user : allUsers) {
-            notificationService.createNotification(message, user);
-        }
-
-        return ResponseEntity.ok().build();
     }
+
 
     @PostMapping("/updateTime")
     public ResponseEntity<Task> updateTaskTime(@RequestBody Map<String, Object> request) {

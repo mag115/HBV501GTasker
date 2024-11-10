@@ -11,11 +11,13 @@ public class LoginResponse {
     private String token;
     private long expiresIn;
     private String role;  // Add role to the login response
+    private Long userId;
 
-    public LoginResponse(String token, long expiresIn, String role) {
+    public LoginResponse(String token, long expiresIn, String role, Long userId) {
         this.token = token;
         this.expiresIn = expiresIn;
         this.role = role;  // Convert enum to string
+        this.userId = userId;
     }
 
     // Getter for token

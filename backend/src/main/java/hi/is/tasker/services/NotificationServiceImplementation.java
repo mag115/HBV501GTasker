@@ -35,6 +35,7 @@ public class NotificationServiceImplementation implements NotificationService {
 
     @Override
     public List<Notification> getNotificationsForUser(User recipient) {
+        System.out.println("Fetching notifications for user: " + recipient.getId());
         return notificationRepository.findByRecipient(recipient);
     }
 

@@ -66,6 +66,7 @@ public class UserController {
 
         return ResponseEntity.ok(updatedUser);
     }
+
     @GetMapping("/username/{username}")
     public ResponseEntity<User> getUserByUsername(@PathVariable String username) {
         Optional<User> userOptional = userService.getUserByUsername(username);

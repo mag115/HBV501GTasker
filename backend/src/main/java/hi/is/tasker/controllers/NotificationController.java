@@ -27,6 +27,26 @@ public class NotificationController {
         this.taskService = taskService;
     }
 
+    // Send reminders for each assigned task to all users in the system
+    @PostMapping("/send")
+    public ResponseEntity<String> sendTaskReminders() {
+        // Fetch all users in the system
+        List<User> users = userService.getAllUsers();
+
+        for (User user : users) {
+            // Find tasks assigned to the current user
+            List<Task> assignedTasks = taskService.getTasksAssignedToUser(user.getUsername());
+
+            for (Task task : assignedTasks) {
+                // Create a reminder notification for each assigned task
+                String message = "Reminder: You have an assigned task '" + task.getTitle() + "' with a deadline on " + task.getDeadline();
+                notificationService.createNotification(message, user);
+            }
+        }
+
+        return ResponseEntity.ok("Reminders sent for all assigned tasks.");
+    }
+
     // Send a task assignment notification to the assigned user
     @PostMapping("/{taskId}/send")
     public ResponseEntity<Void> sendTaskAssignmentNotification(@PathVariable Long taskId, @RequestBody Long assignedUserId) {

@@ -16,8 +16,13 @@ const LoginForm = () => {
     const loginData = { username, password };
     const res = await handleLogin(loginData);
 
-    if (res.success) {
-      login(res.data); // Set the authenticated user in context
+    if (res.success && res.data.userId) {
+      console.log('res.data', res.data);
+      login({
+        token: res.data.token,
+        role: res?.data?.role,
+        userId: res.data.userId,
+      });
       navigate('/');
     } else {
       setErrorMessage(res.error || 'Error logging in');
@@ -27,15 +32,22 @@ const LoginForm = () => {
   return (
     <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-slate-700 via-slate-800 to-slate-900">
       <div className="bg-white p-8 rounded-lg shadow-xl max-w-sm w-full">
-        <h2 className="text-3xl font-bold mb-6 text-center text-indigo-700">Login</h2>
+        <h2 className="text-3xl font-bold mb-6 text-center text-indigo-700">
+          Login
+        </h2>
 
         {errorMessage && (
-          <p className="text-red-500 text-center mb-4 font-semibold">{errorMessage}</p>
+          <p className="text-red-500 text-center mb-4 font-semibold">
+            {errorMessage}
+          </p>
         )}
 
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
-            <label className="block text-gray-600 text-sm font-bold mb-2" htmlFor="username">
+            <label
+              className="block text-gray-600 text-sm font-bold mb-2"
+              htmlFor="username"
+            >
               Username
             </label>
             <input
@@ -49,7 +61,10 @@ const LoginForm = () => {
           </div>
 
           <div className="mb-6">
-            <label className="block text-gray-600 text-sm font-bold mb-2" htmlFor="password">
+            <label
+              className="block text-gray-600 text-sm font-bold mb-2"
+              htmlFor="password"
+            >
               Password
             </label>
             <input

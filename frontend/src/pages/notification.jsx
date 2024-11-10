@@ -12,13 +12,15 @@ const NotificationPage = () => {
 
   // Fetch notifications from the backend when the component mounts
   useEffect(() => {
+    console.log('I TRIED GETTING');
     const fetchNotifications = async () => {
       setLoading(true);
       try {
-        const response = await request('get', `/notifications/${auth.user.id}`);  // Fetch notifications for the logged-in user
+        console.log('auth.userId', auth);
+        const response = await request('get', `/notifications/${auth.userId}`); // Fetch notifications for the logged-in user
 
         // Log the response to verify it's being fetched correctly
-        console.log("Fetched notifications:", response.data);
+        console.log('Fetched notifications:', response.data);
 
         setNotifications(response.data);
       } catch (err) {
@@ -29,18 +31,15 @@ const NotificationPage = () => {
       }
     };
 
-    if (auth.user?.id) {
-      fetchNotifications();  // Fetch notifications if user is logged in
-    }
+    fetchNotifications();
   }, [auth.user]);
 
-  // Mark a notification as read
   const handleMarkAsRead = async (id) => {
     try {
-      await request('patch', `/notifications/${id}/read`);  // Call the API to mark notification as read
+      await request('patch', `/notifications/${id}/read`);
       setNotifications((prevNotifications) =>
         prevNotifications.map((notif) =>
-          notif.id === id ? { ...notif, isRead: true } : notif
+          notif.id === id ? { ...notif, read: true } : notif
         )
       );
     } catch (err) {
@@ -49,7 +48,6 @@ const NotificationPage = () => {
     }
   };
 
-  // Conditional rendering for loading and error states
   if (loading) return <p>Loading...</p>;
   if (error) return <p className="text-red-500">{error}</p>;
 

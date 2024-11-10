@@ -30,11 +30,15 @@ public class AuthenticationController {
 
         String jwtToken = jwtService.generateToken(registeredUser);
 
+        System.out.println(registeredUser.getId());
+
         LoginResponse loginResponse = new LoginResponse(
                 jwtToken,
                 jwtService.getExpirationTime(),
-                registeredUser.getRole()
+                registeredUser.getRole(),
+                registeredUser.getId()
         );
+        System.out.println("asdf" + loginResponse);
 
         return ResponseEntity.ok(loginResponse);
     }
@@ -48,8 +52,10 @@ public class AuthenticationController {
         LoginResponse loginResponse = new LoginResponse(
                 jwtToken,
                 jwtService.getExpirationTime(),
-                authenticatedUser.getRole()
-        );
+                authenticatedUser.getRole(),
+                authenticatedUser.getId());
+
+        System.out.println("userID : " + authenticatedUser.getId());
 
         return ResponseEntity.ok(loginResponse);
     }
