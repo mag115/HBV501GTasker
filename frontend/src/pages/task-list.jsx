@@ -61,26 +61,31 @@ const fetchTaskById = async (id) => {
       <h1 className="text-3xl text-center font-bold text-white mb-8 mt-4 ">
         List of tasks
       </h1>
-      <SearchBar onSearch={fetchTaskById} />
-      {/* Show the time frame input and button only to project managers */}
-      {auth.role === 'PROJECT_MANAGER' && (
-        <div className="text-center mb-6">
-            <input
-                type="number"
-                placeholder="Enter number of days"
-                value={days}
-                onChange={(e) => setDays(e.target.value)}
-                className="px-3 py-2 border rounded mr-2"
-                min="1"
-            />
-            <button
-                onClick={fetchUpcomingTasks}
-                lassName="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700"
-            >
-            Search Upcoming Tasks
-            </button>
-        </div>
-      )}
+
+      {/* Combined search section with identical look */}
+      <div className="flex flex-col md:flex-row justify-center items-center space-x-0 md:space-x-6 mb-6 w-full">
+        {/* Search by ID */}
+        <SearchBar onSearch={fetchTaskById} className="flex-grow" />
+
+        {/* Upcoming tasks search (only for Project Managers) */}
+        {auth.role === 'PROJECT_MANAGER' && (
+            <div className="flex justify-center items-center mb-6">
+                <input
+                    type="number"
+                    placeholder="Days ahead"
+                    value={days}
+                    onChange={(e) => setDays(e.target.value)}
+                    className="w-60 p-3 border border-gray-300 rounded-l-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                />
+                <button
+                    onClick={fetchUpcomingTasks}
+                    className="p-3 bg-indigo-500 text-white rounded-r-lg hover:bg-indigo-600 transition duration-200 ease-in-out"
+                >
+                    Search Upcoming
+                </button>
+            </div>
+        )}
+      </div>
 
       <TaskList />
 
