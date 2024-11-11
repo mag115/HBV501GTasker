@@ -68,7 +68,7 @@ const fetchTaskById = async (id) => {
         <SearchBar onSearch={fetchTaskById} className="flex-grow" />
 
         {/* Upcoming tasks search (only for Project Managers) */}
-        {auth.role === 'PROJECT_MANAGER' && (
+
             <div className="flex justify-center items-center mb-6">
                 <input
                     type="number"
@@ -84,7 +84,6 @@ const fetchTaskById = async (id) => {
                     Search Upcoming
                 </button>
             </div>
-        )}
       </div>
 
       <TaskList />
