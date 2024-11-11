@@ -112,7 +112,6 @@ const MyTasks = () => {
               task.id === taskId ? { ...task, progress: parsedValue } : task
             )
           );
-          alert('Task progress updated successfully.');
         } catch (error) {
           console.error('Error updating task progress:', error);
           alert('Failed to update task progress.');
