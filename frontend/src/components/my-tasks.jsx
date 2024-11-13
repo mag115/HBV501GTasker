@@ -4,18 +4,44 @@ import { request } from '../api/http';
 const MyTasks = () => {
   const [myTasks, setMyTasks] = useState([]);
   const [tasks, setTasks] = useState([]); // For dependency check
+  const [manualProgress, setManualProgress] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
+ const refreshTaskData = async () => {
+     try {
+         const response = await request('get', '/tasks/assigned');
+         const allTasksResponse = await request('get', '/tasks');
+         setMyTasks(response.data);
+         setTasks(allTasksResponse.data);
+
+         const manualProgressMap = response.data.reduce((acc, task) => {
+             acc[task.id] = task.manualProgress || 0;
+             return acc;
+         }, {});
+         setManualProgress(manualProgressMap);
+     } catch (error) {
+         console.error('Error refreshing tasks:', error);
+         setError('Failed to refresh tasks.');
+     }
+ };
+
+ useEffect(() => {
+    refreshTaskData();
+  }, []);
+
 
   const handleManualTimeChange = (taskId, value, event) => {
     if (event.key === 'Enter') {
       const updatedTasks = myTasks.map((task) => {
         if (task.id === taskId) {
-          const parsedValue = parseInt(value, 10); // Parse input as integer (seconds)
+          const parsedValue = parseInt(value, 10);
           if (!isNaN(parsedValue)) {
             task.timeSpent += parsedValue;
             task.elapsedTime = 0;
-            updateTimeSpent(task.id, task.timeSpent);
+            const calculatedProgress = Math.min((task.timeSpent / (task.estimatedDuration * 3600)) * 100, 100);
+            task.progress = Math.round(calculatedProgress);
+            updateTimeSpent(task.id, task.timeSpent).then(refreshTaskData);
             event.target.value = '';
           }
         }
@@ -40,7 +66,11 @@ const MyTasks = () => {
           task.isTracking = false;
           task.timeSpent += task.elapsedTime;
           task.elapsedTime = 0;
-          updateTimeSpent(task.id, task.timeSpent);
+
+        const calculatedProgress = Math.min((task.timeSpent / (task.estimatedDuration * 3600)) * 100, 100);
+        task.progress = Math.round(calculatedProgress);
+
+          updateTimeSpent(task.id, task.timeSpent).then(refreshTaskData);
         }
         else {
                   task.isTracking = true;
@@ -75,6 +105,7 @@ const MyTasks = () => {
         )
       );
       await request('patch', `/tasks/${taskId}/status`, { status: newStatus });
+      await refreshTaskData();
     } catch (error) {
       console.error('Failed to update status:', error);
       alert('Failed to update status. Please try again.');
@@ -100,24 +131,25 @@ const MyTasks = () => {
     return depTask && depTask.status === 'Done';
   };
 
-  const handleProgressChange = async (taskId, value) => {
+
+const handleProgressChange = async (taskId, value) => {
     const parsedValue = parseFloat(value);
-        if (isNaN(parsedValue) || parsedValue < 0 || parsedValue > 100) {
-          alert('Please enter a valid progress percentage between 0 and 100.');
-          return;
-        }
-        try {
-          await request('patch', `/tasks/${taskId}/progress`, { progress: parsedValue });
-          setMyTasks((prevTasks) =>
-            prevTasks.map((task) =>
-              task.id === taskId ? { ...task, progress: parsedValue } : task
-            )
-          );
-        } catch (error) {
-          console.error('Error updating task progress:', error);
-          alert('Failed to update task progress.');
-        }
-  };
+    if (isNaN(parsedValue) || parsedValue < 0 || parsedValue > 100) {
+        alert('Please enter a valid progress percentage between 0 and 100.');
+        return;
+    }
+    try {
+        // Update only the local state for manualProgress
+        setManualProgress((prev) => ({ ...prev, [taskId]: parsedValue }));
+
+        await request('patch', `/tasks/${taskId}/progress`, { manualProgress: parsedValue });
+
+    } catch (error) {
+        console.error('Error updating task manual progress:', error);
+        alert('Failed to update task progress.');
+    }
+};
+
 
   useEffect(() => {
     const fetchMyTasks = async () => {
@@ -196,19 +228,27 @@ const MyTasks = () => {
       </div>
 
       <div className="mt-4">
-        <label className="block text-sm font-bold text-indigo-500 mb-1">Progress (%)</label>
+        <p className="text-gray-700 mb-2">
+          <strong>User-Set Progress:</strong> {manualProgress[task.id] !== undefined ? `${Math.round(manualProgress[task.id])}%` : 'Not set'}
+        </p>
+        <p className="text-gray-700 mb-4">
+          <strong>Calculated Progress:</strong> {task.progress !== undefined ? `${Math.round(task.progress)}%` : 'N/A'}
+        </p>
+        <label className="block text-sm font-bold text-indigo-500 mb-1">Set Manual Progress (%)</label>
         <input
           type="number"
           min="0"
           max="100"
-          value={task.progress !== null && task.progress !== undefined ? task.progress : ''}
-          onChange={(e) => handleProgressChange(task.id, e.target.value)}
+          value={manualProgress[task.id] || ''}
+          onChange={(e) => setManualProgress((prev) => ({ ...prev, [task.id]: e.target.value }))}
+          onKeyDown={(e) => e.key === 'Enter' && handleProgressChange(task.id, e.target.value)}
           className="w-full px-3 py-2 border border-gray-300 rounded-md"
           placeholder="Enter progress percentage"
         />
       </div>
     </div>
   );
+
 
 
   if (loading) {

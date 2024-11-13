@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 @Getter
@@ -27,7 +28,8 @@ Task {
     private Double effortPercentage;   // percentage of total time until deadline if applicable
     private String progressStatus;     // "On Track", "Behind Schedule", or "Completed"
     private Long dependency;
-    private Double progress; //ATH: geymir hvað user setur progress sem
+    private Double progress;
+    private Double manualProgress;//ATH: geymir hvað user setur progress sem
 
     // New fields:
     @ManyToOne
@@ -41,12 +43,71 @@ Task {
     private String project_id;
     private double timeSpent;
     private double elapsedTime;
+    private Double scheduledProgress;
 
     @OneToMany(mappedBy = "task", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<TimeTracking> timeTrackings;
 
 
-    // Getters and Setters (Lombok handles these)
+    public void calculateActualProgress() {
+        if (estimatedDuration != null && estimatedDuration > 0) {
+            this.progress = Math.min((timeSpent / (estimatedDuration * 3600)) * 100, 100); // Cap at 100%
+        } else {
+            this.progress = 0.0;
+        }
+    }
+
+    public Double calculateScheduledProgress() {
+        if (deadline != null) {
+            long totalDuration = ChronoUnit.SECONDS.between(LocalDateTime.now(), deadline);
+            long timeSinceStart = estimatedDuration != null ? (long) (estimatedDuration * 3600) : totalDuration;
+
+            long elapsedSeconds = ChronoUnit.SECONDS.between(LocalDateTime.now().minusSeconds(timeSinceStart), LocalDateTime.now());
+
+            return Math.min(((double) elapsedSeconds / totalDuration) * 100, 100);
+        }
+        return 0.0;
+    }
+    public void calculateScheduledProgressStatus() {
+        if (deadline != null) {
+            double scheduledProgress = calculateScheduledProgress();
+            double actualProgress = progress != null ? progress : 0.0;
+
+            if (actualProgress >= 100) {
+                this.progressStatus = "Completed";
+            } else if (actualProgress >= scheduledProgress) {
+                this.progressStatus = "On Track";
+            } else {
+                this.progressStatus = "Behind Schedule";
+            }
+        } else {
+            this.progressStatus = "On Track";
+        }
+    }
+
+    public void updateProgressStatus() {
+        if (deadline != null) {
+            double scheduledProgress = calculateScheduledProgress();
+            double actualProgress = progress != null ? progress : 0.0;
+
+            if (actualProgress >= scheduledProgress) {
+                this.progressStatus = "On Track";
+            } else {
+                this.progressStatus = "Behind Schedule";
+            }
+        } else {
+            this.progressStatus = "On Track";
+        }
+    }
+
+    public void setManualProgress(Double manualProgress) {
+        this.manualProgress = manualProgress;
+    }
+
+    public Double getManualProgress() {
+        return manualProgress;
+    }
+
     public String getStatus() {
         return status;
     }

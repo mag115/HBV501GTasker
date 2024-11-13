@@ -9,6 +9,22 @@ const TaskList = () => {
   const [error, setError] = useState(null);
   const { auth } = useAuth();
 
+  const refreshTaskData = async () => {
+    try {
+      const response = await request('get', '/tasks');
+      setTasks(response.data);
+    } catch (error) {
+      console.error('Error refreshing tasks:', error);
+      setError('Failed to load tasks');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    refreshTaskData();
+  }, []);
+
   useEffect(() => {
     const fetchTasks = async () => {
       try {
@@ -54,6 +70,7 @@ const TaskList = () => {
         )
       );
       await request('patch', `/tasks/${taskId}/status`, { status: newStatus });
+      refreshTaskData();
       console.log(`Updated task ${taskId} status to ${newStatus}`);
     } catch (error) {
       console.error('Failed to update status:', error);
@@ -82,6 +99,7 @@ const TaskList = () => {
     try {
       await request('post', `/tasks/${taskId}/reminder`);
       alert('Reminder sent successfully!');
+      refreshTaskData();
     } catch (error) {
       console.error('Error sending reminder:', error);
       alert('Failed to send reminder. Please try again.');
@@ -134,6 +152,18 @@ const TaskList = () => {
             <span className="text-red-500">Behind Schedule</span>
           )}
         </p>
+
+
+        {/* Display calculated and user-set (manual) progress separately */}
+        <p className="text-gray-500 mb-2">
+          <strong>Calculated Progress:</strong>{' '}
+          {task.progress !== undefined ? `${Math.round(task.progress)}%` : 'N/A'}
+        </p>
+        <p className="text-gray-500 mb-2">
+          <strong>User-Set Progress:</strong>{' '}
+          {task.manualProgress !== undefined ? `${Math.round(task.manualProgress)}%` : 'Not set'}
+        </p>
+
 
         {/* Due Date */}
         <p className="text-gray-500 mb-2">

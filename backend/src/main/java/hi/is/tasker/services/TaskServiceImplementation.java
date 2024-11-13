@@ -54,8 +54,8 @@ public class TaskServiceImplementation implements TaskService {
     public Task updateTimeSpent(Long taskId, double timeSpent) {
         Task task = taskRepository.findById(taskId)
                 .orElseThrow(() -> new RuntimeException("Task not found with id: " + taskId));
-
         task.setTimeSpent(timeSpent);
+        calculateAndUpdateTaskProgress(task);  // Recalculate progress with new time spent
         return taskRepository.save(task);
     }
 
@@ -130,67 +130,93 @@ public class TaskServiceImplementation implements TaskService {
         return "Project Report";
     }
 
+
     @Override
     public Task assignDuration(Long taskId, Integer estimatedWeeks, Double effortPercentage) {
         Task task = taskRepository.findById(taskId).orElseThrow(() -> new RuntimeException("Task not found"));
 
+        // Deadline bbased on effortPercentage or weeks
+        if (task.getDeadline() == null) {
+            throw new IllegalStateException("Deadline must be set to calculate estimated duration.");
+        }
+
+        long hoursUntilDeadline = ChronoUnit.HOURS.between(LocalDateTime.now(), task.getDeadline());
+
+        // Max weeks allowed
+        double maxWeeks = hoursUntilDeadline / 40.0; // 40 hours per week
+        if (estimatedWeeks != null && estimatedWeeks > maxWeeks) {
+            throw new IllegalArgumentException("The estimated duration in weeks exceeds the time available until the deadline.");
+        }
+
+        // Estimated duration based on the weeks or effort percentage
         Double estimatedDuration = null;
         if (estimatedWeeks != null) {
-            estimatedDuration = estimatedWeeks * 40.0;  // Assuming a 40-hour work week
-        } else if (effortPercentage != null && task.getDeadline() != null) {
-            LocalDateTime now = LocalDateTime.now();
-            long hoursUntilDeadline = ChronoUnit.HOURS.between(now, task.getDeadline());
-            estimatedDuration = hoursUntilDeadline * (effortPercentage / 100.0);
+            estimatedDuration = Math.min(estimatedWeeks * 40.0, hoursUntilDeadline);
+        } else if (effortPercentage != null) {
+            estimatedDuration = Math.min(hoursUntilDeadline * (effortPercentage / 100.0), hoursUntilDeadline);
         }
 
         task.setEstimatedDuration(estimatedDuration);
         task.setEstimatedWeeks(estimatedWeeks);
         task.setEffortPercentage(effortPercentage);
+        calculateAndUpdateTaskProgress(task);
         return taskRepository.save(task);
     }
 
-    @Override
-    public double calculateTaskProgress(Long taskId) {
-        Task task = taskRepository.findById(taskId)
-                .orElseThrow(() -> new RuntimeException("Task not found"));
 
-        if (task.getEstimatedDuration() == null || task.getEstimatedDuration() == 0) {
-            return 0;
+    @Override
+    public void calculateAndUpdateTaskProgress(Task task) {
+        if (task.getEstimatedDuration() == null || task.getEstimatedDuration() <= 0 || task.getDeadline() == null) {
+            task.setProgress(0.0);
+            task.setProgressStatus("Not Started");
+            return;
         }
 
-        double progressPercentage = (task.getTimeSpent() / task.getEstimatedDuration()) * 100;
-        task.setProgressStatus(progressPercentage >= 100 ? "Completed" : "In Progress");
-        taskRepository.save(task);
+        double estimatedDurationInSeconds = task.getEstimatedDuration() * 3600;
 
-        return progressPercentage;
-    }
+        // Calculate Actual Progress: (Logged Hours / Estimated Hours) * 100
+        double actualProgress = Math.min((task.getTimeSpent() / estimatedDurationInSeconds) * 100, 100);
+        task.setProgress((double) Math.round(actualProgress));
 
-    @Override
-    public String getProgressStatus(Long taskId) {
-        Task task = taskRepository.findById(taskId).orElseThrow(() -> new RuntimeException("Task not found"));
-        double progressPercentage = calculateTaskProgress(taskId);
+        // Calculate Scheduled Progress based on deadline and estimated duration
         LocalDateTime now = LocalDateTime.now();
-        long hoursUntilDeadline = task.getDeadline() != null ? ChronoUnit.HOURS.between(now, task.getDeadline()) : 0;
+        LocalDateTime taskStart = task.getDeadline().minusSeconds((long) estimatedDurationInSeconds);
 
-        if (progressPercentage >= 100) {
-            return "Completed";
-        } else if (progressPercentage < 100 && hoursUntilDeadline <= 0) {
-            return "Behind Schedule";
-        } else if (progressPercentage < 100 && hoursUntilDeadline > 0) {
-            return "On Track";
+        double scheduledProgress;
+        if (now.isBefore(task.getDeadline())) {
+            long totalDuration = ChronoUnit.SECONDS.between(taskStart, task.getDeadline());
+            long elapsedTime = ChronoUnit.SECONDS.between(taskStart, now);
+
+            // Scheduled Progress = (Elapsed Time / Total Time Until Deadline) * 100
+            scheduledProgress = Math.min(((double) elapsedTime / totalDuration) * 100, 100);
         } else {
-            return "Unknown";
+            // If the current time is past the deadline, scheduled progress should be 100%
+            scheduledProgress = 100.0;
         }
+
+        // Determine the progress status based on scheduled vs actual progress
+        if (actualProgress >= scheduledProgress) {
+            task.setProgressStatus("On Track");
+        } else {
+            task.setProgressStatus("Behind Schedule");
+        }
+
+        // Save the task with updated progress and status
+        taskRepository.save(task);
     }
 
+
+
     @Override
-    public Task updateTaskProgress(Long taskId, Double progress) {
+    public Task updateTaskProgress(Long taskId, Double manualProgress) {
         Task task = taskRepository.findById(taskId)
                 .orElseThrow(() -> new RuntimeException("Task not found with id: " + taskId));
 
-        task.setProgress(progress);
+        task.setManualProgress(manualProgress);
+        calculateAndUpdateTaskProgress(task);
         return taskRepository.save(task);
     }
+
 
     @Override
     public List<Task> findTasksWithUpcomingDeadlines(int days) {

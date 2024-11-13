@@ -14,14 +14,14 @@ const TaskForm = () => {
   const [responseMessage, setResponseMessage] = useState('');
   const [taskId, setTaskId] = useState(null); // State for the task ID
   const[timeSpent, setTimeSpent]=useState('');
-  const [estimatedDuration, setEstimatedDuration] = useState('');
+  const [estimatedWeeks, setEstimatedWeeks] = useState('');
+  const [effortPercentage, setEffortPercentage] = useState('');
+  const [estimatedDuration, setEstimatedDuration] = useState(null);
   const navigate = useNavigate();
   const [tasks, setTasks] = useState([]);
   const [task, setTask]=useState([]);
   const [dependency, setDependency] = useState('');
 
-
-  // Fetch the list of users from the backend when the component mounts
   useEffect(() => {
     const fetchUsers = async () => {
       try {
@@ -32,21 +32,40 @@ const TaskForm = () => {
       }
     };
 
+    const fetchTasks = async () => {
+      try {
+        const response = await request('get', '/tasks');
+        setTasks(response.data);
+      } catch (error) {
+        console.error('Error fetching tasks:', error);
+      }
+    };
+
     fetchUsers();
+    fetchTasks();
   }, []);
 
   useEffect(() => {
-      const fetchTasks = async () => {
-        try {
-          const response = await request('get', '/tasks');
-          setTasks(response.data);
-        } catch (error) {
-          console.error('Error fetching tasks:', error);
-        }
-      };
+    const calculateEstimatedDuration = () => {
+      const hoursUntilDeadline = deadline ? (new Date(deadline) - new Date()) / (1000 * 60 * 60) : null;
 
-      fetchTasks();
-    }, []);
+      if (estimatedWeeks && hoursUntilDeadline !== null) {
+        // Duration based on estimatedWeeks and cap at the deadline
+        const weeksDuration = parseFloat(estimatedWeeks) * 40; // Assume 40 hours per week
+        return Math.min(weeksDuration, hoursUntilDeadline);
+      }
+
+      if (effortPercentage && hoursUntilDeadline !== null) {
+        // Duration based on effortPercentage and cap at the deadline
+        const calculatedDuration = hoursUntilDeadline * (parseFloat(effortPercentage) / 100);
+        return Math.min(calculatedDuration, hoursUntilDeadline);
+      }
+
+      return null;
+    };
+
+    setEstimatedDuration(calculateEstimatedDuration());
+  }, [estimatedWeeks, effortPercentage, deadline]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -60,26 +79,28 @@ const TaskForm = () => {
       status: 'To-do',
       timeSpent:0,
       elapsedTime:0,
-      estimatedDuration: parseFloat(estimatedDuration),
+      estimatedWeeks: estimatedWeeks ? parseInt(estimatedWeeks) : null,
+      effortPercentage: effortPercentage ? parseFloat(effortPercentage) : null,
+      estimatedDuration,
       dependency,
     };
     console.log(dependency);
     try {
-      // Create the task with the assigned duration
       const res = await request('post', `/tasks?assignedUserId=${assignedUser}`, newTask);
       if (res.status === 200) {
         setTaskId(res.data.id);
         setResponseMessage('Task successfully created!');
         setIsTaskCreated(true);
-        // Clear the form fields
         setTitle('');
         setDescription('');
         setDeadline('');
         setReminderSent(false);
         setPriority('');
         setAssignedUser('');
-        setEstimatedDuration('');
+        setEstimatedWeeks('');
+        setEffortPercentage('');
         setDependency(null);
+        setEstimatedDuration(null);
       } else {
         setResponseMessage('Failed to create task.');
       }
@@ -183,20 +204,53 @@ const TaskForm = () => {
             </div>
 
             <div className="mb-4">
-              <label className="block text-gray-700 text-sm font-semibold mb-1" htmlFor="estimatedDuration">
-                Estimated Duration (in hours)
-              </label>
-              <input
-                id="estimatedDuration"
-                type="number"
-                step="0.1"
-                min="0"
-                className="w-full px-3 py-2 border rounded-md focus:ring focus:ring-indigo-300"
-                value={estimatedDuration}
-                onChange={(e) => setEstimatedDuration(e.target.value)}
-                required
-              />
+              <label className="block text-gray-700 text-sm font-semibold mb-1">Estimated Duration</label>
+              <p className="text-gray-600 text-sm mb-2">
+                Choose either estimated weeks or effort percentage (not both).
+              </p>
+
+              <div className="mb-4">
+                <label className="block text-gray-700 text-sm font-semibold mb-1" htmlFor="estimatedWeeks">
+                  Estimated Weeks
+                </label>
+                <input
+                  id="estimatedWeeks"
+                  type="number"
+                  step="1"
+                  min="0"
+                  className="w-full px-3 py-2 border rounded-md focus:ring focus:ring-indigo-300"
+                  value={estimatedWeeks}
+                  onChange={(e) => {
+                    setEstimatedWeeks(e.target.value);
+                    setEffortPercentage('');
+                  }}
+                />
+              </div>
+
+              <div className="mb-4">
+                <label className="block text-gray-700 text-sm font-semibold mb-1" htmlFor="effortPercentage">
+                  Effort Percentage (% of total time until deadline)
+                </label>
+                <input
+                  id="effortPercentage"
+                  type="number"
+                  step="1"
+                  min="0"
+                  max="100"
+                  className="w-full px-3 py-2 border rounded-md focus:ring focus:ring-indigo-300"
+                  value={effortPercentage}
+                  onChange={(e) => {
+                    setEffortPercentage(e.target.value);
+                    setEstimatedWeeks('');
+                  }}
+                />
+              </div>
+
+              <p className="text-gray-700">
+                <strong>Calculated Estimated Duration:</strong> {estimatedDuration ? `${estimatedDuration.toFixed(2)} hours` : 'N/A'}
+              </p>
             </div>
+
 
             <div className="mb-4">
               <label className="block text-gray-700 text-sm font-semibold mb-1">Assign User</label>

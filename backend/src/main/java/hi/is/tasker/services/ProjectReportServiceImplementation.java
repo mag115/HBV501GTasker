@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.Collections;
 import java.util.List;
 
@@ -19,16 +20,19 @@ public class ProjectReportServiceImplementation implements ProjectReportService 
     private final ProjectReportRepository projectReportRepository;
     private final TaskRepository taskRepository;
     private final TimeTrackingRepository timeTrackingRepository;
+    private final TaskService taskService;
 
     @Autowired
     public ProjectReportServiceImplementation(
             ProjectReportRepository projectReportRepository,
             TaskRepository taskRepository,
-            TimeTrackingRepository timeTrackingRepository
+            TimeTrackingRepository timeTrackingRepository,
+            TaskService taskService
     ) {
         this.projectReportRepository = projectReportRepository;
         this.taskRepository = taskRepository;
         this.timeTrackingRepository = timeTrackingRepository; // Initialize here
+        this.taskService = taskService;
     }
 
     @Override
@@ -64,14 +68,65 @@ public class ProjectReportServiceImplementation implements ProjectReportService 
                 .sum();
     }
 
-    private String calculateOverallPerformance(List<Task> tasks) {
+   /* private String calculateOverallPerformance(List<Task> tasks) {
         LocalDateTime now = LocalDateTime.now();
         long tasksBehindSchedule = tasks.stream()
                 .filter(task -> task.getDeadline() != null && task.getDeadline().isBefore(now) && !task.getStatus().equals("Completed"))
                 .count();
 
         return tasksBehindSchedule > 0 ? "Behind Schedule" : "On Track";
+    }*/
+
+    private String calculateOverallPerformance(List<Task> tasks) {
+        double totalScheduledProgress = 0.0;
+        double totalActualProgress = 0.0;
+
+        for (Task task : tasks) {
+            // Skip tasks without deadlines or estimated durations
+            if (task.getDeadline() == null || task.getEstimatedDuration() == null || task.getEstimatedDuration() <= 0) {
+                continue;
+            }
+
+            // Update the task's progress to ensure it's up-to-date
+            taskService.calculateAndUpdateTaskProgress(task);
+
+            // Get actual progress
+            double actualProgress = task.getProgress() != null ? task.getProgress() : 0.0;
+
+            // Calculate scheduled progress
+            double scheduledProgress = calculateTaskScheduledProgress(task);
+
+            totalScheduledProgress += scheduledProgress;
+            totalActualProgress += actualProgress;
+        }
+
+        // Avoid division by zero
+        if (totalScheduledProgress == 0) {
+            return "On Track";  // Default if no tasks have scheduled progress
+        }
+
+        // Determine overall performance
+        if (totalActualProgress >= totalScheduledProgress) {
+            return "On Track";
+        } else {
+            return "Behind Schedule";
+        }
     }
+
+    // Helper method to calculate scheduled progress for a task
+    private double calculateTaskScheduledProgress(Task task) {
+        LocalDateTime now = LocalDateTime.now();
+        double estimatedDurationInSeconds = task.getEstimatedDuration() * 3600;
+        LocalDateTime taskStart = task.getDeadline().minusSeconds((long) estimatedDurationInSeconds);
+
+        long totalDurationSeconds = ChronoUnit.SECONDS.between(taskStart, task.getDeadline());
+        long elapsedTimeSeconds = ChronoUnit.SECONDS.between(taskStart, now);
+
+        double scheduledProgress = Math.min(((double) elapsedTimeSeconds / totalDurationSeconds) * 100, 100);
+
+        return scheduledProgress;
+    }
+
 
     public ProjectReport generateCustomProjectReport(ReportOptions options) {
         List<Task> tasks = options.isIncludeTasks() ? taskRepository.findAll() : Collections.emptyList();

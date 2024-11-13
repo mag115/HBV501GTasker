@@ -21,6 +21,7 @@ public interface TaskService {
     Task updateTaskPriority(Long taskId, String priority);
 
     List<Task> getTasksAssignedToUser(String username);
+    void calculateAndUpdateTaskProgress(Task task);
 
     List<Task> filterTasksByStatus(String status);
 
@@ -31,10 +32,6 @@ public interface TaskService {
     Task updateTimeSpent(Long taskId, double timeSpent);
 
     Task assignDuration(Long taskId, Integer estimatedWeeks, Double effortPercentage);
-
-    double calculateTaskProgress(Long taskId);
-
-    String getProgressStatus(Long taskId);
 
     Task setDependency(Long taskId);
 

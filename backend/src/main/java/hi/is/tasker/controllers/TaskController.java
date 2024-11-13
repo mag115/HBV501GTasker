@@ -40,8 +40,8 @@ public class TaskController {
 
     @GetMapping("/assigned")
     public ResponseEntity<List<Task>> getTasksAssignedToUser(Principal principal) {
-        String username = principal.getName(); // Assuming the username is part of the logged-in user's identity
-        List<Task> tasks = taskService.getTasksAssignedToUser(username); // This method should return tasks assigned to this user
+        String username = principal.getName();
+        List<Task> tasks = taskService.getTasksAssignedToUser(username);
         return ResponseEntity.ok(tasks);
     }
 
@@ -61,6 +61,9 @@ public class TaskController {
             System.out.println("Assigned User set with username: " + assignedUser.getUsername());
         }
         task.setStatus("To-do");
+        // task.setProgress(0.0);
+        // task.setProgressStatus("Not Started");
+        task.updateProgressStatus();
         Task savedTask = taskService.save(task);
         return ResponseEntity.ok(savedTask);
     }
@@ -74,7 +77,7 @@ public class TaskController {
 
     @PatchMapping("/{taskId}/status")
     public ResponseEntity<Task> updateTaskStatus(@PathVariable Long taskId, @RequestBody Map<String, String> requestBody) {
-        String status = requestBody.get("status");  // Extract the status from the request body
+        String status = requestBody.get("status");
         Task updatedTask = taskService.updateTaskStatus(taskId, status);
         return ResponseEntity.ok(updatedTask);
     }
@@ -113,12 +116,15 @@ public class TaskController {
     public ResponseEntity<Task> updateTaskTime(@RequestBody Map<String, Object> request) {
         Long taskId = ((Number) request.get("taskId")).longValue();
         Double timeSpent = ((Number) request.get("timeSpent")).doubleValue();
-        System.out.print(timeSpent);
         Task task = taskService.updateTimeSpent(taskId, timeSpent);
+
+        // Update progress
+        taskService.calculateAndUpdateTaskProgress(task);
+
         return ResponseEntity.ok(task);
     }
 
-    // Assign predicted task duration (we use this to evaluate progress)
+    // Assign predicted task duration based on either weeks or effort percentage
     @PostMapping("/{taskId}/duration")
     public ResponseEntity<Task> assignTaskDuration(
             @PathVariable Long taskId,
@@ -126,23 +132,22 @@ public class TaskController {
     ) {
         Integer estimatedWeeks = (Integer) requestBody.get("estimatedWeeks");
         Double effortPercentage = (Double) requestBody.get("effortPercentage");
-
         Task updatedTask = taskService.assignDuration(taskId, estimatedWeeks, effortPercentage);
         return ResponseEntity.ok(updatedTask);
     }
 
-    // Get a task's progress
+
     @GetMapping("/{taskId}/tracking")
     public ResponseEntity<Map<String, Object>> getTaskProgress(@PathVariable Long taskId) {
         Task task = taskService.findById(taskId);
-        double progress = taskService.calculateTaskProgress(taskId);
+        taskService.calculateAndUpdateTaskProgress(task);
 
         Map<String, Object> response = new HashMap<>();
         response.put("taskId", taskId);
         response.put("title", task.getTitle());
-        response.put("progress", progress);  // Progress as a percentage
-        response.put("status", task.getProgressStatus());  // "On Track", "Behind Schedule", or "Completed"
-
+        response.put("progress", task.getProgress());
+        response.put("manualProgress", task.getManualProgress());
+        response.put("status", task.getProgressStatus());
         return ResponseEntity.ok(response);
     }
 
@@ -151,12 +156,14 @@ public class TaskController {
             @PathVariable Long taskId,
             @RequestBody Map<String, Double> requestBody
     ) {
-        Double progress = requestBody.get("progress");
-        if (progress == null || progress < 0 || progress > 100) {
+        Double manualProgress = requestBody.get("manualProgress");
+        if (manualProgress == null || manualProgress < 0 || manualProgress > 100) {
             return ResponseEntity.badRequest().build();
         }
-        Task updatedTask = taskService.updateTaskProgress(taskId, progress);
-        return ResponseEntity.ok(updatedTask);
+        Task task = taskService.findById(taskId);
+        task.setManualProgress(manualProgress);
+        taskService.save(task);
+        return ResponseEntity.ok(task);
     }
 
     @GetMapping("/upcoming")
