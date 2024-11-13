@@ -38,6 +38,7 @@ public class ProjectReportServiceImplementation implements ProjectReportService 
 
     public ProjectReport generateProjectReport() {
         // Fetch all tasks
+
         List<Task> tasks = taskRepository.findAll();
 
         // Calculate total time spent on tasks using TimeTracking
@@ -50,6 +51,7 @@ public class ProjectReportServiceImplementation implements ProjectReportService 
 
         // Create a ProjectReport entity
         ProjectReport report = new ProjectReport(tasks, totalTimeSpent, overallPerformance);
+        projectReportRepository.deleteAll();
         projectReportRepository.save(report);
 
         return report;
@@ -91,6 +93,7 @@ public class ProjectReportServiceImplementation implements ProjectReportService 
                 options.isIncludeTimeSpent() ? totalTimeSpent : 0,
                 options.isIncludePerformance() ? overallPerformance : null
         );
+        projectReportRepository.deleteAll();
         projectReportRepository.save(report);
 
         return report;

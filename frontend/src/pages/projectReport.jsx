@@ -26,9 +26,9 @@ const ProjectReportPage = () => {
     const fetchReports = async () => {
       try {
         setLoading(true);
-        const response = await request('get', '/reports');
+
         const response2 = await request('get', '/tasks');
-        setReports(response.data);
+
         setTasks(response2.data);
       } catch (err) {
         console.error('Error fetching reports:', err);
@@ -39,14 +39,22 @@ const ProjectReportPage = () => {
     };
 
     fetchReports();
+
+    return () => {
+      console.log("Cleaning up...");
+      setReports([]);
+      setTasks([]);
+      setShowTasksReport(false);
+    };
   }, []);
+
 
   const handleCreateReport = async () => {
     try {
       setLoading(true);
       const response = await request('post', '/reports/generate');
       alert('Project report created successfully!');
-      setReports((prevReports) => [...prevReports, response.data]);
+      setReports([response.data]);
       setShowTasksReport(true); // Display tasks after creating the report
       setReportOptions((prevOptions) => ({
               ...prevOptions,
@@ -111,7 +119,7 @@ const ProjectReportPage = () => {
       setLoading(true);
       const response = await request('post', '/reports/generate/custom', reportOptions);
       alert('Custom project report created successfully!');
-      setReports((prevReports) => [...prevReports, response.data]);
+      setReports([response.data]);
       setIsCustomReportModalOpen(false);
 
       // Show tasks report if tasks are included in the custom report
@@ -138,7 +146,7 @@ const ProjectReportPage = () => {
 
   return (
     <Page>
-      <h1 className="text-2xl font-bold text-center mb-6 text-white">
+      <h1 className="text-2xl font-bold text-center mb-6 text-white mt-4">
         Project Reports
       </h1>
       <div className="text-center mb-6">
@@ -167,12 +175,12 @@ const ProjectReportPage = () => {
       {reports.length === 0 ? (
         <p className="text-center">No project reports available.</p>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-1 gap-4">
           {reports.map((report) => (
             <div key={report.id} className="rounded overflow-hidden shadow-lg bg-white m-4 p-4">
-              <h2 className="font-bold text-xl mb-2">Report #{report.id}</h2>
+              <h2 className="font-bold text-xl mb-2 ">Project report</h2>
               <p className="text-gray-700">
-                Report Date: {new Date(report.reportDate).toLocaleDateString()}
+                Date of Report: {new Date(report.reportDate).toLocaleDateString()}
               </p>
               {reportOptions.includeTimeSpent && (
               <p className="text-gray-700">
