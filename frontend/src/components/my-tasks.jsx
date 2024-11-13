@@ -41,14 +41,15 @@ const MyTasks = () => {
           task.timeSpent += task.elapsedTime;
           task.elapsedTime = 0;
           updateTimeSpent(task.id, task.timeSpent);
-        } else {
-          task.isTracking = true;
-          task.elapsedTime = 0;
-          task.timerId = setInterval(() => {
-            task.elapsedTime += 1;
-            setMyTasks([...updatedTasks]);
-          }, 1000);
         }
+        else {
+                  task.isTracking = true;
+                  task.elapsedTime = 0;
+                  task.timerId = setInterval(() => {
+                    task.elapsedTime += 1;
+                    setMyTasks([...updatedTasks]);
+                  }, 1000);
+                }
       }
       return task;
     });

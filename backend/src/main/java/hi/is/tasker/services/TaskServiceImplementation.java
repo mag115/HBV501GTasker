@@ -1,7 +1,6 @@
 package hi.is.tasker.services;
 
 import hi.is.tasker.entities.Task;
-import hi.is.tasker.entities.TimeTracking;
 import hi.is.tasker.entities.User;
 import hi.is.tasker.repositories.TaskRepository;
 import hi.is.tasker.repositories.TimeTrackingRepository;
@@ -56,7 +55,7 @@ public class TaskServiceImplementation implements TaskService {
         Task task = taskRepository.findById(taskId)
                 .orElseThrow(() -> new RuntimeException("Task not found with id: " + taskId));
 
-        task.setTimeSpent(task.getTimeSpent() + timeSpent);
+        task.setTimeSpent(timeSpent);
         return taskRepository.save(task);
     }
 
