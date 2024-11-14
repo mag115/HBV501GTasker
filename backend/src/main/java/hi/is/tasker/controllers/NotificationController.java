@@ -80,8 +80,6 @@ public class NotificationController {
         return ResponseEntity.ok(notifications);
     }
 
-
-    // Mark a notification as read by notificationId
     @PatchMapping("/{notificationId}/read")
     public ResponseEntity<Void> markNotificationAsRead(@PathVariable Long notificationId) {
         notificationService.markAsRead(notificationId);
@@ -117,8 +115,6 @@ public class NotificationController {
         return ResponseEntity.ok("Notification sent with custom comment from " + commentingUser.getUsername() + ".");
     }
 
-
-    // Send a deadline reminder for a specific task to the assigned user
     @PostMapping("/tasks/{taskId}/reminder")
     public ResponseEntity<String> sendDeadlineReminder(@PathVariable Long taskId) {
         Task task = taskService.findById(taskId);

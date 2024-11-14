@@ -41,6 +41,4 @@ public class TimeTrackingController {
         List<TimeTracking> timeLogs = timeTrackingService.getTimeLogsForTask(taskId);
         return ResponseEntity.ok(timeLogs);
     }
-
-   
 }

@@ -1,6 +1,7 @@
 package hi.is.tasker.entities;
 
 import jakarta.persistence.*;
+
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -21,9 +22,8 @@ public class ProjectReport {
 
     private Long totalTimeSpent; // Summary tíma
 
-    private String overallPerformance; // "On Track" or "Behind Schedule"
+    private String overallPerformance;
 
-    // Default constructor
     public ProjectReport() {
     }
 

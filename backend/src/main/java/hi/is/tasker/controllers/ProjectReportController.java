@@ -4,15 +4,15 @@ import hi.is.tasker.dto.ReportOptions;
 import hi.is.tasker.entities.ProjectReport;
 import hi.is.tasker.entities.Task;
 import hi.is.tasker.services.ProjectReportService;
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.pdmodel.PDPage;
+import org.apache.pdfbox.pdmodel.PDPageContentStream;
+import org.apache.pdfbox.pdmodel.font.PDType1Font;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.apache.pdfbox.pdmodel.PDDocument;
-import org.apache.pdfbox.pdmodel.PDPage;
-import org.apache.pdfbox.pdmodel.PDPageContentStream;
-import org.apache.pdfbox.pdmodel.font.PDType1Font;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -49,7 +49,6 @@ public class ProjectReportController {
         return ResponseEntity.ok(report);
     }
 
-
     @GetMapping("/{reportId}")
     public ResponseEntity<ProjectReport> getProjectReport(@PathVariable Long reportId) {
         ProjectReport report = projectReportService.getReportById(reportId);
@@ -78,8 +77,6 @@ public class ProjectReportController {
                 contentStream.setFont(PDType1Font.HELVETICA_BOLD, 16);
                 contentStream.setLeading(20f);
                 contentStream.newLineAtOffset(50, 750);
-
-                // Add title and report metadata
                 contentStream.showText("Project Report");
                 contentStream.newLine();
                 contentStream.setFont(PDType1Font.HELVETICA, 12);
@@ -92,7 +89,6 @@ public class ProjectReportController {
                 contentStream.showText("Overall Performance: " + report.getOverallPerformance());
                 contentStream.newLine();
 
-                // Add task details
                 contentStream.newLine();
                 contentStream.showText("Tasks:");
                 contentStream.newLine();

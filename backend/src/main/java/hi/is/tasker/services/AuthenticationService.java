@@ -39,7 +39,6 @@ public class AuthenticationService {
                 defaultRole
         );
 
-
         return userRepository.save(user);
     }
 

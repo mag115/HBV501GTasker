@@ -35,16 +35,9 @@ public class UserController {
         return new ResponseEntity<>("Authentication success", HttpStatus.OK);
     }
 
-   /* @PatchMapping("/{userId}/role")
-    public ResponseEntity<User> updateUserRole(@PathVariable Long userId, @RequestBody Map<String, String> requestBody) {
-        String role = requestBody.get("role");
-        User updatedUser = userService.updateUserRole(userId, role);
-        return new ResponseEntity<>(updatedUser, HttpStatus.OK);
-    }*/
-
     @GetMapping
     public ResponseEntity<List<User>> getAllUsers() {
-        List<User> users = userService.findAll();  // Assuming you have a service method that fetches all users
+        List<User> users = userService.findAll();
         return ResponseEntity.ok(users);
     }
 
@@ -52,7 +45,6 @@ public class UserController {
     public ResponseEntity<User> updateAuthenticatedUserRole(@RequestBody Map<String, String> requestBody) {
         String role = requestBody.get("role");
 
-        // Get the authenticated user from the security context
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
 
@@ -62,7 +54,7 @@ public class UserController {
 
         // Update the user's role
         user.setRole(role);
-        User updatedUser = userService.save(user); // Save the updated user
+        User updatedUser = userService.save(user);
 
         return ResponseEntity.ok(updatedUser);
     }

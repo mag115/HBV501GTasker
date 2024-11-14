@@ -62,50 +62,39 @@ public class ProjectReportServiceImplementation implements ProjectReportService 
     }
 
     private long calculateTotalTimeSpentForTask(Task task) {
-        // Sum up all the time spent for each time tracking entry related to the task
         return task.getTimeTrackings().stream()
-                .mapToLong(tt -> (long) tt.getTimeSpent())  // Assuming timeSpent is in hours, adapt if necessary
+                .mapToLong(tt -> (long) tt.getTimeSpent())
                 .sum();
     }
-
-   /* private String calculateOverallPerformance(List<Task> tasks) {
-        LocalDateTime now = LocalDateTime.now();
-        long tasksBehindSchedule = tasks.stream()
-                .filter(task -> task.getDeadline() != null && task.getDeadline().isBefore(now) && !task.getStatus().equals("Completed"))
-                .count();
-
-        return tasksBehindSchedule > 0 ? "Behind Schedule" : "On Track";
-    }*/
 
     private String calculateOverallPerformance(List<Task> tasks) {
         double totalScheduledProgress = 0.0;
         double totalActualProgress = 0.0;
 
         for (Task task : tasks) {
-            // Skip tasks without deadlines or estimated durations
+            //skip tasks without deadlines or estimated durations
             if (task.getDeadline() == null || task.getEstimatedDuration() == null || task.getEstimatedDuration() <= 0) {
                 continue;
             }
 
-            // Update the task's progress to ensure it's up-to-date
+            //update the task's progress to ensure it's up-to-date
             taskService.calculateAndUpdateTaskProgress(task);
 
-            // Get actual progress
+            //get actual progress
             double actualProgress = task.getProgress() != null ? task.getProgress() : 0.0;
 
-            // Calculate scheduled progress
+            //calculate scheduled progress
             double scheduledProgress = calculateTaskScheduledProgress(task);
 
             totalScheduledProgress += scheduledProgress;
             totalActualProgress += actualProgress;
         }
 
-        // Avoid division by zero
         if (totalScheduledProgress == 0) {
-            return "On Track";  // Default if no tasks have scheduled progress
+            return "On Track";
         }
 
-        // Determine overall performance
+        //determine overall performance
         if (totalActualProgress >= totalScheduledProgress) {
             return "On Track";
         } else {
@@ -113,7 +102,7 @@ public class ProjectReportServiceImplementation implements ProjectReportService 
         }
     }
 
-    // Helper method to calculate scheduled progress for a task
+    //helper method to calculate scheduled progress for a task
     private double calculateTaskScheduledProgress(Task task) {
         LocalDateTime now = LocalDateTime.now();
         double estimatedDurationInSeconds = task.getEstimatedDuration() * 3600;

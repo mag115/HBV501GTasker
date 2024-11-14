@@ -27,7 +27,6 @@ public class TaskServiceImplementation implements TaskService {
         this.notificationService = notificationService;
     }
 
-
     @Override
     public List<Task> findAll() {
         List<Task> tasks = taskRepository.findAll();
@@ -106,18 +105,16 @@ public class TaskServiceImplementation implements TaskService {
 
     @Override
     public void sendReminder(Long taskId) {
-        // Fetch the task by taskId
+        //fetch the task by taskId
         Task task = taskRepository.findById(taskId)
                 .orElseThrow(() -> new RuntimeException("Task not found with id: " + taskId));
 
-        // Check if a user is assigned to the task
         User assignedUser = task.getAssignedUser();
         if (assignedUser == null) {
             System.out.println("No user assigned to the task with id: " + taskId);
             return;
         }
 
-        // Create a reminder notification for the assigned user
         String message = "Reminder: You have a pending task: " + task.getTitle();
         notificationService.createNotification(message, assignedUser);
 
@@ -135,20 +132,19 @@ public class TaskServiceImplementation implements TaskService {
     public Task assignDuration(Long taskId, Integer estimatedWeeks, Double effortPercentage) {
         Task task = taskRepository.findById(taskId).orElseThrow(() -> new RuntimeException("Task not found"));
 
-        // Deadline bbased on effortPercentage or weeks
+        //deadline bbased on effortPercentage or weeks
         if (task.getDeadline() == null) {
             throw new IllegalStateException("Deadline must be set to calculate estimated duration.");
         }
 
         long hoursUntilDeadline = ChronoUnit.HOURS.between(LocalDateTime.now(), task.getDeadline());
 
-        // Max weeks allowed
         double maxWeeks = hoursUntilDeadline / 40.0; // 40 hours per week
         if (estimatedWeeks != null && estimatedWeeks > maxWeeks) {
             throw new IllegalArgumentException("The estimated duration in weeks exceeds the time available until the deadline.");
         }
 
-        // Estimated duration based on the weeks or effort percentage
+        //estimated duration based on the weeks or effort percentage
         Double estimatedDuration = null;
         if (estimatedWeeks != null) {
             estimatedDuration = Math.min(estimatedWeeks * 40.0, hoursUntilDeadline);
@@ -162,7 +158,6 @@ public class TaskServiceImplementation implements TaskService {
         calculateAndUpdateTaskProgress(task);
         return taskRepository.save(task);
     }
-
 
     @Override
     public void calculateAndUpdateTaskProgress(Task task) {
@@ -205,8 +200,6 @@ public class TaskServiceImplementation implements TaskService {
         taskRepository.save(task);
     }
 
-
-
     @Override
     public Task updateTaskProgress(Long taskId, Double manualProgress) {
         Task task = taskRepository.findById(taskId)
@@ -216,8 +209,7 @@ public class TaskServiceImplementation implements TaskService {
         calculateAndUpdateTaskProgress(task);
         return taskRepository.save(task);
     }
-
-
+    
     @Override
     public List<Task> findTasksWithUpcomingDeadlines(int days) {
         LocalDateTime now = LocalDateTime.now();

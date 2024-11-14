@@ -82,12 +82,6 @@ public class TaskController {
         return ResponseEntity.ok(updatedTask);
     }
 
-    // @PatchMapping("/{taskId}/priority")
-    //public ResponseEntity<Task> updateTaskPriority(@PathVariable Long taskId, @RequestBody String priority) {
-    //  Task updatedTask = taskService.updateTaskPriority(taskId, priority);
-    // return ResponseEntity.ok(updatedTask);
-    //}
-
     @PatchMapping("/{taskId}/priority")
     public ResponseEntity<Task> updateTaskPriority(@PathVariable Long taskId, @RequestBody Map<String, String> requestBody) {
         String priority = requestBody.get("priority");
@@ -101,6 +95,7 @@ public class TaskController {
         taskService.delete(task);
         return ResponseEntity.noContent().build();
     }
+
     @PostMapping("/{taskId}/reminder")
     public ResponseEntity<String> sendTaskDeadlineReminder(@PathVariable Long taskId) {
         try {
@@ -110,7 +105,6 @@ public class TaskController {
             return ResponseEntity.badRequest().body("Error: " + e.getMessage());
         }
     }
-
 
     @PostMapping("/updateTime")
     public ResponseEntity<Task> updateTaskTime(@RequestBody Map<String, Object> request) {

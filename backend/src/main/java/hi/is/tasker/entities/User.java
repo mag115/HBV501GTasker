@@ -66,7 +66,6 @@ public class User implements UserDetails {
         this.role = role;
     }
 
-    // UserDetails interface methods
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of();  // Returning empty list as there are no roles/authorities set

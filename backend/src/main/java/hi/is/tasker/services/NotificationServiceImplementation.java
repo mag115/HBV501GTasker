@@ -18,15 +18,7 @@ public class NotificationServiceImplementation implements NotificationService {
     public NotificationServiceImplementation(NotificationRepository notificationRepository) {
         this.notificationRepository = notificationRepository;
     }
-
- /*   @Override
-    public Notification createNotification(String message, User recipient) {
-        Notification notification = new Notification(message, recipient);
-        Notification savedNotification = notificationRepository.save(notification);
-        System.out.println("Saved notification with ID: " + savedNotification.getId());
-        return savedNotification;
-    }*/
-
+    
     @Override
     public Notification createNotification(String message, User recipient) {
         Notification notification = new Notification(message, recipient);
