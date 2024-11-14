@@ -31,6 +31,12 @@ Task {
     private Double progress;
     private Double manualProgress;//ATH: geymir hvað user setur progress sem
 
+    // Add this field:
+    @ManyToOne
+    @JoinColumn(name = "project_id")
+    @JsonIgnoreProperties({"tasks", "members"})
+    private Project project;
+
     // New fields:
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = true)

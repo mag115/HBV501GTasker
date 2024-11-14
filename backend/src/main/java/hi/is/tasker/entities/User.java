@@ -1,6 +1,7 @@
 package hi.is.tasker.entities;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Size;
@@ -53,6 +54,21 @@ public class User implements UserDetails {
     @OneToMany(mappedBy = "assignedUser", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JsonBackReference
     private List<Task> tasks;
+
+    // Projects owned by the user
+    @OneToMany(mappedBy = "owner", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonIgnoreProperties({"owner", "members"})
+    private List<Project> ownedProjects;
+
+    // Projects where the user is a member
+    @ManyToMany(mappedBy = "members")
+    @JsonIgnoreProperties({"members", "owner"})
+    private List<Project> projects;
+
+    // Tasks assigned to the user
+    @OneToMany(mappedBy = "assignedUser", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonIgnoreProperties({"assignedUser", "project"})
+    private List<Task> assignedTasks;
 
     // Default constructor
     public User() {
