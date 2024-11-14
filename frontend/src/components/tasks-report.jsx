@@ -115,7 +115,7 @@ const TasksReport = () => {
 
         {/* Display the task's progress status */}
         <p className="text-sm mb-2">
-          <strong>Status:</strong>{' '}
+          <strong>Progress status:</strong>{' '}
           {task.progressStatus === 'Completed' ? (
             <span className="text-green-500">Completed</span>
           ) : task.progressStatus === 'On Track' ? (
@@ -131,7 +131,16 @@ const TasksReport = () => {
             ? new Date(task.deadline).toLocaleDateString()
             : 'No deadline set'}
         </p>
-        <p> Status: Ongoing </p>
+        <p className="text-sm mb-2">
+                 <strong>Status:</strong>{' '}
+                 {task.status === 'To-do' ? (
+                   <span className="text-green-500">To-do</span>
+                 ) : task.status === 'Ongoing' ? (
+                   <span className="text-blue-500">Ongoing</span>
+                 ) : (
+                   <span className="text-red-500">Done</span>
+                 )}
+               </p>
 
         {auth.role === 'PROJECT_MANAGER' && <CommentInput taskId={task.id} />}
         {auth.role === 'PROJECT_MANAGER' && (
