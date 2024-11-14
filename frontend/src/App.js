@@ -68,7 +68,7 @@ const router = createBrowserRouter([
   {
     path: '/my-tasks',
     element: (
-      <ProtectedRoute requiredRole="TEAM_MEMBER">
+      <ProtectedRoute>
         <MyTasksPage />
       </ProtectedRoute>
     ),

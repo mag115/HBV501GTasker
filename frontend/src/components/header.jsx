@@ -48,6 +48,11 @@ const Header = () => {
                     </NavLink>
                   </li>
                   <li>
+                    <NavLink to="/my-tasks" className="hover:text-gray-300">
+                      My Tasks
+                    </NavLink>
+                  </li>
+                  <li>
                     <NavLink to="/task-list" className="hover:text-gray-300">
                       All Tasks
                     </NavLink>
