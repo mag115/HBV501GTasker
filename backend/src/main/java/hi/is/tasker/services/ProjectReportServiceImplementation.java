@@ -31,29 +31,23 @@ public class ProjectReportServiceImplementation implements ProjectReportService 
     ) {
         this.projectReportRepository = projectReportRepository;
         this.taskRepository = taskRepository;
-        this.timeTrackingRepository = timeTrackingRepository; // Initialize here
+        this.timeTrackingRepository = timeTrackingRepository;
         this.taskService = taskService;
     }
 
     @Override
     public List<ProjectReport> getAllReports() {
-        return projectReportRepository.findAll();  // Fetch all project reports
+        return projectReportRepository.findAll();
     }
 
     public ProjectReport generateProjectReport() {
-        // Fetch all tasks
-
         List<Task> tasks = taskRepository.findAll();
 
-        // Calculate total time spent on tasks using TimeTracking
         long totalTimeSpent = tasks.stream()
                 .mapToLong(this::calculateTotalTimeSpentForTask)
                 .sum();
 
-        // Determine overall performance based on deadlines
         String overallPerformance = calculateOverallPerformance(tasks);
-
-        // Create a ProjectReport entity
         ProjectReport report = new ProjectReport(tasks, totalTimeSpent, overallPerformance);
         projectReportRepository.deleteAll();
         projectReportRepository.save(report);
@@ -115,8 +109,7 @@ public class ProjectReportServiceImplementation implements ProjectReportService 
 
         return scheduledProgress;
     }
-
-
+    
     public ProjectReport generateCustomProjectReport(ReportOptions options) {
         List<Task> tasks = options.isIncludeTasks() ? taskRepository.findAll() : Collections.emptyList();
 
@@ -142,7 +135,6 @@ public class ProjectReportServiceImplementation implements ProjectReportService 
 
         return report;
     }
-
 
     @Override
     public ProjectReport getReportById(Long id) {

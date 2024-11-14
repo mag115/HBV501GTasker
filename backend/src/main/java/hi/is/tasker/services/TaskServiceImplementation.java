@@ -54,7 +54,7 @@ public class TaskServiceImplementation implements TaskService {
         Task task = taskRepository.findById(taskId)
                 .orElseThrow(() -> new RuntimeException("Task not found with id: " + taskId));
         task.setTimeSpent(timeSpent);
-        calculateAndUpdateTaskProgress(task);  // Recalculate progress with new time spent
+        calculateAndUpdateTaskProgress(task);
         return taskRepository.save(task);
     }
 
@@ -78,7 +78,6 @@ public class TaskServiceImplementation implements TaskService {
         return taskRepository.save(task);
     }
 
-
     @Override
     public Task updateTaskStatus(Long taskId, String status) {
         Task task = taskRepository.findById(taskId)
@@ -99,13 +98,11 @@ public class TaskServiceImplementation implements TaskService {
 
     @Override
     public List<Task> filterTasksByStatus(String status) {
-        // TODO: Implement filterTasksByStatus method
         return null;
     }
 
     @Override
     public void sendReminder(Long taskId) {
-        //fetch the task by taskId
         Task task = taskRepository.findById(taskId)
                 .orElseThrow(() -> new RuntimeException("Task not found with id: " + taskId));
 
@@ -123,7 +120,6 @@ public class TaskServiceImplementation implements TaskService {
 
     @Override
     public String generateProjectReport(Long projectId) {
-        // TODO: Implement generateProjectReport method
         return "Project Report";
     }
 
@@ -169,11 +165,11 @@ public class TaskServiceImplementation implements TaskService {
 
         double estimatedDurationInSeconds = task.getEstimatedDuration() * 3600;
 
-        // Calculate Actual Progress: (Logged Hours / Estimated Hours) * 100
+        //actual Progress: (Logged Hours / Estimated Hours) * 100
         double actualProgress = Math.min((task.getTimeSpent() / estimatedDurationInSeconds) * 100, 100);
         task.setProgress((double) Math.round(actualProgress));
 
-        // Calculate Scheduled Progress based on deadline and estimated duration
+        //scheduled Progress based on deadline and estimated duration
         LocalDateTime now = LocalDateTime.now();
         LocalDateTime taskStart = task.getDeadline().minusSeconds((long) estimatedDurationInSeconds);
 
@@ -182,21 +178,18 @@ public class TaskServiceImplementation implements TaskService {
             long totalDuration = ChronoUnit.SECONDS.between(taskStart, task.getDeadline());
             long elapsedTime = ChronoUnit.SECONDS.between(taskStart, now);
 
-            // Scheduled Progress = (Elapsed Time / Total Time Until Deadline) * 100
+            //scheduled Progress = (Elapsed Time / Total Time Until Deadline) * 100
             scheduledProgress = Math.min(((double) elapsedTime / totalDuration) * 100, 100);
         } else {
-            // If the current time is past the deadline, scheduled progress should be 100%
             scheduledProgress = 100.0;
         }
 
-        // Determine the progress status based on scheduled vs actual progress
         if (actualProgress >= scheduledProgress) {
             task.setProgressStatus("On Track");
         } else {
             task.setProgressStatus("Behind Schedule");
         }
 
-        // Save the task with updated progress and status
         taskRepository.save(task);
     }
 
@@ -209,7 +202,7 @@ public class TaskServiceImplementation implements TaskService {
         calculateAndUpdateTaskProgress(task);
         return taskRepository.save(task);
     }
-    
+
     @Override
     public List<Task> findTasksWithUpcomingDeadlines(int days) {
         LocalDateTime now = LocalDateTime.now();

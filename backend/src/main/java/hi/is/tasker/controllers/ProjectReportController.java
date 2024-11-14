@@ -28,14 +28,12 @@ public class ProjectReportController {
     public ProjectReportController(ProjectReportService projectReportService) {
         this.projectReportService = projectReportService;
     }
-
-
+    
     @GetMapping()
     public ResponseEntity<List<ProjectReport>> getAllReports() {
         List<ProjectReport> reports = projectReportService.getAllReports();
         return ResponseEntity.ok(reports);
     }
-
 
     @PostMapping("/generate")
     public ResponseEntity<ProjectReport> generateProjectReport() {
@@ -66,7 +64,7 @@ public class ProjectReportController {
             return ResponseEntity.notFound().build();
         }
 
-        // Create a PDF document
+        //PDF document
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         try (PDDocument document = new PDDocument()) {
             PDPage page = new PDPage();
@@ -88,7 +86,6 @@ public class ProjectReportController {
                 contentStream.newLine();
                 contentStream.showText("Overall Performance: " + report.getOverallPerformance());
                 contentStream.newLine();
-
                 contentStream.newLine();
                 contentStream.showText("Tasks:");
                 contentStream.newLine();
@@ -104,8 +101,6 @@ public class ProjectReportController {
         }
 
         byte[] pdfBytes = outputStream.toByteArray();
-
-        // Return the PDF as a downloadable file
         return ResponseEntity.ok()
                 .contentType(MediaType.APPLICATION_PDF)
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=project_report_" + projectId + ".pdf")

@@ -61,13 +61,10 @@ public class TaskController {
             System.out.println("Assigned User set with username: " + assignedUser.getUsername());
         }
         task.setStatus("To-do");
-        // task.setProgress(0.0);
-        // task.setProgressStatus("Not Started");
         task.updateProgressStatus();
         Task savedTask = taskService.save(task);
         return ResponseEntity.ok(savedTask);
     }
-
 
     @PostMapping("/{taskId}/assign")
     public ResponseEntity<Task> assignTask(@PathVariable Long taskId, @RequestBody Long userId) {
@@ -118,7 +115,7 @@ public class TaskController {
         return ResponseEntity.ok(task);
     }
 
-    // Assign predicted task duration based on either weeks or effort percentage
+    //assign predicted task duration based on either weeks or effort percent
     @PostMapping("/{taskId}/duration")
     public ResponseEntity<Task> assignTaskDuration(
             @PathVariable Long taskId,
@@ -129,7 +126,6 @@ public class TaskController {
         Task updatedTask = taskService.assignDuration(taskId, estimatedWeeks, effortPercentage);
         return ResponseEntity.ok(updatedTask);
     }
-
 
     @GetMapping("/{taskId}/tracking")
     public ResponseEntity<Map<String, Object>> getTaskProgress(@PathVariable Long taskId) {

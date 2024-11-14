@@ -28,18 +28,15 @@ public class NotificationController {
         this.taskService = taskService;
     }
 
-    // Send reminders for each assigned task to all users in the system
     @PostMapping("/send")
     public ResponseEntity<String> sendTaskReminders() {
         // Fetch all users in the system
         List<User> users = userService.getAllUsers();
 
         for (User user : users) {
-            // Find tasks assigned to the current user
             List<Task> assignedTasks = taskService.getTasksAssignedToUser(user.getUsername());
 
             for (Task task : assignedTasks) {
-                // Create a reminder notification for each assigned task
                 String message = "Reminder: You have an assigned task '" + task.getTitle() + "' with a deadline on " + task.getDeadline();
                 notificationService.createNotification(message, user);
             }
@@ -48,7 +45,6 @@ public class NotificationController {
         return ResponseEntity.ok("Reminders sent for all assigned tasks.");
     }
 
-    // Send a task assignment notification to the assigned user
     @PostMapping("/{taskId}/send")
     public ResponseEntity<Void> sendTaskAssignmentNotification(@PathVariable Long taskId, @RequestBody Long assignedUserId) {
         Task task = taskService.findById(taskId);
@@ -59,23 +55,19 @@ public class NotificationController {
         User assignedUser = userService.getUserById(assignedUserId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        // Create a notification specific to the assigned task and user
         String message = "You have been assigned a new task: '" + task.getTitle() + "'.";
         notificationService.createNotification(message, assignedUser);
 
         return ResponseEntity.ok().build();
     }
 
-    // Retrieve notifications for a user by userId
+    //retrieve notifications for a user by userId
     @GetMapping("/{userId}")
     public ResponseEntity<List<Notification>> getNotificationsForUser(@PathVariable Long userId) {
         User user = userService.getUserById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
         List<Notification> notifications = notificationService.getNotificationsForUser(user);
-
-        // Add this log to verify notifications are being fetched
-        System.out.println("Fetched " + notifications.size() + " notifications for user: " + user.getUsername());
 
         return ResponseEntity.ok(notifications);
     }
@@ -98,17 +90,15 @@ public class NotificationController {
             return ResponseEntity.badRequest().body("No user is assigned to this task.");
         }
 
-        // Find the user who made the comment
         User commentingUser = userService.getUserById(userId)
                 .orElseThrow(() -> new RuntimeException("Commenting user not found"));
 
-        // Retrieve the custom comment from the request body
         String comment = requestBody.get("comment");
         if (comment == null || comment.trim().isEmpty()) {
             return ResponseEntity.badRequest().body("Comment text is required.");
         }
 
-        // Create a notification message with the custom comment and sender's name
+        //create a notification message with the comment and name
         String message = "New comment on task '" + task.getTitle() + "' from " + commentingUser.getUsername() + ": " + comment;
         notificationService.createNotification(message, assignedUser);
 
