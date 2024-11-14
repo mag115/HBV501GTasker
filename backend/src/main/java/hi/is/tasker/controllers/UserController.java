@@ -31,7 +31,6 @@ public class UserController {
 
     @PostMapping("/authenticate")
     public ResponseEntity<String> authenticateUser() {
-        // Authentication logic can be implemented here
         return new ResponseEntity<>("Authentication success", HttpStatus.OK);
     }
 
