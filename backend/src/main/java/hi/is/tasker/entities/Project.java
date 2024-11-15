@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -36,8 +37,9 @@ public class Project {
             joinColumns = @JoinColumn(name = "project_id"),
             inverseJoinColumns = @JoinColumn(name = "user_id")
     )
-    @JsonIgnoreProperties({"projects", "tasks", "assignedTasks"})
-    private List<User> members;
+
+    @JsonIgnoreProperties({"projects", "ownedProjects", "tasks", "assignedTasks"})
+    private List<User> members = new ArrayList<>();
 
     // Tasks associated with this project
     @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, fetch = FetchType.LAZY)

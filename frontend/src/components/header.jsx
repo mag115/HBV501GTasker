@@ -34,7 +34,7 @@ const Header = () => {
             }
           }
         };
-        
+
     fetchUnreadNotifications();
   }, [auth]);
 
@@ -82,6 +82,11 @@ const handleProjectChange = (e) => {
             <>
               {auth.role === 'PROJECT_MANAGER' && (
                 <>
+                  <li>
+                    <NavLink to="/create-project" className="hover:text-gray-300">
+                      Create Project
+                    </NavLink>
+                  </li>
                   <li>
                     <NavLink to="/create-task" className="hover:text-gray-300">
                       Create Task

@@ -13,6 +13,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
@@ -60,10 +61,9 @@ public class User implements UserDetails {
     @JsonIgnoreProperties({"owner", "members"})
     private List<Project> ownedProjects;
 
-    // Projects where the user is a member
-    @ManyToMany(mappedBy = "members")
-    @JsonIgnoreProperties({"members", "owner"})
-    private List<Project> projects;
+    @ManyToMany(mappedBy = "members", fetch = FetchType.LAZY)
+    @JsonIgnoreProperties({"members", "owner", "tasks"})
+    private List<Project> projects = new ArrayList<>();
 
     // Tasks assigned to the user
     @OneToMany(mappedBy = "assignedUser", cascade = CascadeType.ALL, fetch = FetchType.LAZY)

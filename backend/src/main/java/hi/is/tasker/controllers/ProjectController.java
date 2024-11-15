@@ -6,15 +6,14 @@ import hi.is.tasker.entities.User;
 import hi.is.tasker.services.ProjectService;
 import hi.is.tasker.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
+import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
 import java.util.Optional;
 
-@Controller
+@CrossOrigin(origins = "http://localhost:3000")
+@RestController
 @RequestMapping("/projects")
 public class ProjectController {
     @Autowired
@@ -23,8 +22,12 @@ public class ProjectController {
     @Autowired
     private UserService userService;
 
-    @PostMapping("/create")
+    @PostMapping
     public Project createProject(@RequestBody ProjectDto projectDTO, Principal principal) {
+
+        if (principal == null) {
+            throw new AuthenticationCredentialsNotFoundException("Principal is null");
+        }
         // Get the currently authenticated user
         String username = principal.getName();
         Optional<User> ownerOptional = userService.getUserByUsername(username);
