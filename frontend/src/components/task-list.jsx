@@ -106,6 +106,18 @@ const TaskList = () => {
     }
   };
 
+   const handleDelete = async (taskId) => {
+        const confirmDelete = window.confirm('Are you sure you want to delete the task?');
+        if(confirmDelete){
+            try {
+                await request('delete', `/tasks/${taskId}`);
+                refreshTaskData();
+            } catch (error) {
+                console.error('Error deleting task:', error);
+                alert('Failed to delete task. Please try again.');
+            }
+   };}
+
   const getPriorityColor = (priority) => {
     switch (priority) {
       case 'low':
@@ -208,6 +220,9 @@ const TaskList = () => {
           </button>
         )}
       </div>
+ {auth.role === 'PROJECT_MANAGER' && (
+          <>
+      <button  className="p-1 bg-red text-white rounded hover:bg-black transition" onClick={() => handleDelete(task.id)}> Delete task </button></>)}
     </div>
   );
 
