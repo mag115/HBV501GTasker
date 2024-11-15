@@ -6,6 +6,8 @@ import { request } from '../api/http';
 const Header = () => {
   const { auth, logout } = useAuth();
   const [unreadCount, setUnreadCount] = useState(0);
+  const [projects, setProjects] = useState([]);
+  const [selectedProject, setSelectedProject] = useState(null);
 
   useEffect(() => {
     const fetchUnreadNotifications = async () => {
@@ -18,6 +20,21 @@ const Header = () => {
         }
       }
     };
+
+    const fetchProjects = async () => {
+          if (auth?.token) {
+            try {
+              const response = await request('get', '/projects');
+              setProjects(response.data);
+              if (response.data.length > 0) {
+                setSelectedProject(response.data[0].id); // Default to the first project
+              }
+            } catch (error) {
+              console.error('Error fetching projects:', error);
+            }
+          }
+        };
+        
     fetchUnreadNotifications();
   }, [auth]);
 
