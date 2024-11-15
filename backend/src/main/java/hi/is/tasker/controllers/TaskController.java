@@ -74,10 +74,13 @@ public class TaskController {
 
     @PatchMapping("/{taskId}/status")
     public ResponseEntity<Task> updateTaskStatus(@PathVariable Long taskId, @RequestBody Map<String, String> requestBody) {
+
         String status = requestBody.get("status");
         Task updatedTask = taskService.updateTaskStatus(taskId, status);
+
         return ResponseEntity.ok(updatedTask);
     }
+
 
     @PatchMapping("/{taskId}/priority")
     public ResponseEntity<Task> updateTaskPriority(@PathVariable Long taskId, @RequestBody Map<String, String> requestBody) {

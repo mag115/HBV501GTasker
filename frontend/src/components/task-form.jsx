@@ -269,30 +269,61 @@ const TaskForm = () => {
                 <strong>Calculated Estimated Duration:</strong> {estimatedDuration ? `${estimatedDuration.toFixed(2)} hours` : 'N/A'}
               </p>
             </div>
+             <div className="mb-4">
+                          <label className="block text-gray-700 text-sm font-semibold mb-1">Assign User</label>
+                          <select
+                            value={assignedUser}
+                            onChange={(e) => setAssignedUser(e.target.value)}
+                            className="w-full px-3 py-2 border rounded-md focus:ring focus:ring-indigo-300"
+                            required
+                          >
+                            <option value="">Select a User</option>
+                            {users.map((user) => (
+                              <option key={user.id} value={user.id}>{user.username}</option>
+                            ))}
+                          </select>
+                        </div>
+                                    <div className="mb-4">
+                                      <label className="block text-gray-700 text-sm font-bold mb-2">Dependencies</label>
+                                      <select
+                                        value={dependency}
+                                        onChange={(e) => setDependency(e.target.value)}
+                                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-300"
 
-            <div className="mb-4">
-              <label className="inline-flex items-center">
-                <input
-                  type="checkbox"
-                  className="form-checkbox h-5 w-5 text-indigo-600"
-                  checked={reminderSent}
-                  onChange={(e) => setReminderSent(e.target.checked)}
-                />
-                <span className="ml-2 text-gray-700">Send a reminder</span>
-              </label>
-            </div>
+                                      >
+                                        <option value="">Select a task that has to be completed before this one can begin</option>
+                                        {tasks.map((task) => (
+                                          <option key={task.id} value={task.id}>{task.title}</option>
+                                        ))}
+                                      </select>
+                                    </div>
 
-            <button
-              type="submit"
-              className="bg-indigo-600 text-white px-4 py-2 rounded-md w-full hover:bg-indigo-700 focus:ring-2 focus:ring-indigo-400 transition"
-            >
-              Add Task
-            </button>
-          </form>
-        )}
-      </div>
-    </div>
-  );
-};
+                        <div className="mb-4">
+                          <label className="inline-flex items-center">
+                            <input
+                              type="checkbox"
+                              className="form-checkbox h-5 w-5 text-indigo-600"
+                              checked={reminderSent}
+                              onChange={(e) => setReminderSent(e.target.checked)}
+                            />
+                            <span className="ml-2 text-gray-700">Send a reminder</span>
+                          </label>
+                        </div>
 
-export { TaskForm };
+                        <button
+                          type="submit"
+                          className="bg-indigo-600 text-white px-4 py-2 rounded-md w-full hover:bg-indigo-700 focus:ring-2 focus:ring-indigo-400 transition"
+                        >
+                          Add Task
+                        </button>
+                      </form>
+                    )}
+                  </div>
+                </div>
+              );
+            };
+
+            export { TaskForm };
+
+
+

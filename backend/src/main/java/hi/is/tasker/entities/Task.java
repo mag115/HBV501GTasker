@@ -68,6 +68,7 @@ Task {
         }
         return 0.0;
     }
+
     public void calculateScheduledProgressStatus() {
         if (deadline != null) {
             double scheduledProgress = calculateScheduledProgress();
