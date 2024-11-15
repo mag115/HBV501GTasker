@@ -38,6 +38,11 @@ const Header = () => {
     fetchUnreadNotifications();
   }, [auth]);
 
+const handleProjectChange = (e) => {
+    setSelectedProject(e.target.value);
+    // skoða þetta kannski betur
+  };
+
   return (
     <header className="bg-indigo-600 text-white p-4 shadow-md">
       <nav className="container mx-auto flex justify-between items-center">
@@ -55,6 +60,24 @@ const Header = () => {
               Home
             </NavLink>
           </li>
+          {auth?.token && (
+            <li>
+              <select
+                value={selectedProject}
+                onChange={handleProjectChange}
+                className="bg-indigo-500 text-white rounded px-3 py-1"
+              >
+                <option value="" disabled>
+                  Select Project
+                </option>
+                {projects.map((project) => (
+                  <option key={project.id} value={project.id}>
+                    {project.name}
+                  </option>
+                ))}
+              </select>
+            </li>
+          )}
           {auth?.token ? (
             <>
               {auth.role === 'PROJECT_MANAGER' && (
