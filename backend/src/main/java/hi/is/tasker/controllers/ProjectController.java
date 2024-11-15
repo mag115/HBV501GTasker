@@ -33,7 +33,6 @@ public class ProjectController {
         }
 
         // Call the service to create the project
-        //return projectService.createProject(projectDTO, owner);
-        return null;
+        return projectService.createProject(projectDTO, owner);
     }
 }

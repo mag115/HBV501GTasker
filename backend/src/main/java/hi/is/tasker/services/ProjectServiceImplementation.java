@@ -8,6 +8,8 @@ import hi.is.tasker.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 public class ProjectServiceImplementation implements ProjectService {
     @Autowired
@@ -16,7 +18,7 @@ public class ProjectServiceImplementation implements ProjectService {
     @Autowired
     private UserRepository userRepository;
 
-    public Project createProject(ProjectDto projectDTO, User owner) {
+    public Project createProject(ProjectDto projectDTO, Optional<User> owner) {
         // Create a new Project entity
         Project project = new Project();
         project.setName(projectDTO.getName());
