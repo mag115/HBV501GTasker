@@ -13,14 +13,15 @@ const TaskForm = () => {
   const [isTaskCreated, setIsTaskCreated] = useState(false);
   const [responseMessage, setResponseMessage] = useState('');
   const [taskId, setTaskId] = useState(null); // State for the task ID
-  const[timeSpent, setTimeSpent]=useState('');
+  const [timeSpent, setTimeSpent] = useState('');
   const [estimatedWeeks, setEstimatedWeeks] = useState('');
   const [effortPercentage, setEffortPercentage] = useState('');
   const [estimatedDuration, setEstimatedDuration] = useState(null);
   const navigate = useNavigate();
   const [tasks, setTasks] = useState([]);
-  const [task, setTask]=useState([]);
+  const [task, setTask] = useState([]);
   const [dependency, setDependency] = useState('');
+  const [maxWeeks, setMaxWeeks] = useState(0);
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -46,17 +47,33 @@ const TaskForm = () => {
   }, []);
 
   useEffect(() => {
+    const calculateMaxWeeks = () => {
+      if (deadline) {
+        const hoursUntilDeadline = (new Date(deadline) - new Date()) / (1000 * 60 * 60);
+        const maxWeeks = hoursUntilDeadline / 168; //168 eru klukkutímar í viku
+        return Math.floor(maxWeeks);
+      }
+      return 0;
+    };
+
+    const maxWeeks = calculateMaxWeeks();
+    setMaxWeeks(maxWeeks);
+
+    if (estimatedWeeks && parseInt(estimatedWeeks) > maxWeeks) {
+      setEstimatedWeeks(maxWeeks);
+    }
+  }, [deadline, estimatedWeeks]);
+
+  useEffect(() => {
     const calculateEstimatedDuration = () => {
       const hoursUntilDeadline = deadline ? (new Date(deadline) - new Date()) / (1000 * 60 * 60) : null;
 
       if (estimatedWeeks && hoursUntilDeadline !== null) {
-        // Duration based on estimatedWeeks and cap at the deadline
-        const weeksDuration = parseFloat(estimatedWeeks) * 40; // Assume 40 hours per week
+        const weeksDuration = parseFloat(estimatedWeeks) * 40;
         return Math.min(weeksDuration, hoursUntilDeadline);
       }
 
       if (effortPercentage && hoursUntilDeadline !== null) {
-        // Duration based on effortPercentage and cap at the deadline
         const calculatedDuration = hoursUntilDeadline * (parseFloat(effortPercentage) / 100);
         return Math.min(calculatedDuration, hoursUntilDeadline);
       }
@@ -77,14 +94,14 @@ const TaskForm = () => {
       reminderSent,
       priority,
       status: 'To-do',
-      timeSpent:0,
-      elapsedTime:0,
+      timeSpent: 0,
+      elapsedTime: 0,
       estimatedWeeks: estimatedWeeks ? parseInt(estimatedWeeks) : null,
       effortPercentage: effortPercentage ? parseFloat(effortPercentage) : null,
       estimatedDuration,
       dependency,
     };
-    console.log(dependency);
+
     try {
       const res = await request('post', `/tasks?assignedUserId=${assignedUser}`, newTask);
       if (res.status === 200) {
@@ -218,6 +235,7 @@ const TaskForm = () => {
                   type="number"
                   step="1"
                   min="0"
+                  max={maxWeeks}
                   className="w-full px-3 py-2 border rounded-md focus:ring focus:ring-indigo-300"
                   value={estimatedWeeks}
                   onChange={(e) => {
@@ -225,6 +243,7 @@ const TaskForm = () => {
                     setEffortPercentage('');
                   }}
                 />
+                <p className="text-gray-500 text-sm mt-2">Maximum available weeks of work within deadline: {maxWeeks}</p>
               </div>
 
               <div className="mb-4">
@@ -250,36 +269,6 @@ const TaskForm = () => {
                 <strong>Calculated Estimated Duration:</strong> {estimatedDuration ? `${estimatedDuration.toFixed(2)} hours` : 'N/A'}
               </p>
             </div>
-
-
-            <div className="mb-4">
-              <label className="block text-gray-700 text-sm font-semibold mb-1">Assign User</label>
-              <select
-                value={assignedUser}
-                onChange={(e) => setAssignedUser(e.target.value)}
-                className="w-full px-3 py-2 border rounded-md focus:ring focus:ring-indigo-300"
-                required
-              >
-                <option value="">Select a User</option>
-                {users.map((user) => (
-                  <option key={user.id} value={user.id}>{user.username}</option>
-                ))}
-              </select>
-            </div>
-                        <div className="mb-4">
-                          <label className="block text-gray-700 text-sm font-bold mb-2">Dependencies</label>
-                          <select
-                            value={dependency}
-                            onChange={(e) => setDependency(e.target.value)}
-                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-300"
-
-                          >
-                            <option value="">Select a task that has to be completed before this one can begin</option>
-                            {tasks.map((task) => (
-                              <option key={task.id} value={task.id}>{task.title}</option>
-                            ))}
-                          </select>
-                        </div>
 
             <div className="mb-4">
               <label className="inline-flex items-center">
