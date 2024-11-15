@@ -18,15 +18,13 @@ public class ProjectServiceImplementation implements ProjectService {
     @Autowired
     private UserRepository userRepository;
 
-    public Project createProject(ProjectDto projectDTO, Optional<User> owner) {
-        // Create a new Project entity
+    public Project createProject(ProjectDto projectDTO, User owner) {
         Project project = new Project();
         project.setName(projectDTO.getName());
         project.setDescription(projectDTO.getDescription());
         project.setOwner(owner);
-        project.getMembers().add(owner); // Add the owner as a member
+        project.getMembers().add(owner);
 
-        // Save the project to the database
         return projectRepository.save(project);
     }
 }

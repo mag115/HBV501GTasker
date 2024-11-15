@@ -45,8 +45,6 @@ Task {
 
     private String status;  // Example values: "To Do", "In Progress", "Completed"
     private String priority;  // Example values: "Low", "Medium", "High"
-    private String project_name;
-    private String project_id;
     private double timeSpent;
     private double elapsedTime;
     private Double scheduledProgress;

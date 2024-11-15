@@ -27,10 +27,10 @@ public class ProjectController {
     public Project createProject(@RequestBody ProjectDto projectDTO, Principal principal) {
         // Get the currently authenticated user
         String username = principal.getName();
-        Optional<User> owner = userService.getUserByUsername(username);
-        if (owner.isEmpty()) {
-            throw new RuntimeException("User not found");
-        }
+        Optional<User> ownerOptional = userService.getUserByUsername(username);
+
+        // Handle the case where the user is not found
+        User owner = ownerOptional.orElseThrow(() -> new RuntimeException("User not found"));
 
         // Call the service to create the project
         return projectService.createProject(projectDTO, owner);
