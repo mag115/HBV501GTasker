@@ -12,6 +12,7 @@ import { MyTasksPage } from './pages/mytasks';
 import { NotificationPage } from './pages/notification';
 import { ProjectReportPage } from './pages/projectReport';
 import { ProjectFormPage } from './pages/create-project';
+import { ProjectPage } from './pages/project';
 
 const router = createBrowserRouter([
   {
@@ -80,6 +81,14 @@ const router = createBrowserRouter([
       <ProtectedRoute>
         <MyTasksPage />
       </ProtectedRoute>
+    ),
+  },
+  {
+    path: '/projects/:id',
+    element: (
+        <ProtectedRoute>
+          <ProjectPage />
+        </ProtectedRoute>
     ),
   },
 ]);

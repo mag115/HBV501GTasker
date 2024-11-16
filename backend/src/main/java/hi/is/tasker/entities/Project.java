@@ -31,14 +31,13 @@ public class Project {
     private User owner;
 
     // Team members (Many-to-Many relationship)
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "project_members",
             joinColumns = @JoinColumn(name = "project_id"),
             inverseJoinColumns = @JoinColumn(name = "user_id")
     )
-
-    @JsonIgnoreProperties({"projects", "ownedProjects", "tasks", "assignedTasks"})
+    @JsonIgnoreProperties({"projects"})
     private List<User> members = new ArrayList<>();
 
     // Tasks associated with this project

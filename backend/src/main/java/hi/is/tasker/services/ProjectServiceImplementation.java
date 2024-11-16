@@ -7,8 +7,11 @@ import hi.is.tasker.repositories.ProjectRepository;
 import hi.is.tasker.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class ProjectServiceImplementation implements ProjectService {
@@ -19,13 +22,6 @@ public class ProjectServiceImplementation implements ProjectService {
     private UserRepository userRepository;
 
     public Project createProject(ProjectDto projectDTO, User owner) {
-        if (projectDTO == null) {
-            throw new IllegalArgumentException("ProjectDTO is null");
-        }
-        if (owner == null) {
-            throw new IllegalArgumentException("Owner is null");
-        }
-
         // Log statements
         System.out.println("Creating project with name: " + projectDTO.getName());
         System.out.println("Owner: " + owner.getUsername());
@@ -44,5 +40,27 @@ public class ProjectServiceImplementation implements ProjectService {
         }
 
         return projectRepository.save(project);
+    }
+
+    @Transactional(readOnly = true)
+    public List<ProjectDto> getAllProjects() {
+        List<Project> projects = projectRepository.findAll();
+        return projects.stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
+    }
+
+    // New method to retrieve a project by ID
+    public Optional<Project> getProjectById(Long id) {
+        return projectRepository.findById(id);
+    }
+
+    private ProjectDto convertToDTO(Project project) {
+        ProjectDto dto = new ProjectDto();
+        dto.setId(project.getId());
+        dto.setName(project.getName());
+        dto.setDescription(project.getDescription());
+        // Map other necessary fields
+        return dto;
     }
 }

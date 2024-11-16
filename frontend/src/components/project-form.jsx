@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/auth-context';
 import { request } from '../api/http';
+import { useNavigate } from 'react-router-dom';
 
 const ProjectForm = () => {
   const { auth } = useAuth();
@@ -8,6 +9,7 @@ const ProjectForm = () => {
   const [description, setDescription] = useState('');
   const [users, setUsers] = useState([]);
   const [selectedUsers, setSelectedUsers] = useState([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
     // Fetch all users to assign them to projects
@@ -34,6 +36,7 @@ const ProjectForm = () => {
       setName('');
       setDescription('');
       setSelectedUsers([]);
+      navigate(`/projects/${response.data.id}`);
     } catch (error) {
       console.error('Error creating project:', error);
     }

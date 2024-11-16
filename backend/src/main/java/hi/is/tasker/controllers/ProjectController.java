@@ -6,10 +6,11 @@ import hi.is.tasker.entities.User;
 import hi.is.tasker.services.ProjectService;
 import hi.is.tasker.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
+import java.util.List;
 import java.util.Optional;
 
 @CrossOrigin(origins = "http://localhost:3000")
@@ -24,10 +25,6 @@ public class ProjectController {
 
     @PostMapping
     public Project createProject(@RequestBody ProjectDto projectDTO, Principal principal) {
-
-        if (principal == null) {
-            throw new AuthenticationCredentialsNotFoundException("Principal is null");
-        }
         // Get the currently authenticated user
         String username = principal.getName();
         Optional<User> ownerOptional = userService.getUserByUsername(username);
@@ -37,5 +34,18 @@ public class ProjectController {
 
         // Call the service to create the project
         return projectService.createProject(projectDTO, owner);
+    }
+
+    @GetMapping
+    @PreAuthorize("hasAnyRole('PROJECT_MANAGER', 'TEAM_MEMBER')")
+    public List<ProjectDto> getAllProjects() {
+        return projectService.getAllProjects();
+    }
+
+    // New GET method to retrieve a project by ID
+    @GetMapping("/{id}")
+    @PreAuthorize("hasAnyRole('PROJECT_MANAGER', 'TEAM_MEMBER')")
+    public Optional<Project> getProjectById(@PathVariable Long id) {
+        return projectService.getProjectById(id);
     }
 }

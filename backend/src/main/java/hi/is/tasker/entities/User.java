@@ -56,13 +56,12 @@ public class User implements UserDetails {
     @JsonBackReference
     private List<Task> tasks;
 
-    // Projects owned by the user
     @OneToMany(mappedBy = "owner", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonIgnoreProperties({"owner", "members"})
     private List<Project> ownedProjects;
 
     @ManyToMany(mappedBy = "members", fetch = FetchType.LAZY)
-    @JsonIgnoreProperties({"members", "owner", "tasks"})
+    @JsonIgnoreProperties({"members"})
     private List<Project> projects = new ArrayList<>();
 
     // Tasks assigned to the user

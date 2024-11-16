@@ -2,12 +2,14 @@ import React, { useState, useEffect } from 'react';
 import { NavLink } from 'react-router-dom';
 import { useAuth } from '../context/auth-context';
 import { request } from '../api/http';
+import { useNavigate } from 'react-router-dom';
 
 const Header = () => {
   const { auth, logout } = useAuth();
   const [unreadCount, setUnreadCount] = useState(0);
   const [projects, setProjects] = useState([]);
   const [selectedProject, setSelectedProject] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchUnreadNotifications = async () => {
@@ -25,6 +27,7 @@ const Header = () => {
           if (auth?.token) {
             try {
               const response = await request('get', '/projects');
+              console.log('Fetched projects:', response.data);
               setProjects(response.data);
               if (response.data.length > 0) {
                 setSelectedProject(response.data[0].id); // Default to the first project
@@ -36,10 +39,12 @@ const Header = () => {
         };
 
     fetchUnreadNotifications();
+    fetchProjects();
   }, [auth]);
 
 const handleProjectChange = (e) => {
     setSelectedProject(e.target.value);
+    navigate(`/projects/${e.target.value}`);
     // skoða þetta kannski betur
   };
 
