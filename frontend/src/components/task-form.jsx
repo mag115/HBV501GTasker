@@ -35,6 +35,7 @@ const TaskForm = () => {
     const fetchTasks = async () => {
       try {
         const response = await request('get', '/tasks');
+        console.log('Fetched users:', response.data);
         setTasks(response.data);
       } catch (error) {
         console.error('Error fetching tasks:', error);
@@ -261,6 +262,17 @@ const TaskForm = () => {
                 required
               >
                 <option value="">Select a User</option>
+                <select
+                  value={assignedUser}
+                  onChange={(e) => setAssignedUser(e.target.value)}
+                  className="w-full px-3 py-2 border rounded-md focus:ring focus:ring-indigo-300"
+                  required
+                >
+                  <option value="">Select a User</option>
+                  {Array.isArray(users) && users.map((user) => (
+                    <option key={user.id} value={user.id}>{user.username}</option>
+                  ))}
+                </select>
                 {users.map((user) => (
                   <option key={user.id} value={user.id}>{user.username}</option>
                 ))}

@@ -1,5 +1,6 @@
 package hi.is.tasker.services;
 
+import hi.is.tasker.dto.TaskDto;
 import hi.is.tasker.entities.Task;
 import hi.is.tasker.entities.User;
 import hi.is.tasker.repositories.TaskRepository;
@@ -7,10 +8,12 @@ import hi.is.tasker.repositories.TimeTrackingRepository;
 import hi.is.tasker.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class TaskServiceImplementation implements TaskService {
@@ -28,10 +31,35 @@ public class TaskServiceImplementation implements TaskService {
     }
 
     @Override
-    public List<Task> findAll() {
+    @Transactional(readOnly = true)
+    public List<TaskDto> findAll() {
         List<Task> tasks = taskRepository.findAll();
-        tasks.forEach(task -> System.out.println("Task: " + task.getTitle() + ", Assigned User: " + (task.getAssignedUser() != null ? task.getAssignedUser().getUsername() : "Unassigned")));
-        return tasks;
+        return tasks.stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
+    }
+
+    public TaskDto convertToDTO(Task task){
+        TaskDto dto = new TaskDto();
+        dto.setId(task.getId());
+        dto.setTitle(task.getTitle());
+        dto.setDescription(task.getDescription());
+        dto.setDeadline(task.getDeadline());
+        dto.setStatus(task.getStatus());
+        dto.setPriority(task.getPriority());
+        dto.setProgress(task.getProgress());
+        dto.setProgressStatus(task.getProgressStatus());
+        dto.setManualProgress(task.getManualProgress());
+
+        if(task.getAssignedUser() != null){
+            dto.setAssignedUserId(task.getAssignedUser().getId());
+            dto.setAssignedUserName(task.getAssignedUser().getUsername());
+        }
+        if(task.getProject() != null){
+            dto.setProjectId(task.getProject().getId());
+        }
+        // Add other fields as needed
+        return dto;
     }
 
     @Override
@@ -40,8 +68,10 @@ public class TaskServiceImplementation implements TaskService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Task findById(Long id) {
-        return taskRepository.findById(id).orElseThrow(() -> new RuntimeException("Task not found with id: " + id));
+        return taskRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Task not found with id: " + id));
     }
 
     @Override

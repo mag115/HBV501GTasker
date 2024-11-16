@@ -1,6 +1,5 @@
 package hi.is.tasker.entities;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
@@ -41,6 +40,8 @@ public class User implements UserDetails {
     @Size(min = 8, message = "Password must be at least 8 characters")
     private String password;
 
+    @Getter
+    @Setter
     @Column(nullable = false)
     private String role;
 
@@ -53,15 +54,15 @@ public class User implements UserDetails {
     private Date updatedAt;
 
     @OneToMany(mappedBy = "assignedUser", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JsonBackReference
+    @JsonIgnoreProperties({"assignedUser", "project"})
     private List<Task> tasks;
 
     @OneToMany(mappedBy = "owner", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JsonIgnoreProperties({"owner", "members"})
+    @JsonIgnoreProperties({"owner", "members", "tasks"})
     private List<Project> ownedProjects;
 
     @ManyToMany(mappedBy = "members", fetch = FetchType.LAZY)
-    @JsonIgnoreProperties({"members"})
+    @JsonIgnoreProperties({"members", "owner", "tasks"})
     private List<Project> projects = new ArrayList<>();
 
     // Tasks assigned to the user
@@ -116,11 +117,4 @@ public class User implements UserDetails {
         return true;
     }
 
-    public void setRole(String role) {
-        this.role = role;
-    }
-
-    public String getRole() {
-        return role;
-    }
 }

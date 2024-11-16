@@ -1,5 +1,6 @@
 package hi.is.tasker.services;
 
+import hi.is.tasker.dto.UserDto;
 import hi.is.tasker.entities.User;
 
 import java.util.List;
@@ -13,6 +14,7 @@ public interface UserService {
     Optional<User> getUserByEmail(String email);
     Optional<User> getUserById(Long id);
     void deleteUser(Long id);
-    List<User> getAllUsers();
+    List<User> getAllUsers();         // Original method
+    List<UserDto> getAllUsersDTO();
     User updateUserRole(Long id, String role);  // New method for updating the role
 }

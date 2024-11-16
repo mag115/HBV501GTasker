@@ -156,6 +156,8 @@ const handleProgressChange = async (taskId, value) => {
       try {
         const response = await request('get', '/tasks/assigned');
         const allTasksResponse = await request('get', '/tasks');
+        console.log('Fetched my tasks:', response.data);
+        console.log('Fetched all tasks:', allTasksResponse.data);
         setMyTasks(response.data);
         setTasks(allTasksResponse.data); // Setting all tasks for dependency checks
       } catch (error) {
@@ -169,9 +171,10 @@ const handleProgressChange = async (taskId, value) => {
     fetchMyTasks();
   }, []);
 
-  const toDoTasks = myTasks.filter((task) => task.status === 'To-do');
-  const ongoingTasks = myTasks.filter((task) => task.status === 'Ongoing');
-  const doneTasks = myTasks.filter((task) => task.status === 'Done');
+  const toDoTasks = Array.isArray(myTasks) ? myTasks.filter((task) => task.status === 'To-do') : [];
+  const ongoingTasks = Array.isArray(myTasks) ? myTasks.filter((task) => task.status === 'Ongoing') : [];
+  const doneTasks = Array.isArray(myTasks) ? myTasks.filter((task) => task.status === 'Done') : [];
+
 
   const renderTask = (task) => (
     <div key={task.id} className="bg-white p-6 shadow-lg rounded-lg mb-6 border border-gray-200">

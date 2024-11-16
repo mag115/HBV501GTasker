@@ -1,5 +1,6 @@
 package hi.is.tasker.controllers;
 
+import hi.is.tasker.dto.TaskDto;
 import hi.is.tasker.entities.Task;
 import hi.is.tasker.entities.User;
 import hi.is.tasker.services.NotificationService;
@@ -30,11 +31,8 @@ public class TaskController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Task>> getAllTasks() {
-        List<Task> tasks = taskService.findAll();
-        for (Task task : tasks) {
-            System.out.println("Task ID: " + task.getId() + ", Assigned User: " + (task.getAssignedUser() != null ? task.getAssignedUser().getUsername() : "Unassigned"));
-        }
+    public ResponseEntity<List<TaskDto>> getAllTasks() {
+        List<TaskDto> tasks = taskService.findAll();
         return ResponseEntity.ok(tasks);
     }
 
@@ -46,9 +44,10 @@ public class TaskController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Task> getTaskById(@PathVariable Long id) {
+    public ResponseEntity<TaskDto> getTaskById(@PathVariable Long id) {
         Task task = taskService.findById(id);
-        return new ResponseEntity<>(task, HttpStatus.OK);
+        TaskDto taskDTO = taskService.convertToDTO(task);
+        return new ResponseEntity<>(taskDTO, HttpStatus.OK);
     }
 
     @PostMapping

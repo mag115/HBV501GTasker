@@ -31,16 +31,14 @@ Task {
     private Double progress;
     private Double manualProgress;//ATH: geymir hvað user setur progress sem
 
-    // Add this field:
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "project_id")
-    @JsonIgnoreProperties({"tasks", "members"})
+    @JsonIgnoreProperties({"tasks", "members", "owner"})
     private Project project;
 
-    // New fields:
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = true)
-    @JsonIgnoreProperties({"tasks"})  // Avoids potential circular reference issues.
+    @JsonIgnoreProperties({"tasks", "password", "email", "role", "assignedTasks", "ownedProjects", "projects"})
     private User assignedUser;
 
     private String status;  // Example values: "To Do", "In Progress", "Completed"
