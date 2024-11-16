@@ -2,12 +2,14 @@ import React, { useState, useEffect } from 'react';
 import { request } from '../api/http';
 import { useAuth } from '../context/auth-context';
 import { CommentInput } from './comment-input';
+import { useNotifications } from '../context/notification-context';
 
 const TaskList = () => {
   const [tasks, setTasks] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const { auth } = useAuth();
+  const { fetchUnreadNotifications } = useNotifications();
 
   const refreshTaskData = async () => {
     try {
@@ -100,6 +102,11 @@ const TaskList = () => {
       await request('post', `/tasks/${taskId}/reminder`);
       alert('Reminder sent successfully!');
       refreshTaskData();
+      if (auth?.userId && auth?.token) {
+            fetchUnreadNotifications(auth.userId, auth.token);
+          } else {
+            console.warn('Cannot fetch notifications - userId or token missing.');
+          }
     } catch (error) {
       console.error('Error sending reminder:', error);
       alert('Failed to send reminder. Please try again.');

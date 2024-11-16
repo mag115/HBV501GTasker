@@ -2,24 +2,17 @@ import React, { useState, useEffect } from 'react';
 import { NavLink } from 'react-router-dom';
 import { useAuth } from '../context/auth-context';
 import { request } from '../api/http';
+import { useNotifications } from '../context/notification-context';
 
 const Header = () => {
   const { auth, logout } = useAuth();
-  const [unreadCount, setUnreadCount] = useState(0);
+  const { unreadCount, fetchUnreadNotifications } = useNotifications();
 
   useEffect(() => {
-    const fetchUnreadNotifications = async () => {
       if (auth?.token && auth.user?.id) {
-        try {
-          const response = await request('get', `/notifications/${auth.user.id}?filter=unread`);
-          setUnreadCount(response.data.length);
-        } catch (error) {
-          console.error('Error fetching unread notifications:', error);
-        }
+        fetchUnreadNotifications(auth.user.id, auth.token);
       }
-    };
-    fetchUnreadNotifications();
-  }, [auth]);
+    }, [auth, fetchUnreadNotifications]);
 
   return (
     <header className="bg-indigo-600 text-white p-4 shadow-md">
@@ -82,13 +75,13 @@ const Header = () => {
 
               <li>
                 <NavLink to="/notifications" className="hover:text-gray-300 relative">
-                  Notifications
-                  {unreadCount > 0 && (
-                    <span className="absolute top-0 right-0 bg-red-600 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
-                      {unreadCount}
-                    </span>
-                  )}
-                </NavLink>
+                             Notifications
+                             {unreadCount > 0 && (
+                               <span className="top-0 right-0 bg-red-600 text-red text-s rounded-full w-5 h-5 flex">
+                                 {"("+unreadCount+")"}
+                               </span>
+                             )}
+                           </NavLink>
               </li>
               <li>
                 <NavLink to="/myinfo" className="hover:text-gray-300">

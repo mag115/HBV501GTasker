@@ -18,7 +18,7 @@ public class NotificationServiceImplementation implements NotificationService {
     public NotificationServiceImplementation(NotificationRepository notificationRepository) {
         this.notificationRepository = notificationRepository;
     }
-    
+
     @Override
     public Notification createNotification(String message, User recipient) {
         Notification notification = new Notification(message, recipient);
@@ -33,6 +33,7 @@ public class NotificationServiceImplementation implements NotificationService {
 
     @Override
     public List<Notification> getUnreadNotificationsForUser(User recipient) {
+        System.out.println("Fetching unread noti for user: " + recipient.getId());
         return notificationRepository.findByRecipientAndIsRead(recipient, false);
     }
 

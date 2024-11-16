@@ -11,6 +11,7 @@ import { MyInfoPage } from './pages/myinfo';
 import { MyTasksPage } from './pages/mytasks';
 import { NotificationPage } from './pages/notification';
 import { ProjectReportPage } from './pages/projectReport';
+import { NotificationsProvider } from './context/notification-context';
 
 const router = createBrowserRouter([
   {
@@ -78,7 +79,9 @@ const router = createBrowserRouter([
 const App = () => {
   return (
     <AuthProvider>
+    <NotificationsProvider>
       <RouterProvider router={router} />
+      </NotificationsProvider>
     </AuthProvider>
   );
 };
