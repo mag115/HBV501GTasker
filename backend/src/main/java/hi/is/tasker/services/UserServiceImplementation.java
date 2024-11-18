@@ -58,27 +58,13 @@ public class UserServiceImplementation implements UserService {
                 .collect(Collectors.toList());
     }
 
-    public UserDto convertToDTO(User user) {
+    private UserDto convertToDTO(User user) {
         UserDto dto = new UserDto();
         dto.setId(user.getId());
         dto.setUsername(user.getUsername());
-        dto.setEmail(user.getEmail());  // If you want to include email
-        dto.setRole(user.getRole());    // If you want to include role
-        // Exclude password and other sensitive information
+        // Map other necessary fields
         return dto;
     }
-
-    public User convertToEntity(UserDto userDto) {
-        User user = new User();
-        user.setId(userDto.getId());
-        user.setUsername(userDto.getUsername());
-        user.setEmail(userDto.getEmail());
-        user.setRole(userDto.getRole());
-        // Do not set the password here
-        return user;
-    }
-
-
 
     @Override
     public List<User> findAll() {

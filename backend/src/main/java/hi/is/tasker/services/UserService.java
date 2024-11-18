@@ -17,6 +17,4 @@ public interface UserService {
     List<User> getAllUsers();         // Original method
     List<UserDto> getAllUsersDTO();
     User updateUserRole(Long id, String role);  // New method for updating the role
-    UserDto convertToDTO(User user);
-    User convertToEntity(UserDto userDto);
 }
