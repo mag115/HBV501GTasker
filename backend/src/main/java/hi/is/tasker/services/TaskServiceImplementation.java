@@ -1,10 +1,8 @@
 package hi.is.tasker.services;
 
 import hi.is.tasker.dto.TaskDto;
-import hi.is.tasker.entities.Project;
 import hi.is.tasker.entities.Task;
 import hi.is.tasker.entities.User;
-import hi.is.tasker.repositories.ProjectRepository;
 import hi.is.tasker.repositories.TaskRepository;
 import hi.is.tasker.repositories.TimeTrackingRepository;
 import hi.is.tasker.repositories.UserRepository;
@@ -25,10 +23,6 @@ public class TaskServiceImplementation implements TaskService {
     private final NotificationService notificationService;
 
     @Autowired
-    private ProjectRepository projectRepository;
-
-
-    @Autowired
     public TaskServiceImplementation(TaskRepository taskRepository, UserRepository userRepository, TimeTrackingRepository timeTrackingRepository, NotificationService notificationService) {
         this.taskRepository = taskRepository;
         this.userRepository = userRepository;
@@ -36,51 +30,16 @@ public class TaskServiceImplementation implements TaskService {
         this.notificationService = notificationService;
     }
 
-    public List<Task> findAll() {
-        return taskRepository.findAll();
-    }
-
     @Override
     @Transactional(readOnly = true)
-    public List<TaskDto> findAllDto() {
+    public List<TaskDto> findAll() {
         List<Task> tasks = taskRepository.findAll();
         return tasks.stream()
                 .map(this::convertToDTO)
                 .collect(Collectors.toList());
     }
 
-
-    @Override
-    public Task convertToEntity(TaskDto taskDto) {
-        Task task = new Task();
-        task.setId(taskDto.getId());
-        task.setTitle(taskDto.getTitle());
-        task.setDescription(taskDto.getDescription());
-        task.setDeadline(taskDto.getDeadline());
-        task.setStatus(taskDto.getStatus());
-        task.setPriority(taskDto.getPriority());
-        task.setProgress(taskDto.getProgress());
-        task.setProgressStatus(taskDto.getProgressStatus());
-        task.setManualProgress(taskDto.getManualProgress());
-
-        if (taskDto.getAssignedUserId() != null) {
-            User assignedUser = userRepository.findById(taskDto.getAssignedUserId())
-                    .orElseThrow(() -> new RuntimeException("User not found with id: " + taskDto.getAssignedUserId()));
-            task.setAssignedUser(assignedUser);
-        }
-
-        if (taskDto.getProjectId() != null) {
-            // Assuming you have a ProjectRepository to fetch the Project entity
-            Project project = projectRepository.findById(taskDto.getProjectId())
-                    .orElseThrow(() -> new RuntimeException("Project not found with id: " + taskDto.getProjectId()));
-            task.setProject(project);
-        }
-
-        return task;
-    }
-
-    @Override
-    public TaskDto convertToDTO(Task task) {
+    public TaskDto convertToDTO(Task task){
         TaskDto dto = new TaskDto();
         dto.setId(task.getId());
         dto.setTitle(task.getTitle());
@@ -92,19 +51,16 @@ public class TaskServiceImplementation implements TaskService {
         dto.setProgressStatus(task.getProgressStatus());
         dto.setManualProgress(task.getManualProgress());
 
-        if (task.getAssignedUser() != null) {
+        if(task.getAssignedUser() != null){
             dto.setAssignedUserId(task.getAssignedUser().getId());
             dto.setAssignedUserName(task.getAssignedUser().getUsername());
         }
-
-        if (task.getProject() != null) {
+        if(task.getProject() != null){
             dto.setProjectId(task.getProject().getId());
         }
-
+        // Add other fields as needed
         return dto;
     }
-
-
 
     @Override
     public List<Task> getTasksAssignedToUser(String username) {

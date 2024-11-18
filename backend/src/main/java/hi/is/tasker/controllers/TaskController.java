@@ -14,7 +14,6 @@ import java.security.Principal;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @CrossOrigin(origins = "http://localhost:3000")
 @RestController
@@ -32,22 +31,16 @@ public class TaskController {
     }
 
     @GetMapping
-    public ResponseEntity<List<TaskDto>> getAllTasksDto() {
-        List<Task> tasks = taskService.findAll();
-        List<TaskDto> taskDtos = tasks.stream()
-                .map(taskService::convertToDTO)
-                .collect(Collectors.toList());
-        return ResponseEntity.ok(taskDtos);
+    public ResponseEntity<List<TaskDto>> getAllTasks() {
+        List<TaskDto> tasks = taskService.findAll();
+        return ResponseEntity.ok(tasks);
     }
 
     @GetMapping("/assigned")
-    public ResponseEntity<List<TaskDto>> getTasksAssignedToUser(Principal principal) {
+    public ResponseEntity<List<Task>> getTasksAssignedToUser(Principal principal) {
         String username = principal.getName();
         List<Task> tasks = taskService.getTasksAssignedToUser(username);
-        List<TaskDto> taskDtos = tasks.stream()
-                .map(taskService::convertToDTO)
-                .collect(Collectors.toList());
-        return ResponseEntity.ok(taskDtos);
+        return ResponseEntity.ok(tasks);
     }
 
     @GetMapping("/{id}")
@@ -58,49 +51,39 @@ public class TaskController {
     }
 
     @PostMapping
-    public ResponseEntity<TaskDto> createTask(@RequestBody TaskDto taskDto) {
-        Task task = taskService.convertToEntity(taskDto);
-
-        // Handle assigned user if present
-        if (taskDto.getAssignedUserId() != null) {
-            User assignedUser = userService.getUserById(taskDto.getAssignedUserId())
+    public ResponseEntity<Task> createTask(@RequestBody Task task, @RequestParam(required = false) Long assignedUserId) {
+        System.out.println("Received assignedUserId: " + assignedUserId);
+        if (assignedUserId != null) {
+            User assignedUser = userService.getUserById(assignedUserId)
                     .orElseThrow(() -> new RuntimeException("User not found"));
             task.setAssignedUser(assignedUser);
+            System.out.println("Assigned User set with username: " + assignedUser.getUsername());
         }
-
         task.setStatus("To-do");
         task.updateProgressStatus();
         Task savedTask = taskService.save(task);
-        TaskDto savedTaskDto = taskService.convertToDTO(savedTask);
-        return ResponseEntity.ok(savedTaskDto);
+        return ResponseEntity.ok(savedTask);
     }
-
 
     @PostMapping("/{taskId}/assign")
-    public ResponseEntity<TaskDto> assignTask(@PathVariable Long taskId, @RequestBody Long userId) {
+    public ResponseEntity<Task> assignTask(@PathVariable Long taskId, @RequestBody Long userId) {
         Task assignedTask = taskService.assignTask(taskId, userId);
-        TaskDto assignedTaskDto = taskService.convertToDTO(assignedTask);
-        return ResponseEntity.ok(assignedTaskDto);
+        return ResponseEntity.ok(assignedTask);
     }
-
 
     @PatchMapping("/{taskId}/status")
-    public ResponseEntity<TaskDto> updateTaskStatus(@PathVariable Long taskId, @RequestBody Map<String, String> requestBody) {
+    public ResponseEntity<Task> updateTaskStatus(@PathVariable Long taskId, @RequestBody Map<String, String> requestBody) {
         String status = requestBody.get("status");
         Task updatedTask = taskService.updateTaskStatus(taskId, status);
-        TaskDto updatedTaskDto = taskService.convertToDTO(updatedTask);
-        return ResponseEntity.ok(updatedTaskDto);
+        return ResponseEntity.ok(updatedTask);
     }
-
 
     @PatchMapping("/{taskId}/priority")
-    public ResponseEntity<TaskDto> updateTaskPriority(@PathVariable Long taskId, @RequestBody Map<String, String> requestBody) {
+    public ResponseEntity<Task> updateTaskPriority(@PathVariable Long taskId, @RequestBody Map<String, String> requestBody) {
         String priority = requestBody.get("priority");
         Task updatedTask = taskService.updateTaskPriority(taskId, priority);
-        TaskDto updatedTaskDto = taskService.convertToDTO(updatedTask);
-        return ResponseEntity.ok(updatedTaskDto);
+        return ResponseEntity.ok(updatedTask);
     }
-
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteTask(@PathVariable Long id) {
@@ -120,7 +103,7 @@ public class TaskController {
     }
 
     @PostMapping("/updateTime")
-    public ResponseEntity<TaskDto> updateTaskTime(@RequestBody Map<String, Object> request) {
+    public ResponseEntity<Task> updateTaskTime(@RequestBody Map<String, Object> request) {
         Long taskId = ((Number) request.get("taskId")).longValue();
         Double timeSpent = ((Number) request.get("timeSpent")).doubleValue();
         Task task = taskService.updateTimeSpent(taskId, timeSpent);
@@ -128,35 +111,37 @@ public class TaskController {
         // Update progress
         taskService.calculateAndUpdateTaskProgress(task);
 
-        TaskDto taskDto = taskService.convertToDTO(task);
-        return ResponseEntity.ok(taskDto);
+        return ResponseEntity.ok(task);
     }
 
-
+    //assign predicted task duration based on either weeks or effort percent
     @PostMapping("/{taskId}/duration")
-    public ResponseEntity<TaskDto> assignTaskDuration(
+    public ResponseEntity<Task> assignTaskDuration(
             @PathVariable Long taskId,
             @RequestBody Map<String, Object> requestBody
     ) {
         Integer estimatedWeeks = (Integer) requestBody.get("estimatedWeeks");
         Double effortPercentage = (Double) requestBody.get("effortPercentage");
         Task updatedTask = taskService.assignDuration(taskId, estimatedWeeks, effortPercentage);
-        TaskDto updatedTaskDto = taskService.convertToDTO(updatedTask);
-        return ResponseEntity.ok(updatedTaskDto);
+        return ResponseEntity.ok(updatedTask);
     }
-
 
     @GetMapping("/{taskId}/tracking")
-    public ResponseEntity<TaskDto> getTaskProgress(@PathVariable Long taskId) {
+    public ResponseEntity<Map<String, Object>> getTaskProgress(@PathVariable Long taskId) {
         Task task = taskService.findById(taskId);
         taskService.calculateAndUpdateTaskProgress(task);
-        TaskDto taskDto = taskService.convertToDTO(task);
-        return ResponseEntity.ok(taskDto);
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("taskId", taskId);
+        response.put("title", task.getTitle());
+        response.put("progress", task.getProgress());
+        response.put("manualProgress", task.getManualProgress());
+        response.put("status", task.getProgressStatus());
+        return ResponseEntity.ok(response);
     }
 
-
     @PatchMapping("/{taskId}/progress")
-    public ResponseEntity<TaskDto> updateTaskProgress(
+    public ResponseEntity<Task> updateTaskProgress(
             @PathVariable Long taskId,
             @RequestBody Map<String, Double> requestBody
     ) {
@@ -164,19 +149,15 @@ public class TaskController {
         if (manualProgress == null || manualProgress < 0 || manualProgress > 100) {
             return ResponseEntity.badRequest().build();
         }
-        Task task = taskService.updateTaskProgress(taskId, manualProgress);
-        TaskDto taskDto = taskService.convertToDTO(task);
-        return ResponseEntity.ok(taskDto);
+        Task task = taskService.findById(taskId);
+        task.setManualProgress(manualProgress);
+        taskService.save(task);
+        return ResponseEntity.ok(task);
     }
-
 
     @GetMapping("/upcoming")
-    public ResponseEntity<List<TaskDto>> getUpcomingTasks(@RequestParam("days") int days) {
+    public ResponseEntity<List<Task>> getUpcomingTasks(@RequestParam("days") int days) {
         List<Task> tasks = taskService.findTasksWithUpcomingDeadlines(days);
-        List<TaskDto> taskDtos = tasks.stream()
-                .map(taskService::convertToDTO)
-                .collect(Collectors.toList());
-        return ResponseEntity.ok(taskDtos);
+        return ResponseEntity.ok(tasks);
     }
-
 }
