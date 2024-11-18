@@ -1,8 +1,10 @@
 package hi.is.tasker.controllers;
 
+import hi.is.tasker.entities.Project;
 import hi.is.tasker.entities.Task;
 import hi.is.tasker.entities.User;
 import hi.is.tasker.services.NotificationService;
+import hi.is.tasker.services.ProjectService;
 import hi.is.tasker.services.TaskService;
 import hi.is.tasker.services.UserService;
 import org.springframework.http.ResponseEntity;
@@ -21,17 +23,13 @@ public class TaskController {
     private final TaskService taskService;
     private final UserService userService;
     private final NotificationService notificationService;
+    private final ProjectService projectService;
 
-    public TaskController(TaskService taskService, UserService userService, NotificationService notificationService) {
+    public TaskController(TaskService taskService, UserService userService, NotificationService notificationService, ProjectService projectService) {
         this.taskService = taskService;
         this.userService = userService;
         this.notificationService = notificationService;
-    }
-
-    @GetMapping
-    public ResponseEntity<List<Task>> getAllTasks() {
-        List<Task> tasks = taskService.findAll();
-        return ResponseEntity.ok(tasks);
+        this.projectService = projectService;
     }
 
     @GetMapping("/assigned")
@@ -47,20 +45,35 @@ public class TaskController {
         return ResponseEntity.ok(task);
     }
 
-
     @PostMapping
-    public ResponseEntity<Task> createTask(@RequestBody Task task, @RequestParam(required = false) Long assignedUserId) {
-        System.out.println("Received assignedUserId: " + assignedUserId);
+    public ResponseEntity<Task> createTask(
+            @RequestBody Task task,
+            @RequestParam Long projectId,
+            @RequestParam(required = false) Long assignedUserId) {
+
+        // Retrieve the project
+        Project project = projectService.getProjectById(projectId)
+                .orElseThrow(() -> new RuntimeException("Project not found"));
+
+        // Set the project in the task
+        task.setProject(project);
+
+        // Handle assigned user
         if (assignedUserId != null) {
             User assignedUser = userService.getUserById(assignedUserId)
                     .orElseThrow(() -> new RuntimeException("User not found"));
             task.setAssignedUser(assignedUser);
-            System.out.println("Assigned User set with username: " + assignedUser.getUsername());
         }
-        task.setStatus("To-do");
-        task.updateProgressStatus();
+
+        // Save the task
         Task savedTask = taskService.save(task);
         return ResponseEntity.ok(savedTask);
+    }
+
+    @GetMapping
+    public ResponseEntity<List<Task>> getAllTasks() {
+        List<Task> tasks = taskService.findAll();
+        return ResponseEntity.ok(tasks);
     }
 
     @PostMapping("/{taskId}/assign")

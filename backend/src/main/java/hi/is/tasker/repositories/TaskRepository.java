@@ -20,4 +20,5 @@ public interface TaskRepository extends JpaRepository<Task, Long> {
 
     List<Task> findByDeadlineBetween(LocalDateTime start, LocalDateTime end);
 
+    List<Task> findByProjectId(Long projectId);
 }

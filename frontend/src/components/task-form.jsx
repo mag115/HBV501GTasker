@@ -21,6 +21,8 @@ const TaskForm = () => {
   const [tasks, setTasks] = useState([]);
   const [task, setTask]=useState([]);
   const [dependency, setDependency] = useState('');
+  const [projects, setProjects] = useState([]);
+  const [projectId, setProjectId] = useState('');
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -42,8 +44,18 @@ const TaskForm = () => {
       }
     };
 
+    const fetchProjects = async () => {
+        try {
+          const response = await request('get', '/projects');
+          setProjects(response.data);
+        } catch (error) {
+          console.error('Error fetching projects:', error);
+        }
+      };
+
     fetchUsers();
     fetchTasks();
+    fetchProjects();
   }, []);
 
   useEffect(() => {
@@ -84,6 +96,7 @@ const TaskForm = () => {
       effortPercentage: effortPercentage ? parseFloat(effortPercentage) : null,
       estimatedDuration,
       dependency,
+      projectId: parseInt(projectId),
     };
     console.log(dependency);
     try {
@@ -292,7 +305,20 @@ const TaskForm = () => {
                             ))}
                           </select>
                         </div>
-
+            <div className="mb-4">
+              <label className="block text-gray-700 text-sm font-semibold mb-1">Select Project</label>
+              <select
+                value={projectId}
+                onChange={(e) => setProjectId(e.target.value)}
+                className="w-full px-3 py-2 border rounded-md focus:ring focus:ring-indigo-300"
+                required
+              >
+                <option value="">Select a Project</option>
+                {projects.map((project) => (
+                  <option key={project.id} value={project.id}>{project.name}</option>
+                ))}
+              </select>
+            </div>
             <div className="mb-4">
               <label className="inline-flex items-center">
                 <input

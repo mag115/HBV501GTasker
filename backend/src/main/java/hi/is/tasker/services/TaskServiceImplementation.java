@@ -1,7 +1,9 @@
 package hi.is.tasker.services;
 
+import hi.is.tasker.entities.Project;
 import hi.is.tasker.entities.Task;
 import hi.is.tasker.entities.User;
+import hi.is.tasker.repositories.ProjectRepository;
 import hi.is.tasker.repositories.TaskRepository;
 import hi.is.tasker.repositories.TimeTrackingRepository;
 import hi.is.tasker.repositories.UserRepository;
@@ -17,15 +19,17 @@ import java.util.List;
 public class TaskServiceImplementation implements TaskService {
     private final TaskRepository taskRepository;
     private final UserRepository userRepository;
+    private final ProjectRepository projectRepository;
     private final TimeTrackingRepository timeTrackingRepository;
     private final NotificationService notificationService;
 
     @Autowired
-    public TaskServiceImplementation(TaskRepository taskRepository, UserRepository userRepository, TimeTrackingRepository timeTrackingRepository, NotificationService notificationService) {
+    public TaskServiceImplementation(TaskRepository taskRepository, UserRepository userRepository, TimeTrackingRepository timeTrackingRepository, NotificationService notificationService, ProjectRepository projectRepository) {
         this.taskRepository = taskRepository;
         this.userRepository = userRepository;
         this.timeTrackingRepository = timeTrackingRepository;
         this.notificationService = notificationService;
+        this.projectRepository = projectRepository;
     }
 
     @Override
@@ -47,8 +51,21 @@ public class TaskServiceImplementation implements TaskService {
     }
 
     @Override
+    public Task createTask(Task task, Long projectId) {
+        Project project = projectRepository.findById(projectId)
+                .orElseThrow(() -> new RuntimeException("Project not found"));
+
+        task.setProject(project);
+        return taskRepository.save(task);
+    }
+
     public Task save(Task task) {
         return taskRepository.save(task);
+    }
+
+    @Override
+    public List<Task> findTasksByProjectId(Long projectId) {
+        return taskRepository.findByProjectId(projectId);
     }
 
     @Override
@@ -69,6 +86,12 @@ public class TaskServiceImplementation implements TaskService {
     public Task assignTask(Long taskId, Long userId) {
         Task task = taskRepository.findById(taskId).orElseThrow(() -> new RuntimeException("Task not found"));
         User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
+
+        // Ensure the user is a member of the task's project
+        if (!task.getProject().getMembers().contains(user)) {
+            throw new RuntimeException("User is not a member of the project");
+        }
+
         task.setAssignedUser(user);
         return taskRepository.save(task);
     }

@@ -31,12 +31,12 @@ Task {
     private Double progress;
     private Double manualProgress;//ATH: geymir hvað user setur progress sem
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "project_id")
     @JsonIgnoreProperties({"tasks", "members", "owner"})
     private Project project;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id", nullable = true)
     @JsonIgnoreProperties({"tasks", "password", "email", "role", "assignedTasks", "ownedProjects", "projects"})
     private User assignedUser;
@@ -47,7 +47,7 @@ Task {
     private double elapsedTime;
     private Double scheduledProgress;
 
-    @OneToMany(mappedBy = "task", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "task", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private List<TimeTracking> timeTrackings;
 
 

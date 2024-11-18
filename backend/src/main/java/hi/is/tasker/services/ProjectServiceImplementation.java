@@ -52,4 +52,17 @@ public class ProjectServiceImplementation implements ProjectService {
     public Optional<Project> getProjectById(Long id) {
         return projectRepository.findById(id);
     }
+
+    @Override
+    public void addMemberToProject(Long projectId, Long userId) {
+        Project project = projectRepository.findById(projectId)
+                .orElseThrow(() -> new RuntimeException("Project not found"));
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        if (!project.getMembers().contains(user)) {
+            project.getMembers().add(user);
+            projectRepository.save(project);
+        }
+    }
 }

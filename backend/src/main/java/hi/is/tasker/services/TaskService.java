@@ -5,12 +5,11 @@ import hi.is.tasker.entities.Task;
 import java.util.List;
 
 public interface TaskService {
-    //Task createTask(Task task);
+    Task createTask(Task task, Long projectId);
+
     List<Task> findAll();
 
     Task findById(Long id);
-
-    Task save(Task task);
 
     void delete(Task task);
 
@@ -38,4 +37,8 @@ public interface TaskService {
     Task updateTaskProgress(Long taskId, Double progress);
 
     List<Task> findTasksWithUpcomingDeadlines(int days);
+
+    List<Task> findTasksByProjectId(Long projectId);
+
+    Task save(Task task);
 }

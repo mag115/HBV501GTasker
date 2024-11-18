@@ -24,26 +24,24 @@ public class Project {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
-    // Owner of the project
-    @ManyToOne
-    @JoinColumn(name = "owner_id", nullable = false)
-    @JsonIgnoreProperties({"ownedProjects", "tasks", "assignedTasks"})
-    private User owner;
+    @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JsonIgnoreProperties({"project", "assignedUser"})
+    private List<Task> tasks = new ArrayList<>();
 
-    // Team members (Many-to-Many relationship)
-    @ManyToMany(fetch = FetchType.LAZY)
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "project_members",
             joinColumns = @JoinColumn(name = "project_id"),
             inverseJoinColumns = @JoinColumn(name = "user_id")
     )
-    @JsonIgnoreProperties({"projects"})
+    @JsonIgnoreProperties({"projects", "ownedProjects", "password", "email", "tasks", "assignedTasks"})
     private List<User> members = new ArrayList<>();
 
-    // Tasks associated with this project
-    @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JsonIgnoreProperties({"project", "assignedUser"})
-    private List<Task> tasks;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "owner_id")
+    @JsonIgnoreProperties({"ownedProjects", "password", "email", "tasks", "assignedTasks"})
+    private User owner;
+
 
     @PrePersist
     protected void onCreate() {

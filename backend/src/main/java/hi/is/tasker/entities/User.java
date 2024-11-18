@@ -53,20 +53,16 @@ public class User implements UserDetails {
     @Column(name = "updated_at")
     private Date updatedAt;
 
-    @OneToMany(mappedBy = "assignedUser", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JsonIgnoreProperties({"assignedUser", "project"})
-    private List<Task> tasks;
-
-    @OneToMany(mappedBy = "owner", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "owner", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JsonIgnoreProperties({"owner", "members", "tasks"})
-    private List<Project> ownedProjects;
+    private List<Project> ownedProjects = new ArrayList<>();
 
-    @ManyToMany(mappedBy = "members", fetch = FetchType.LAZY)
+    @ManyToMany(mappedBy = "members", fetch = FetchType.EAGER)
     @JsonIgnoreProperties({"members", "owner", "tasks"})
     private List<Project> projects = new ArrayList<>();
 
     // Tasks assigned to the user
-    @OneToMany(mappedBy = "assignedUser", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "assignedUser", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JsonIgnoreProperties({"assignedUser", "project"})
     private List<Task> assignedTasks;
 
