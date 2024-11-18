@@ -41,49 +41,42 @@ public class UserController {
         return ResponseEntity.ok(users);
     }
 
-    // Add a new endpoint if needed to return List<User>
-    @GetMapping("/entities")
-    public ResponseEntity<List<User>> getAllUsers() {
-        List<User> users = userService.getAllUsers();
-        return ResponseEntity.ok(users);
-    }
-
     @PatchMapping("/role")
-    public ResponseEntity<User> updateAuthenticatedUserRole(@RequestBody Map<String, String> requestBody) {
+    public ResponseEntity<UserDto> updateAuthenticatedUserRole(@RequestBody Map<String, String> requestBody) {
         String role = requestBody.get("role");
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
 
-        // Fetch the user by their username
         User user = userService.getUserByUsername(username)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        // Update the user's role
         user.setRole(role);
         User updatedUser = userService.save(user);
 
-        return ResponseEntity.ok(updatedUser);
+        UserDto userDto = userService.convertToDTO(updatedUser);
+        return ResponseEntity.ok(userDto);
     }
 
+
     @GetMapping("/username/{username}")
-    public ResponseEntity<User> getUserByUsername(@PathVariable String username) {
+    public ResponseEntity<UserDto> getUserByUsername(@PathVariable String username) {
         Optional<User> userOptional = userService.getUserByUsername(username);
-        return userOptional.map(user -> new ResponseEntity<>(user, HttpStatus.OK))
+        return userOptional.map(user -> new ResponseEntity<>(userService.convertToDTO(user), HttpStatus.OK))
                 .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
     @GetMapping("/id/{id}")
-    public ResponseEntity<User> getUserById(@PathVariable Long id) {
+    public ResponseEntity<UserDto> getUserById(@PathVariable Long id) {
         Optional<User> userOptional = userService.getUserById(id);
-        return userOptional.map(user -> new ResponseEntity<>(user, HttpStatus.OK))
+        return userOptional.map(user -> new ResponseEntity<>(userService.convertToDTO(user), HttpStatus.OK))
                 .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
     @GetMapping("/email/{email}")
-    public ResponseEntity<User> getUserByEmail(@PathVariable String email) {
+    public ResponseEntity<UserDto> getUserByEmail(@PathVariable String email) {
         Optional<User> userOptional = userService.getUserByEmail(email);
-        return userOptional.map(user -> new ResponseEntity<>(user, HttpStatus.OK))
+        return userOptional.map(user -> new ResponseEntity<>(userService.convertToDTO(user), HttpStatus.OK))
                 .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
