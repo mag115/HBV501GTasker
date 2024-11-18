@@ -7,9 +7,13 @@ import java.util.List;
 
 public interface TaskService {
     //Task createTask(Task task);
-    List<TaskDto> findAll();
+    List<TaskDto> findAllDto();
+
+    List<Task> findAll();
 
     TaskDto convertToDTO(Task task);
+
+    Task convertToEntity(TaskDto taskDto);
 
     Task findById(Long id);
 

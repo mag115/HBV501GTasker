@@ -2,11 +2,13 @@ package hi.is.tasker.dto;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 
 import java.time.LocalDateTime;
 
 @Getter
 @Setter
+@Accessors(chain = true)
 public class TaskDto {
     private Long id;
     private String title;
@@ -23,9 +25,7 @@ public class TaskDto {
 
     private Long projectId;
 
-    // Constructors
+    // No-args constructor
     public TaskDto() {}
-
-    // Getters and setters
-    // Include getters and setters for all fields
 }
+
