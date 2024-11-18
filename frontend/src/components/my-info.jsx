@@ -5,6 +5,7 @@ import userImage from '../images/user.png';
 
 const MyInfo = () => {
   const { auth, setAuth } = useAuth(); // Access token and role from auth
+  const [username, setUsername] = useState(auth.username || '');
   const [role, setRole] = useState(auth.role || ''); // Initialize with the role from auth
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
@@ -20,15 +21,18 @@ const MyInfo = () => {
 
       // Update role in component's state
       setRole(response.data.role);
+      setUsername(response.data.username);
 
       // Update the auth context
       setAuth((prevAuth) => ({
         ...prevAuth,
-        role: response.data.role,  // Make sure to use the role from the response
+        role: response.data.role, // Make sure to use the role from the response
+        username: response.data.username,
       }));
 
       // Persist the new role in localStorage
       localStorage.setItem('role', response.data.role);
+      localStorage.setItem('username', response.data.username);
 
     } catch (err) {
       console.error('Error while updating role:', err);
@@ -45,12 +49,13 @@ const MyInfo = () => {
 
   return (
        <div className="container mx-auto p-8 bg-gray-900 rounded-lg shadow-lg text-white max-w-lg">
-         <h1 className="text-3xl font-bold mb-6 text-indigo-500">My Role</h1>
+         <h1 className="text-3xl font-bold mb-6 text-indigo-500">My Info</h1>
 
          <div className="flex items-center mb-6">
            <img src={userImage} alt="User" className="w-24 h-24 rounded-full border-4 border-indigo-500 mr-4" />
            <div>
              <p className="text-xl"><strong>Role:</strong> {role}</p>
+             <p className="text-xl">Name: {auth.username}</p>
            </div>
          </div>
 

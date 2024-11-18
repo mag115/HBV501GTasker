@@ -38,6 +38,7 @@ const SignupForm = () => {
         token: result.data.token,
         role: result.data.role || role,
         userId: result.data.userId,
+        username: result.data.username,
       });
 
       navigate('/');

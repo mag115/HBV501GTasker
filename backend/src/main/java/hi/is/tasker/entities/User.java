@@ -105,6 +105,10 @@ public class User implements UserDetails {
         this.role = role;
     }
 
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
     public String getRole() {
         return role;
     }

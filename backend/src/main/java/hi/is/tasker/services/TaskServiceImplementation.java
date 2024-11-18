@@ -134,6 +134,9 @@ public class TaskServiceImplementation implements TaskService {
         }
 
         long hoursUntilDeadline = ChronoUnit.HOURS.between(LocalDateTime.now(), task.getDeadline());
+        long daysUntilDeadline = ChronoUnit.DAYS.between(LocalDateTime.now(), task.getDeadline());
+        double hoursAvailable = daysUntilDeadline * 8.0;
+        System.out.print(hoursAvailable);
 
         double maxWeeks = hoursUntilDeadline / 40.0; // 40 hours per week
         if (estimatedWeeks != null && estimatedWeeks > maxWeeks) {
@@ -145,7 +148,7 @@ public class TaskServiceImplementation implements TaskService {
         if (estimatedWeeks != null) {
             estimatedDuration = Math.min(estimatedWeeks * 40.0, hoursUntilDeadline);
         } else if (effortPercentage != null) {
-            estimatedDuration = Math.min(hoursUntilDeadline * (effortPercentage / 100.0), hoursUntilDeadline);
+            estimatedDuration = Math.min(hoursAvailable * (effortPercentage / 100.0), hoursAvailable);
         }
 
         task.setEstimatedDuration(estimatedDuration);

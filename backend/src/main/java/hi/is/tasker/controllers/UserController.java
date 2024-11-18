@@ -50,7 +50,7 @@ public class UserController {
         // Fetch the user by their username
         User user = userService.getUserByUsername(username)
                 .orElseThrow(() -> new RuntimeException("User not found"));
-
+        user.setUsername(username);
         // Update the user's role
         user.setRole(role);
         User updatedUser = userService.save(user);

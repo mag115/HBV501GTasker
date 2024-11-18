@@ -1,8 +1,8 @@
 package hi.is.tasker.controllers;
 
+import hi.is.tasker.dto.LoginResponse;
 import hi.is.tasker.dto.LoginUserDto;
 import hi.is.tasker.dto.RegisterUserDto;
-import hi.is.tasker.dto.LoginResponse;
 import hi.is.tasker.entities.User;
 import hi.is.tasker.services.AuthenticationService;
 import hi.is.tasker.services.JwtService;
@@ -36,7 +36,8 @@ public class AuthenticationController {
                 jwtToken,
                 jwtService.getExpirationTime(),
                 registeredUser.getRole(),
-                registeredUser.getId()
+                registeredUser.getId(),
+                registeredUser.getUsername()
         );
         System.out.println("asdf" + loginResponse);
 
@@ -53,7 +54,8 @@ public class AuthenticationController {
                 jwtToken,
                 jwtService.getExpirationTime(),
                 authenticatedUser.getRole(),
-                authenticatedUser.getId());
+                authenticatedUser.getId(),
+                authenticatedUser.getUsername());
 
         System.out.println("userID : " + authenticatedUser.getId());
 

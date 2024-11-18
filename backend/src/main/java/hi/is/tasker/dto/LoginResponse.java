@@ -12,12 +12,14 @@ public class LoginResponse {
     private long expiresIn;
     private String role;  // Add role to the login response
     private Long userId;
+    private String username;
 
-    public LoginResponse(String token, long expiresIn, String role, Long userId) {
+    public LoginResponse(String token, long expiresIn, String role, Long userId, String username) {
         this.token = token;
         this.expiresIn = expiresIn;
         this.role = role;  // Convert enum to string
         this.userId = userId;
+        this.username = username;
     }
 
     // Getter for token
@@ -48,5 +50,13 @@ public class LoginResponse {
     // Setter for role (in case you need to change role later)
     public void setRole(String role) {
         this.role = role;  // Convert enum to string
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;  // Convert enum to string
     }
 }

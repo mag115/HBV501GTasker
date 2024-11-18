@@ -67,14 +67,16 @@ const TaskForm = () => {
   useEffect(() => {
     const calculateEstimatedDuration = () => {
       const hoursUntilDeadline = deadline ? (new Date(deadline) - new Date()) / (1000 * 60 * 60) : null;
-
+      const millisecondsPerDay = 24 * 60 * 60 * 1000;
+      const daysUntilDeadline = deadline ? (new Date(deadline) - new Date()) / millisecondsPerDay : null;
+      const hoursAvail=daysUntilDeadline*8;
       if (estimatedWeeks && hoursUntilDeadline !== null) {
         const weeksDuration = parseFloat(estimatedWeeks) * 40;
         return Math.min(weeksDuration, hoursUntilDeadline);
       }
 
       if (effortPercentage && hoursUntilDeadline !== null) {
-        const calculatedDuration = hoursUntilDeadline * (parseFloat(effortPercentage) / 100);
+        const calculatedDuration = hoursAvail * (parseFloat(effortPercentage) / 100);
         return Math.min(calculatedDuration, hoursUntilDeadline);
       }
 
@@ -197,6 +199,7 @@ const TaskForm = () => {
                 type="datetime-local"
                 className="w-full px-3 py-2 border rounded-md focus:ring focus:ring-indigo-300"
                 value={deadline}
+                min={new Date().toISOString().slice(0, 16)}
                 onChange={(e) => setDeadline(e.target.value)}
                 required
               />

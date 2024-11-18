@@ -22,6 +22,7 @@ const LoginForm = () => {
         token: res.data.token,
         role: res?.data?.role,
         userId: res.data.userId,
+        username: res.data.username,
       });
       navigate('/');
     } else {
