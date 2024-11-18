@@ -1,15 +1,12 @@
 package hi.is.tasker.services;
 
-import hi.is.tasker.dto.UserDto;
 import hi.is.tasker.entities.User;
 import hi.is.tasker.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 public class UserServiceImplementation implements UserService {
@@ -47,23 +44,6 @@ public class UserServiceImplementation implements UserService {
 
     public List<User> getAllUsers() {
         return userRepository.findAll();
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public List<UserDto> getAllUsersDTO() {
-        List<User> users = userRepository.findAll();
-        return users.stream()
-                .map(this::convertToDTO)
-                .collect(Collectors.toList());
-    }
-
-    private UserDto convertToDTO(User user) {
-        UserDto dto = new UserDto();
-        dto.setId(user.getId());
-        dto.setUsername(user.getUsername());
-        // Map other necessary fields
-        return dto;
     }
 
     @Override

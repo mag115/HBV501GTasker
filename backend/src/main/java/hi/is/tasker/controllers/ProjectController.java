@@ -1,6 +1,5 @@
 package hi.is.tasker.controllers;
 
-import hi.is.tasker.dto.ProjectDto;
 import hi.is.tasker.entities.Project;
 import hi.is.tasker.entities.User;
 import hi.is.tasker.services.ProjectService;
@@ -24,7 +23,7 @@ public class ProjectController {
     private UserService userService;
 
     @PostMapping
-    public Project createProject(@RequestBody ProjectDto projectDTO, Principal principal) {
+    public Project createProject(@RequestBody Project project, Principal principal) {
         // Get the currently authenticated user
         String username = principal.getName();
         Optional<User> ownerOptional = userService.getUserByUsername(username);
@@ -33,12 +32,12 @@ public class ProjectController {
         User owner = ownerOptional.orElseThrow(() -> new RuntimeException("User not found"));
 
         // Call the service to create the project
-        return projectService.createProject(projectDTO, owner);
+        return projectService.createProject(project, owner);
     }
 
     @GetMapping
     @PreAuthorize("hasAnyRole('PROJECT_MANAGER', 'TEAM_MEMBER')")
-    public List<ProjectDto> getAllProjects() {
+    public List<Project> getAllProjects() {
         return projectService.getAllProjects();
     }
 

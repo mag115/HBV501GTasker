@@ -1,6 +1,5 @@
 package hi.is.tasker.controllers;
 
-import hi.is.tasker.dto.UserDto;
 import hi.is.tasker.entities.User;
 import hi.is.tasker.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,14 +34,8 @@ public class UserController {
         return new ResponseEntity<>("Authentication success", HttpStatus.OK);
     }
 
-    @GetMapping
-    public ResponseEntity<List<UserDto>> getAllUsersDTO() {
-        List<UserDto> users = userService.getAllUsersDTO();
-        return ResponseEntity.ok(users);
-    }
-
     // Add a new endpoint if needed to return List<User>
-    @GetMapping("/entities")
+    @GetMapping
     public ResponseEntity<List<User>> getAllUsers() {
         List<User> users = userService.getAllUsers();
         return ResponseEntity.ok(users);

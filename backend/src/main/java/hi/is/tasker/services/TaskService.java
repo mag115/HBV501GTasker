@@ -1,15 +1,12 @@
 package hi.is.tasker.services;
 
-import hi.is.tasker.dto.TaskDto;
 import hi.is.tasker.entities.Task;
 
 import java.util.List;
 
 public interface TaskService {
     //Task createTask(Task task);
-    List<TaskDto> findAll();
-
-    TaskDto convertToDTO(Task task);
+    List<Task> findAll();
 
     Task findById(Long id);
 

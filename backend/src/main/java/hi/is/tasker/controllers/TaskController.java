@@ -1,12 +1,10 @@
 package hi.is.tasker.controllers;
 
-import hi.is.tasker.dto.TaskDto;
 import hi.is.tasker.entities.Task;
 import hi.is.tasker.entities.User;
 import hi.is.tasker.services.NotificationService;
 import hi.is.tasker.services.TaskService;
 import hi.is.tasker.services.UserService;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -31,8 +29,8 @@ public class TaskController {
     }
 
     @GetMapping
-    public ResponseEntity<List<TaskDto>> getAllTasks() {
-        List<TaskDto> tasks = taskService.findAll();
+    public ResponseEntity<List<Task>> getAllTasks() {
+        List<Task> tasks = taskService.findAll();
         return ResponseEntity.ok(tasks);
     }
 
@@ -44,11 +42,11 @@ public class TaskController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<TaskDto> getTaskById(@PathVariable Long id) {
+    public ResponseEntity<Task> getTaskById(@PathVariable Long id) {
         Task task = taskService.findById(id);
-        TaskDto taskDTO = taskService.convertToDTO(task);
-        return new ResponseEntity<>(taskDTO, HttpStatus.OK);
+        return ResponseEntity.ok(task);
     }
+
 
     @PostMapping
     public ResponseEntity<Task> createTask(@RequestBody Task task, @RequestParam(required = false) Long assignedUserId) {
