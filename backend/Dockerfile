@@ -4,15 +4,11 @@ FROM openjdk:17-jdk-slim
 # Set the working directory
 WORKDIR /app
 
-COPY gradlew .
-COPY . .
+# Copy the built JAR file to the container
+COPY build/libs/Tasker-0.0.1-SNAPSHOT.jar .
 
-
-# Build the application
-RUN ./gradlew build -x test
-
-# Expose the port that the Spring Boot app will use
+# Expose the port that the Spring Boot app uses
 EXPOSE 8080
 
 # Run the Spring Boot application
-CMD ["java", "-jar", "build/libs/<your-jar-name>.jar"]
+CMD ["java", "-jar", "Tasker-0.0.1-SNAPSHOT.jar"]
