@@ -58,7 +58,7 @@ public class User implements UserDetails {
     private List<Project> ownedProjects = new ArrayList<>();
 
     @ManyToMany(mappedBy = "members", fetch = FetchType.EAGER)
-    @JsonIgnoreProperties({"members", "owner", "tasks"})
+    @JsonIgnoreProperties({"members", "tasks", "owner", "password", "email", "assignedTasks", "currentProject"})
     private List<Project> projects = new ArrayList<>();
 
     // Tasks assigned to the user

@@ -50,7 +50,7 @@ public class ProjectServiceImplementation implements ProjectService {
 
     // New method to retrieve a project by ID
     public Optional<Project> getProjectById(Long id) {
-        return projectRepository.findById(id);
+        return projectRepository.findByIdWithUsers(id);
     }
 
     @Override

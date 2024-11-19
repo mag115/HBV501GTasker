@@ -44,11 +44,11 @@ public class ProjectController {
         return projectService.getAllProjects();
     }
 
-    // New GET method to retrieve a project by ID
     @GetMapping("/{id}")
-    @PreAuthorize("hasAnyRole('PROJECT_MANAGER', 'TEAM_MEMBER')")
-    public Optional<Project> getProjectById(@PathVariable Long id) {
-        return projectService.getProjectById(id);
+    public ResponseEntity<Project> getProjectById(@PathVariable Long id) {
+        Project project = projectService.getProjectById(id)
+                .orElseThrow(() -> new RuntimeException("Project not found"));
+        return ResponseEntity.ok(project);
     }
 
     @PostMapping("/set-current")

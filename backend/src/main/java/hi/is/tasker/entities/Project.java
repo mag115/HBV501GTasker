@@ -11,9 +11,9 @@ import java.util.List;
 
 @Getter
 @Setter
-@Entity(name = "project")
+@Entity
 @Table(name = "projects")
-@JsonIgnoreProperties({"tasks", "members", "owner"})
+@JsonIgnoreProperties({"tasks", "owner"})
 public class Project {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -35,7 +35,7 @@ public class Project {
             joinColumns = @JoinColumn(name = "project_id"),
             inverseJoinColumns = @JoinColumn(name = "user_id")
     )
-    @JsonIgnoreProperties({"projects", "ownedProjects", "password", "email", "tasks", "assignedTasks"})
+    @JsonIgnoreProperties({"projects", "password", "email", "assignedTasks", "currentProject"})
     private List<User> members = new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.EAGER)

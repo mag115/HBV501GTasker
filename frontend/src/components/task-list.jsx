@@ -11,44 +11,26 @@ const TaskList = () => {
   const [error, setError] = useState(null);
   const { auth } = useAuth();
 
-  const refreshTaskData = async () => {
-      if (!selectedProject) {
-        setTasks([]);
-        return;
-      }
-      try {
-        const response = await request('get', `/tasks?projectId=${selectedProject}`);
-        setTasks(response.data);
-      } catch (error) {
-        console.error('Error refreshing tasks:', error);
-        setError('Failed to load tasks');
-      }
-    };
-
   useEffect(() => {
     refreshTaskData();
   }, [selectedProject]);
 
-  useEffect(() => {
-    const fetchTasks = async () => {
-      try {
-        const response = await request('get', '/tasks');
-        console.log('Tasks fetched:', response.data); // Log all tasks and their assigned users
-        if (Array.isArray(response.data)) {
-          setTasks(response.data);
-        } else {
-          throw new Error('Invalid response format');
-        }
-      } catch (err) {
-        console.error('Error fetching tasks:', err);
-        setError('Failed to load tasks');
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchTasks();
-  }, []);
+  const refreshTaskData = async () => {
+    if (!selectedProject) {
+      setTasks([]);
+      setLoading(false);
+      return;
+    }
+    try {
+      setLoading(true);
+      const response = await request('get', `/tasks?projectId=${selectedProject}`);
+      setTasks(response.data);
+    } catch (error) {
+      setError('Failed to load tasks');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   if (loading) {
     return <p>Loading tasks...</p>;
