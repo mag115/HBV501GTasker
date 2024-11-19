@@ -33,9 +33,9 @@ public class TaskController {
     }
 
     @GetMapping("/assigned")
-    public ResponseEntity<List<Task>> getTasksAssignedToUser(Principal principal) {
+    public ResponseEntity<List<Task>> getTasksAssignedToUser(Principal principal, @RequestParam(required = false) Long projectId) {
         String username = principal.getName();
-        List<Task> tasks = taskService.getTasksAssignedToUser(username);
+        List<Task> tasks = taskService.getTasksAssignedToUser(username, projectId);
         return ResponseEntity.ok(tasks);
     }
 
@@ -71,8 +71,8 @@ public class TaskController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Task>> getAllTasks() {
-        List<Task> tasks = taskService.findAll();
+    public ResponseEntity<List<Task>> getAllTasks(@RequestParam(required = false) Long projectId) {
+        List<Task> tasks = taskService.findAll(projectId);
         return ResponseEntity.ok(tasks);
     }
 

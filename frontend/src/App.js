@@ -13,6 +13,7 @@ import { NotificationPage } from './pages/notification';
 import { ProjectReportPage } from './pages/projectReport';
 import { ProjectFormPage } from './pages/create-project';
 import { ProjectPage } from './pages/project';
+import { ProjectProvider } from './context/project-context';
 
 const router = createBrowserRouter([
   {
@@ -96,7 +97,9 @@ const router = createBrowserRouter([
 const App = () => {
   return (
     <AuthProvider>
-      <RouterProvider router={router} />
+        <ProjectProvider>
+            <RouterProvider router={router} />
+        </ProjectProvider>
     </AuthProvider>
   );
 };

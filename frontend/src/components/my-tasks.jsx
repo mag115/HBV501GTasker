@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { request } from '../api/http';
+import { useProject } from '../context/project-context';
 
 const MyTasks = () => {
+  const { selectedProject } = useProject();
   const [myTasks, setMyTasks] = useState([]);
   const [tasks, setTasks] = useState([]); // For dependency check
   const [manualProgress, setManualProgress] = useState({});
@@ -9,26 +11,26 @@ const MyTasks = () => {
   const [error, setError] = useState(null);
 
  const refreshTaskData = async () => {
-     try {
-         const response = await request('get', '/tasks/assigned');
-         const allTasksResponse = await request('get', '/tasks');
-         setMyTasks(response.data);
-         setTasks(allTasksResponse.data);
-
-         const manualProgressMap = response.data.reduce((acc, task) => {
-             acc[task.id] = task.manualProgress || 0;
-             return acc;
-         }, {});
-         setManualProgress(manualProgressMap);
-     } catch (error) {
-         console.error('Error refreshing tasks:', error);
-         setError('Failed to refresh tasks.');
+     if (!selectedProject) {
+       setMyTasks([]);
+       setTasks([]);
+       return;
      }
- };
+     try {
+       const response = await request('get', `/tasks/assigned?projectId=${selectedProject}`);
+       const allTasksResponse = await request('get', `/tasks?projectId=${selectedProject}`);
+       setMyTasks(response.data);
+       setTasks(allTasksResponse.data);
+       // ... rest of your logic
+     } catch (error) {
+       console.error('Error refreshing tasks:', error);
+       setError('Failed to refresh tasks.');
+     }
+   };
 
  useEffect(() => {
-    refreshTaskData();
-  }, []);
+     refreshTaskData();
+ }, [selectedProject]);
 
 
   const handleManualTimeChange = (taskId, value, event) => {

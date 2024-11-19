@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { request } from '../api/http';
+import { useProject } from '../context/project-context';
 
 const TaskForm = () => {
+  const { selectedProject } = useProject();
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [deadline, setDeadline] = useState('');
@@ -96,11 +98,11 @@ const TaskForm = () => {
       effortPercentage: effortPercentage ? parseFloat(effortPercentage) : null,
       estimatedDuration,
       dependency,
-      projectId: parseInt(projectId),
+      projectId: parseInt(selectedProject),
     };
     console.log(dependency);
     try {
-      const res = await request('post', `/tasks?assignedUserId=${assignedUser}`, newTask);
+      const res = await request('post', `/tasks?assignedUserId=${assignedUser}&projectId=${selectedProject}`, newTask);
       if (res.status === 200) {
         setTaskId(res.data.id);
         setResponseMessage('Task successfully created!');
@@ -115,6 +117,7 @@ const TaskForm = () => {
         setEffortPercentage('');
         setDependency(null);
         setEstimatedDuration(null);
+        setProjectId('');
       } else {
         setResponseMessage('Failed to create task.');
       }

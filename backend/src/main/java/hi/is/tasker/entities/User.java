@@ -66,6 +66,10 @@ public class User implements UserDetails {
     @JsonIgnoreProperties({"assignedUser", "project"})
     private List<Task> assignedTasks;
 
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "current_project_id")
+    private Project currentProject;
+
     // Default constructor
     public User() {
     }

@@ -13,6 +13,7 @@ import java.util.List;
 @Setter
 @Entity(name = "project")
 @Table(name = "projects")
+@JsonIgnoreProperties({"tasks", "members", "owner"})
 public class Project {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

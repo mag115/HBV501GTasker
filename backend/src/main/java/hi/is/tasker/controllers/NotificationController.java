@@ -34,7 +34,7 @@ public class NotificationController {
         List<User> users = userService.getAllUsers();
 
         for (User user : users) {
-            List<Task> assignedTasks = taskService.getTasksAssignedToUser(user.getUsername());
+            List<Task> assignedTasks = taskService.getTasksAssignedToUser(user.getUsername(), null);
 
             for (Task task : assignedTasks) {
                 String message = "Reminder: You have an assigned task '" + task.getTitle() + "' with a deadline on " + task.getDeadline();

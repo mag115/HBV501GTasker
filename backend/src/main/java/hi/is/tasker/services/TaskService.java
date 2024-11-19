@@ -7,7 +7,7 @@ import java.util.List;
 public interface TaskService {
     Task createTask(Task task, Long projectId);
 
-    List<Task> findAll();
+    List<Task> findAll(Long projectId);
 
     Task findById(Long id);
 
@@ -19,7 +19,8 @@ public interface TaskService {
 
     Task updateTaskPriority(Long taskId, String priority);
 
-    List<Task> getTasksAssignedToUser(String username);
+    List<Task> getTasksAssignedToUser(String username, Long projectId);
+
     void calculateAndUpdateTaskProgress(Task task);
 
     List<Task> filterTasksByStatus(String status);

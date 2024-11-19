@@ -3,12 +3,13 @@ import { NavLink } from 'react-router-dom';
 import { useAuth } from '../context/auth-context';
 import { request } from '../api/http';
 import { useNavigate } from 'react-router-dom';
+import { useProject } from '../context/project-context';
 
 const Header = () => {
   const { auth, logout } = useAuth();
   const [unreadCount, setUnreadCount] = useState(0);
   const [projects, setProjects] = useState([]);
-  const [selectedProject, setSelectedProject] = useState(null);
+  const { selectedProject, setSelectedProject } = useProject();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -27,9 +28,8 @@ const Header = () => {
           if (auth?.token) {
             try {
               const response = await request('get', '/projects');
-              console.log('Fetched projects:', response.data);
               setProjects(response.data);
-              if (response.data.length > 0) {
+              if (response.data.length > 0 && !selectedProject) {
                 setSelectedProject(response.data[0].id); // Default to the first project
               }
             } catch (error) {
@@ -38,15 +38,34 @@ const Header = () => {
           }
         };
 
+    const fetchCurrentProject = async () => {
+        if (auth?.token) {
+            try {
+              const response = await request('get', '/projects/current');
+              if (response.status === 200) {
+                setSelectedProject(response.data.id);
+              }
+            } catch (error) {
+                console.error('Error fetching current project:', error);
+            }
+        }
+    };
+
+    fetchCurrentProject();
     fetchUnreadNotifications();
     fetchProjects();
   }, [auth]);
 
-const handleProjectChange = (e) => {
-    setSelectedProject(e.target.value);
-    navigate(`/projects/${e.target.value}`);
-    // skoða þetta kannski betur
-  };
+const handleProjectChange = async (e) => {
+    const projectId = e.target.value;
+    setSelectedProject(projectId);
+    try {
+        await request('post', '/projects/set-current', { projectId: parseInt(projectId) });
+        navigate(`/projects/${projectId}`);
+    } catch (error) {
+        console.error('Error setting current project:', error);
+    }
+};
 
   return (
     <header className="bg-indigo-600 text-white p-4 shadow-md">

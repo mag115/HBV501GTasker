@@ -34,13 +34,21 @@ public class TaskServiceImplementation implements TaskService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<Task> findAll() {
-        return taskRepository.findAll();
+    public List<Task> findAll(Long projectId) {
+        if (projectId != null) {
+            return taskRepository.findByProjectId(projectId);
+        } else {
+            return taskRepository.findAll();
+        }
     }
 
     @Override
-    public List<Task> getTasksAssignedToUser(String username) {
-        return taskRepository.findByAssignedUserUsername(username);
+    public List<Task> getTasksAssignedToUser(String username, Long projectId) {
+        if (projectId != null) {
+            return taskRepository.findByAssignedUserUsernameAndProjectId(username, projectId);
+        } else {
+            return taskRepository.findByAssignedUserUsername(username);
+        }
     }
 
     @Override

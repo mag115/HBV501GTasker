@@ -2,28 +2,32 @@ import React, { useState, useEffect } from 'react';
 import { request } from '../api/http';
 import { useAuth } from '../context/auth-context';
 import { CommentInput } from './comment-input';
+import { useProject } from '../context/project-context';
 
 const TaskList = () => {
   const [tasks, setTasks] = useState([]);
+  const { selectedProject } = useProject();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const { auth } = useAuth();
 
   const refreshTaskData = async () => {
-    try {
-      const response = await request('get', '/tasks');
-      setTasks(response.data);
-    } catch (error) {
-      console.error('Error refreshing tasks:', error);
-      setError('Failed to load tasks');
-    } finally {
-      setLoading(false);
-    }
-  };
+      if (!selectedProject) {
+        setTasks([]);
+        return;
+      }
+      try {
+        const response = await request('get', `/tasks?projectId=${selectedProject}`);
+        setTasks(response.data);
+      } catch (error) {
+        console.error('Error refreshing tasks:', error);
+        setError('Failed to load tasks');
+      }
+    };
 
   useEffect(() => {
     refreshTaskData();
-  }, []);
+  }, [selectedProject]);
 
   useEffect(() => {
     const fetchTasks = async () => {
