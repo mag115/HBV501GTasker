@@ -4,12 +4,10 @@ FROM openjdk:17-jdk-slim
 # Set the working directory
 WORKDIR /app
 
-# Copy Gradle wrapper and project files
 COPY gradlew .
+COPY gradle ./gradle
 COPY . .
 
-# Give execute permissions to the Gradle wrapper
-RUN chmod +x ./gradlew
 
 # Build the application
 RUN ./gradlew build -x test
