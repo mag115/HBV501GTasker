@@ -1,13 +1,6 @@
 package hi.is.tasker.entities;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
-import jakarta.persistence.Column;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.JoinColumn;
+import jakarta.persistence.*;
 import jakarta.persistence.Column;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.JoinColumn;
@@ -23,7 +16,8 @@ import java.time.LocalDateTime;
 @Table(name = "notifications")
 public class Notification {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "notification_seq")
+    @SequenceGenerator(name = "notification_seq", sequenceName = "notification_sequence", allocationSize = 1)
     private Long id;
 
     @Column(nullable = false)

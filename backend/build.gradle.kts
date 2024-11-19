@@ -32,7 +32,6 @@ dependencies {
 	developmentOnly("org.springframework.boot:spring-boot-devtools")
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
 	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
-	implementation("org.xerial:sqlite-jdbc:3.46.1.0")
 	implementation("org.hibernate.orm:hibernate-community-dialects:6.2.6.Final")
 	implementation("io.jsonwebtoken:jjwt-api:0.11.5")
 	runtimeOnly("io.jsonwebtoken:jjwt-impl:0.11.5")
@@ -46,6 +45,8 @@ dependencies {
 	implementation("javax.annotation:javax.annotation-api:1.3.2")
 	implementation("com.itextpdf:itextpdf:5.5.13.2")
 	implementation("org.apache.pdfbox:pdfbox:2.0.29")
+	implementation("io.github.cdimascio:dotenv-java:2.2.4")
+	implementation ("org.postgresql:postgresql:42.5.4")
 }
 
 tasks.withType<Test> {

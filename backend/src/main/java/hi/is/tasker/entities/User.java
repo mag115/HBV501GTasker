@@ -24,8 +24,9 @@ import java.util.List;
 @Entity
 public class User implements UserDetails {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(nullable = false)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "user_seq")
+    @SequenceGenerator(name = "user_seq", sequenceName = "user_sequence", allocationSize = 1)
+    @Column(nullable = false, updatable = false)
     private Long id;
 
     @Column(nullable = false)

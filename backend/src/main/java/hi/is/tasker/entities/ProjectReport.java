@@ -10,7 +10,8 @@ import java.util.List;
 public class ProjectReport {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "project_report_seq")
+    @SequenceGenerator(name = "project_report_seq", sequenceName = "project_report_sequence", allocationSize = 1)
     private Long id;
 
     @OneToMany
