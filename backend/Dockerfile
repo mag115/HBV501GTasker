@@ -4,14 +4,19 @@ FROM openjdk:17-jdk-slim
 # Set the working directory
 WORKDIR /app
 
-# Copy the Gradle wrapper and project files
+# Copy Gradle wrapper and project files
+COPY gradlew .
+COPY gradle ./gradle
 COPY . .
+
+# Give execute permissions to the Gradle wrapper
+RUN chmod +x ./gradlew
 
 # Build the application
 RUN ./gradlew build -x test
 
-# Expose the port that your Spring Boot app runs on
+# Expose the port that the Spring Boot app will use
 EXPOSE 8080
 
 # Run the Spring Boot application
-CMD ["java", "-jar", "/build/libs/Tasker-0.0.1-SNAPSHOT.jar"]
+CMD ["java", "-jar", "build/libs/<your-jar-name>.jar"]
