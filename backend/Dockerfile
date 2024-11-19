@@ -6,7 +6,6 @@ WORKDIR /app
 
 # Copy Gradle wrapper and project files
 COPY gradlew .
-COPY gradle ./gradle
 COPY . .
 
 # Give execute permissions to the Gradle wrapper
