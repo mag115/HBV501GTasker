@@ -6,16 +6,20 @@ import io.github.cdimascio.dotenv.Dotenv;
 
 @SpringBootApplication
 public class TaskerApplication {
-
     public static void main(String[] args) {
-        // Load environment variables from .env file for local development
-        Dotenv dotenv = Dotenv.load();
+        // Try to load the .env file, and fallback to system environment variables if not found
+        Dotenv dotenv;
+        try {
+            dotenv = Dotenv.load();
+        } catch (Exception e) {
+            System.out.println("Could not load .env file, falling back to system environment variables.");
+            dotenv = Dotenv.configure().ignoreIfMissing().load();
+        }
 
-        System.setProperty("SPRING_DATASOURCE_URL", dotenv.get("SPRING_DATASOURCE_URL"));
-        System.setProperty("SPRING_DATASOURCE_USERNAME", dotenv.get("SPRING_DATASOURCE_USERNAME"));
-        System.setProperty("SPRING_DATASOURCE_PASSWORD", dotenv.get("SPRING_DATASOURCE_PASSWORD"));
+        // Example usage
+        String dbHost = dotenv.get("DB_HOST", System.getenv("DB_HOST"));
+        System.out.println("Database Host: " + dbHost);
 
         SpringApplication.run(TaskerApplication.class, args);
     }
-	
 }
