@@ -7,7 +7,6 @@ import lombok.Setter;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
-import java.util.List;
 
 @Getter
 @Setter
@@ -46,9 +45,6 @@ Task {
     private double timeSpent;
     private double elapsedTime;
     private Double scheduledProgress;
-
-    @OneToMany(mappedBy = "task", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    private List<TimeTracking> timeTrackings;
 
 
     public void calculateActualProgress() {

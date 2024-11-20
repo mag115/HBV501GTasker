@@ -84,7 +84,6 @@ public class ProjectReportController {
                 contentStream.newLine();
                 contentStream.showText("Date: " + report.getReportDate().toString());
                 contentStream.newLine();
-                contentStream.showText("Total Time Spent: " + report.getTotalTimeSpent() + " hours");
                 contentStream.newLine();
                 contentStream.showText("Overall Performance: " + report.getOverallPerformance());
                 contentStream.newLine();

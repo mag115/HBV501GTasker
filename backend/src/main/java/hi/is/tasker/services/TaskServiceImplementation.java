@@ -5,7 +5,6 @@ import hi.is.tasker.entities.Task;
 import hi.is.tasker.entities.User;
 import hi.is.tasker.repositories.ProjectRepository;
 import hi.is.tasker.repositories.TaskRepository;
-import hi.is.tasker.repositories.TimeTrackingRepository;
 import hi.is.tasker.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -20,14 +19,12 @@ public class TaskServiceImplementation implements TaskService {
     private final TaskRepository taskRepository;
     private final UserRepository userRepository;
     private final ProjectRepository projectRepository;
-    private final TimeTrackingRepository timeTrackingRepository;
     private final NotificationService notificationService;
 
     @Autowired
-    public TaskServiceImplementation(TaskRepository taskRepository, UserRepository userRepository, TimeTrackingRepository timeTrackingRepository, NotificationService notificationService, ProjectRepository projectRepository) {
+    public TaskServiceImplementation(TaskRepository taskRepository, UserRepository userRepository, NotificationService notificationService, ProjectRepository projectRepository) {
         this.taskRepository = taskRepository;
         this.userRepository = userRepository;
-        this.timeTrackingRepository = timeTrackingRepository;
         this.notificationService = notificationService;
         this.projectRepository = projectRepository;
     }

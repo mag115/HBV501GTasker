@@ -25,8 +25,6 @@ public class ProjectReport {
     @Column(nullable = false)
     private LocalDateTime reportDate;
 
-    private Long totalTimeSpent; // Summary tíma
-
     private String overallPerformance;
 
     @ManyToOne(fetch = FetchType.EAGER)
@@ -36,9 +34,8 @@ public class ProjectReport {
     public ProjectReport() {
     }
 
-    public ProjectReport(List<Task> tasks, Long totalTimeSpent, String overallPerformance) {
+    public ProjectReport(List<Task> tasks, String overallPerformance) {
         this.tasks = tasks;
-        this.totalTimeSpent = totalTimeSpent;
         this.overallPerformance = overallPerformance;
         this.reportDate = LocalDateTime.now();
     }
