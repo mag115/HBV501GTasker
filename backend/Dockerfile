@@ -1,14 +1,13 @@
 # Use an OpenJDK base image
 FROM openjdk:17-jdk-slim
 
+COPY ./ /tmp
 # Set the working directory inside the container
+
+# Ensure the Gradle wrapper has execute permissions
+RUN chmod +x ./gradlew
+
 WORKDIR /app
-
-# Copy the Gradle wrapper and project files into the container
-COPY gradlew .
-COPY gradle ./gradle
-COPY . .
-
 # Build the application using the Gradle wrapper
 RUN ./gradlew build -x test
 
