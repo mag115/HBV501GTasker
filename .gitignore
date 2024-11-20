@@ -2,11 +2,11 @@
 HELP.md
 
 # Gradle-specific files
-.gradle/
-build/
-!gradle/wrapper/gradle-wrapper.jar
-!**/src/main/**/build/
-!**/src/test/**/build/
+# .gradle/
+# build/
+# !gradle/wrapper/gradle-wrapper.jar
+# !**/src/main/**/build/
+# !**/src/test/**/build/
 
 # Log files
 *.log
@@ -21,7 +21,7 @@ build/
 
 
 # Backend
-backend/.gradle/
+# backend/.gradle/
 backend/out/
 backend/taskerDB.db
 backend/.idea/
@@ -94,7 +94,7 @@ yarn-error.log*
 *.ear
 
 # Gradle additional outputs
-.gradle/**
+# .gradle/**
 *.bin
 
 # Cache directories
