@@ -12,8 +12,7 @@ import java.time.LocalDateTime;
 public class TimeTracking {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "time_tracking_seq")
-    @SequenceGenerator(name = "time_tracking_seq", sequenceName = "time_tracking_sequence", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne(fetch = FetchType.EAGER)

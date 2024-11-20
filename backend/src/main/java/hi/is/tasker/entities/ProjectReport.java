@@ -15,8 +15,7 @@ public class ProjectReport {
 
     // Getters and Setters
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "project_report_seq")
-    @SequenceGenerator(name = "project_report_seq", sequenceName = "project_report_sequence", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @OneToMany

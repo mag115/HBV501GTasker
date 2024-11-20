@@ -16,9 +16,7 @@ import java.util.List;
 @JsonIgnoreProperties({"tasks", "owner"})
 public class Project {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "project_seq")
-    @SequenceGenerator(name = "project_seq", sequenceName = "project_sequence", allocationSize = 1)
-    @Column(nullable = false, updatable = false)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private String name;
