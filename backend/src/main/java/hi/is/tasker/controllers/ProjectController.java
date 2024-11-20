@@ -40,8 +40,13 @@ public class ProjectController {
 
     @GetMapping
     @PreAuthorize("hasAnyRole('PROJECT_MANAGER', 'TEAM_MEMBER')")
-    public List<Project> getAllProjects() {
-        return projectService.getAllProjects();
+    public ResponseEntity<List<Project>> getAllProjects(Principal principal) {
+        String username = principal.getName();
+        User user = userService.getUserByUsername(username)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        List<Project> projects = projectService.getProjectsForUser(user);
+        return ResponseEntity.ok(projects);
     }
 
     @GetMapping("/{id}")
@@ -86,5 +91,18 @@ public class ProjectController {
         }
 
         return ResponseEntity.ok(currentProject);
+    }
+
+    @PostMapping("/{projectId}/add-member")
+    public ResponseEntity<Project> addMemberToProject(@PathVariable Long projectId, @RequestBody Map<String, Long> requestBody) {
+        Long userId = requestBody.get("userId");
+        try {
+            projectService.addMemberToProject(projectId, userId);
+            Project project = projectService.getProjectById(projectId)
+                    .orElseThrow(() -> new RuntimeException("Project not found"));
+            return ResponseEntity.ok(project);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
     }
 }

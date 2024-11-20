@@ -5,7 +5,6 @@ import hi.is.tasker.entities.ProjectReport;
 import hi.is.tasker.entities.Task;
 import hi.is.tasker.repositories.ProjectReportRepository;
 import hi.is.tasker.repositories.TaskRepository;
-import hi.is.tasker.repositories.TimeTrackingRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -19,19 +18,16 @@ public class ProjectReportServiceImplementation implements ProjectReportService 
 
     private final ProjectReportRepository projectReportRepository;
     private final TaskRepository taskRepository;
-    private final TimeTrackingRepository timeTrackingRepository;
     private final TaskService taskService;
 
     @Autowired
     public ProjectReportServiceImplementation(
             ProjectReportRepository projectReportRepository,
             TaskRepository taskRepository,
-            TimeTrackingRepository timeTrackingRepository,
             TaskService taskService
     ) {
         this.projectReportRepository = projectReportRepository;
         this.taskRepository = taskRepository;
-        this.timeTrackingRepository = timeTrackingRepository;
         this.taskService = taskService;
     }
 
@@ -40,25 +36,15 @@ public class ProjectReportServiceImplementation implements ProjectReportService 
         return projectReportRepository.findAll();
     }
 
-    public ProjectReport generateProjectReport() {
-        List<Task> tasks = taskRepository.findAll();
-
-        long totalTimeSpent = tasks.stream()
-                .mapToLong(this::calculateTotalTimeSpentForTask)
-                .sum();
+    public ProjectReport generateProjectReport(Long projectId) {
+        List<Task> tasks = taskRepository.findByProjectId(projectId);
 
         String overallPerformance = calculateOverallPerformance(tasks);
-        ProjectReport report = new ProjectReport(tasks, totalTimeSpent, overallPerformance);
+        ProjectReport report = new ProjectReport(tasks, overallPerformance);
         projectReportRepository.deleteAll();
         projectReportRepository.save(report);
 
         return report;
-    }
-
-    private long calculateTotalTimeSpentForTask(Task task) {
-        return task.getTimeTrackings().stream()
-                .mapToLong(tt -> (long) tt.getTimeSpent())
-                .sum();
     }
 
     private String calculateOverallPerformance(List<Task> tasks) {
@@ -109,16 +95,12 @@ public class ProjectReportServiceImplementation implements ProjectReportService 
 
         return scheduledProgress;
     }
-    
-    public ProjectReport generateCustomProjectReport(ReportOptions options) {
-        List<Task> tasks = options.isIncludeTasks() ? taskRepository.findAll() : Collections.emptyList();
+
+    public ProjectReport generateCustomProjectReport(Long projectId, ReportOptions options) {
+        List<Task> tasks = options.isIncludeTasks() ? taskRepository.findByProjectId(projectId) : Collections.emptyList();
 
         long totalTimeSpent = 0;
-        if (options.isIncludeTimeSpent()) {
-            totalTimeSpent = tasks.stream()
-                    .mapToLong(this::calculateTotalTimeSpentForTask)
-                    .sum();
-        }
+
 
         String overallPerformance = null;
         if (options.isIncludePerformance()) {
@@ -127,7 +109,6 @@ public class ProjectReportServiceImplementation implements ProjectReportService 
 
         ProjectReport report = new ProjectReport(
                 tasks.isEmpty() ? null : tasks,
-                options.isIncludeTimeSpent() ? totalTimeSpent : 0,
                 options.isIncludePerformance() ? overallPerformance : null
         );
         projectReportRepository.deleteAll();

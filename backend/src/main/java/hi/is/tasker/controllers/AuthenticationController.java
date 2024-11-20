@@ -1,8 +1,8 @@
 package hi.is.tasker.controllers;
 
+import hi.is.tasker.dto.LoginResponse;
 import hi.is.tasker.dto.LoginUserDto;
 import hi.is.tasker.dto.RegisterUserDto;
-import hi.is.tasker.dto.LoginResponse;
 import hi.is.tasker.entities.User;
 import hi.is.tasker.services.AuthenticationService;
 import hi.is.tasker.services.JwtService;
@@ -26,37 +26,53 @@ public class AuthenticationController {
 
     @PostMapping("/signup")
     public ResponseEntity<LoginResponse> register(@RequestBody RegisterUserDto registerUserDto) {
-        User registeredUser = authenticationService.signup(registerUserDto);
+        try {
+            User registeredUser = authenticationService.signup(registerUserDto);
 
-        String jwtToken = jwtService.generateToken(registeredUser);
+            String jwtToken = jwtService.generateToken(registeredUser);
 
-        System.out.println(registeredUser.getId());
+            System.out.println(registeredUser.getId());
 
-        LoginResponse loginResponse = new LoginResponse(
-                jwtToken,
-                jwtService.getExpirationTime(),
-                registeredUser.getRole(),
-                registeredUser.getId()
-        );
-        System.out.println("asdf" + loginResponse);
+            LoginResponse loginResponse = new LoginResponse(
+                    jwtToken,
+                    jwtService.getExpirationTime(),
+                    registeredUser.getRole(),
+                    registeredUser.getId(),
+                    registeredUser.getUsername()
+            );
+            System.out.println("asdf" + loginResponse);
 
-        return ResponseEntity.ok(loginResponse);
+            return ResponseEntity.ok(loginResponse);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.badRequest().build();
+        }
     }
 
     @PostMapping("/login")
     public ResponseEntity<LoginResponse> authenticate(@RequestBody LoginUserDto loginUserDto) {
-        User authenticatedUser = authenticationService.authenticate(loginUserDto);
+        try {
 
-        String jwtToken = jwtService.generateToken(authenticatedUser);
 
-        LoginResponse loginResponse = new LoginResponse(
-                jwtToken,
-                jwtService.getExpirationTime(),
-                authenticatedUser.getRole(),
-                authenticatedUser.getId());
+            User authenticatedUser = authenticationService.authenticate(loginUserDto);
 
-        System.out.println("userID : " + authenticatedUser.getId());
+            String jwtToken = jwtService.generateToken(authenticatedUser);
 
-        return ResponseEntity.ok(loginResponse);
+            LoginResponse loginResponse = new LoginResponse(
+                    jwtToken,
+                    jwtService.getExpirationTime(),
+                    authenticatedUser.getRole(),
+                    authenticatedUser.getId(),
+                    authenticatedUser.getUsername());
+
+
+            System.out.println("userID : " + authenticatedUser.getId());
+
+            return ResponseEntity.ok(loginResponse);
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.badRequest().build();
+        }
     }
 }

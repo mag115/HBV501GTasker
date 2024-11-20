@@ -7,7 +7,6 @@ import lombok.Setter;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
-import java.util.List;
 
 @Getter
 @Setter
@@ -31,6 +30,7 @@ Task {
     private Long dependency;
     private Double progress;
     private Double manualProgress;//ATH: geymir hvað user setur progress sem
+    private Boolean isDeleted;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "project_id")
@@ -47,9 +47,6 @@ Task {
     private double timeSpent;
     private double elapsedTime;
     private Double scheduledProgress;
-
-    @OneToMany(mappedBy = "task", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    private List<TimeTracking> timeTrackings;
 
 
     public void calculateActualProgress() {
@@ -71,6 +68,7 @@ Task {
         }
         return 0.0;
     }
+
     public void calculateScheduledProgressStatus() {
         if (deadline != null) {
             double scheduledProgress = calculateScheduledProgress();

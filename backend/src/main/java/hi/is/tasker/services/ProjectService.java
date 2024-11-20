@@ -14,4 +14,7 @@ public interface ProjectService {
     Optional<Project> getProjectById(Long id);
 
     void addMemberToProject(Long projectId, Long userId);
+
+    List<Project> getProjectsForUser(User user);
+
 }

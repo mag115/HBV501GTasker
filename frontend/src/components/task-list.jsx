@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { request } from '../api/http';
 import { useAuth } from '../context/auth-context';
 import { CommentInput } from './comment-input';
+import { useNotifications } from '../context/notification-context';
 import { useProject } from '../context/project-context';
 
 const TaskList = () => {
@@ -10,6 +11,7 @@ const TaskList = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const { auth } = useAuth();
+  const { fetchUnreadNotifications } = useNotifications();
 
   useEffect(() => {
     refreshTaskData();
@@ -86,9 +88,27 @@ const TaskList = () => {
       await request('post', `/tasks/${taskId}/reminder`);
       alert('Reminder sent successfully!');
       refreshTaskData();
+      if (auth?.userId && auth?.token) {
+        fetchUnreadNotifications(auth.userId, auth.token);
+      } else {
+        console.warn('Cannot fetch notifications - userId or token missing.');
+      }
     } catch (error) {
       console.error('Error sending reminder:', error);
       alert('Failed to send reminder. Please try again.');
+    }
+  };
+
+  const handleDelete = async (taskId) => {
+    const confirmDelete = window.confirm('Are you sure you want to delete the task?');
+    if (confirmDelete) {
+      try {
+        await request('delete', `/tasks/${taskId}`);
+        refreshTaskData();
+      } catch (error) {
+        console.error('Error deleting task:', error);
+        alert('Failed to delete task. Please try again.');
+      }
     }
   };
 
@@ -139,7 +159,6 @@ const TaskList = () => {
           )}
         </p>
 
-
         {/* Display calculated and user-set (manual) progress separately */}
         <p className="text-gray-500 mb-2">
           <strong>Calculated Progress:</strong>{' '}
@@ -149,7 +168,6 @@ const TaskList = () => {
           <strong>User-Set Progress:</strong>{' '}
           {task.manualProgress !== undefined ? `${Math.round(task.manualProgress)}%` : 'Not set'}
         </p>
-
 
         {/* Due Date */}
         <p className="text-gray-500 mb-2">
@@ -194,6 +212,14 @@ const TaskList = () => {
           </button>
         )}
       </div>
+      {auth.role === 'PROJECT_MANAGER' && (
+        <button
+          className="p-1 bg-red text-white rounded hover:bg-black transition m-2"
+          onClick={() => handleDelete(task.id)}
+        >
+          Delete Task
+        </button>
+      )}
     </div>
   );
 

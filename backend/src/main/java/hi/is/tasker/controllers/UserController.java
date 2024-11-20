@@ -33,8 +33,7 @@ public class UserController {
     public ResponseEntity<String> authenticateUser() {
         return new ResponseEntity<>("Authentication success", HttpStatus.OK);
     }
-
-    // Add a new endpoint if needed to return List<User>
+    
     @GetMapping
     public ResponseEntity<List<User>> getAllUsers() {
         List<User> users = userService.getAllUsers();
@@ -51,7 +50,7 @@ public class UserController {
         // Fetch the user by their username
         User user = userService.getUserByUsername(username)
                 .orElseThrow(() -> new RuntimeException("User not found"));
-
+        user.setUsername(username);
         // Update the user's role
         user.setRole(role);
         User updatedUser = userService.save(user);

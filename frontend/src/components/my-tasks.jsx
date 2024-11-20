@@ -107,7 +107,7 @@ const MyTasks = () => {
           task.id === taskId ? { ...task, status: newStatus } : task
         )
       );
-      await request('patch', `/tasks/${taskId}/status`, { status: newStatus });
+      await request('patch', `/tasks/${taskId}/status`, { status: newStatus, });
       await refreshTaskData();
     } catch (error) {
       console.error('Failed to update status:', error);
@@ -131,9 +131,10 @@ const MyTasks = () => {
   const canStartTimer = (task) => {
     if (!task.dependency) return true;
     const depTask = tasks.find((t) => t.id === task.dependency);
-    return depTask && depTask.status === 'Done';
+    console.log("task sem er deletað", depTask);
+    console.log("taskið", task);
+    return depTask=== undefined || depTask.status === 'Done';
   };
-
 
 const handleProgressChange = async (taskId, value) => {
     const parsedValue = parseFloat(value);
@@ -166,23 +167,29 @@ const handleProgressChange = async (taskId, value) => {
         <strong>Priority:</strong> {task.priority}
       </p>
 
+
+{task.status !== 'Done' && (
+  <>
       <label className="text-gray-700 mb-1">Status:</label>
       <select
         className="w-full px-3 py-2 border rounded mb-4"
         value={task.status}
         onChange={(e) => handleStatusChange(task.id, e.target.value)}
+        disabled={!canStartTimer(task)}
       >
         <option value="To-do">To-do</option>
         <option value="Ongoing">Ongoing</option>
         <option value="Done">Done</option>
       </select>
-
+</>)}
       <p className="text-gray-700 mb-4"><strong>Deadline:</strong> {new Date(task.deadline).toLocaleString()}</p>
 
       <div className="mb-4">
         <p className="text-gray-700 mb-2">
           <strong>Time Spent:</strong> {formatTime(task.isTracking ? task.elapsedTime + task.timeSpent  : task.timeSpent)}
         </p>
+        {task.status !== 'Done' && (
+          <>
         <button
           style={{
             backgroundColor: task.isTracking ? '#DC2626' : '#6366F1',
@@ -193,14 +200,15 @@ const handleProgressChange = async (taskId, value) => {
           disabled={!canStartTimer(task)}
         >
           {task.isTracking ? 'Stop Tracking' : 'Start Tracking'}
-        </button>
+        </button></>)}
         {!canStartTimer(task) && (
           <p className="text-red-500 mt-2">
             This task cannot start until all dependencies are completed.
           </p>
         )}
       </div>
-
+{task.status !== 'Done' && (
+          <>
       <div>
         <label className="block text-sm font-bold text-indigo-500 mb-1 mt-4">Manual time</label>
         <input
@@ -210,8 +218,9 @@ const handleProgressChange = async (taskId, value) => {
           placeholder="Enter time in seconds and press Enter"
           disabled={!canStartTimer(task)}
         />
-      </div>
-
+      </div></>)}
+{task.status !== 'Done' && (
+          <>
       <div className="mt-4">
         <p className="text-gray-700 mb-2">
           <strong>User-Set Progress:</strong> {manualProgress[task.id] !== undefined ? `${Math.round(manualProgress[task.id])}%` : 'Not set'}
@@ -230,7 +239,7 @@ const handleProgressChange = async (taskId, value) => {
           className="w-full px-3 py-2 border border-gray-300 rounded-md"
           placeholder="Enter progress percentage"
         />
-      </div>
+      </div></>)}
     </div>
   );
 

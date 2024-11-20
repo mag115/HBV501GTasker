@@ -10,7 +10,7 @@ public interface ProjectReportService {
 
     List<ProjectReport> getAllReports();
 
-    ProjectReport generateProjectReport();
+    ProjectReport generateProjectReport(Long projectId);
 
-    ProjectReport generateCustomProjectReport(ReportOptions options);
+    ProjectReport generateCustomProjectReport(Long projectId, ReportOptions options);
 }

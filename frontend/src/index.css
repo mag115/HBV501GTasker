@@ -72,3 +72,11 @@ body {
 .header a:hover {
   color: #F59E0B;
 }
+
+input {
+text-transform:capitalize;
+}
+
+#email{
+text-transform:none;
+}

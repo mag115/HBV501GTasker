@@ -26,7 +26,7 @@ public class Project {
 
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
-
+    
     @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JsonIgnoreProperties({"project", "assignedUser"})
     private List<Task> tasks = new ArrayList<>();
@@ -39,6 +39,7 @@ public class Project {
     )
     @JsonIgnoreProperties({"projects", "password", "email", "assignedTasks", "currentProject"})
     private List<User> members = new ArrayList<>();
+
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "owner_id")

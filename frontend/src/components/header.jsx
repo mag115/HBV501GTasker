@@ -1,71 +1,62 @@
 import React, { useState, useEffect } from 'react';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/auth-context';
 import { request } from '../api/http';
-import { useNavigate } from 'react-router-dom';
+import { useNotifications } from '../context/notification-context';
 import { useProject } from '../context/project-context';
 
 const Header = () => {
   const { auth, logout } = useAuth();
-  const [unreadCount, setUnreadCount] = useState(0);
+  const { unreadCount, fetchUnreadNotifications } = useNotifications();
   const [projects, setProjects] = useState([]);
   const { selectedProject, setSelectedProject } = useProject();
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const fetchUnreadNotifications = async () => {
-      if (auth?.token && auth.user?.id) {
-        try {
-          const response = await request('get', `/notifications/${auth.user.id}?filter=unread`);
-          setUnreadCount(response.data.length);
-        } catch (error) {
-          console.error('Error fetching unread notifications:', error);
+  // Function to fetch projects
+  const fetchProjects = async () => {
+    if (auth?.token) {
+      try {
+        const response = await request('get', '/projects');
+        setProjects(response.data);
+        if (response.data.length > 0 && !selectedProject) {
+          setSelectedProject(response.data[0].id); // Default to the first project
         }
+      } catch (error) {
+        console.error('Error fetching projects:', error);
       }
-    };
+    }
+  };
 
-    const fetchProjects = async () => {
-          if (auth?.token) {
-            try {
-              const response = await request('get', '/projects');
-              setProjects(response.data);
-              if (response.data.length > 0 && !selectedProject) {
-                setSelectedProject(response.data[0].id); // Default to the first project
-              }
-            } catch (error) {
-              console.error('Error fetching projects:', error);
-            }
-          }
-        };
-
-    const fetchCurrentProject = async () => {
-        if (auth?.token) {
-            try {
-              const response = await request('get', '/projects/current');
-              if (response.status === 200) {
-                setSelectedProject(response.data.id);
-              }
-            } catch (error) {
-                console.error('Error fetching current project:', error);
-            }
+  // Function to fetch the current project
+  const fetchCurrentProject = async () => {
+    if (auth?.token) {
+      try {
+        const response = await request('get', '/projects/current');
+        if (response.status === 200) {
+          setSelectedProject(response.data.id);
         }
-    };
+      } catch (error) {
+        console.error('Error fetching current project:', error);
+      }
+    }
+  };
 
-    fetchCurrentProject();
-    fetchUnreadNotifications();
-    fetchProjects();
-  }, [auth]);
+  useEffect(() => {
+      fetchUnreadNotifications();
+      fetchCurrentProject();
+      fetchProjects();
+    }, [auth]);
 
-const handleProjectChange = async (e) => {
+  const handleProjectChange = async (e) => {
     const projectId = e.target.value;
     setSelectedProject(projectId);
     try {
-        await request('post', '/projects/set-current', { projectId: parseInt(projectId) });
-        navigate(`/projects/${projectId}`);
+      await request('post', '/projects/set-current', { projectId: parseInt(projectId) });
+      navigate(`/projects/${projectId}`);
     } catch (error) {
-        console.error('Error setting current project:', error);
+      console.error('Error setting current project:', error);
     }
-};
+  };
 
   return (
     <header className="bg-indigo-600 text-white p-4 shadow-md">
@@ -149,16 +140,16 @@ const handleProjectChange = async (e) => {
                 </>
               )}
 
-              <li>
+               <li>
                 <NavLink to="/notifications" className="hover:text-gray-300 relative">
-                  Notifications
-                  {unreadCount > 0 && (
-                    <span className="absolute top-0 right-0 bg-red-600 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
-                      {unreadCount}
-                    </span>
-                  )}
+                    Notifications
+                    {unreadCount > 0 && (
+                      <span className="top-0 right-0 bg-red-600 text-red text-s rounded-full w-5 h-5 flex">
+                        {"("+unreadCount+")"}
+                      </span>
+                    )}
                 </NavLink>
-              </li>
+               </li>
               <li>
                 <NavLink to="/myinfo" className="hover:text-gray-300">
                   My Info

@@ -28,6 +28,7 @@ public class NotificationController {
         this.taskService = taskService;
     }
 
+
     @PostMapping("/send")
     public ResponseEntity<String> sendTaskReminders() {
         // Fetch all users in the system
@@ -68,6 +69,16 @@ public class NotificationController {
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
         List<Notification> notifications = notificationService.getNotificationsForUser(user);
+
+        return ResponseEntity.ok(notifications);
+    }
+
+    @GetMapping("/{userId}/unread")
+    public ResponseEntity<List<Notification>> getUnreadNotifications(@PathVariable Long userId) {
+        User user = userService.getUserById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        List<Notification> notifications = notificationService.getUnreadNotificationsForUser(user);
 
         return ResponseEntity.ok(notifications);
     }

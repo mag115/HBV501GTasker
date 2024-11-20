@@ -38,6 +38,7 @@ const SignupForm = () => {
         token: result.data.token,
         role: result.data.role || role,
         userId: result.data.userId,
+        username: result.data.username,
       });
 
       navigate('/');
@@ -90,6 +91,7 @@ const SignupForm = () => {
             </label>
             <input
               type="email"
+              id="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required

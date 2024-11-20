@@ -16,6 +16,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @RestController
@@ -28,7 +30,7 @@ public class ProjectReportController {
     public ProjectReportController(ProjectReportService projectReportService) {
         this.projectReportService = projectReportService;
     }
-    
+
     @GetMapping()
     public ResponseEntity<List<ProjectReport>> getAllReports() {
         List<ProjectReport> reports = projectReportService.getAllReports();
@@ -36,16 +38,18 @@ public class ProjectReportController {
     }
 
     @PostMapping("/generate")
-    public ResponseEntity<ProjectReport> generateProjectReport() {
-        ProjectReport report = projectReportService.generateProjectReport();
-        return ResponseEntity.ok(report);  // Return the generated report in the response
-    }
-
-    @PostMapping("/generate/custom")
-    public ResponseEntity<ProjectReport> generateCustomProjectReport(@RequestBody ReportOptions options) {
-        ProjectReport report = projectReportService.generateCustomProjectReport(options);
+    public ResponseEntity<ProjectReport> generateProjectReport(@RequestParam Long projectId) {
+        ProjectReport report = projectReportService.generateProjectReport(projectId);
         return ResponseEntity.ok(report);
     }
+
+
+    @PostMapping("/generate/custom")
+    public ResponseEntity<ProjectReport> generateCustomProjectReport(@RequestParam Long projectId, @RequestBody ReportOptions options) {
+        ProjectReport report = projectReportService.generateCustomProjectReport(projectId, options);
+        return ResponseEntity.ok(report);
+    }
+
 
     @GetMapping("/{reportId}")
     public ResponseEntity<ProjectReport> getProjectReport(@PathVariable Long reportId) {
@@ -56,13 +60,17 @@ public class ProjectReportController {
         return ResponseEntity.ok(report);
     }
 
-    @GetMapping("/{projectId}/export")
-    public ResponseEntity<byte[]> exportProjectReport(@PathVariable Long projectId) throws IOException {
-        ProjectReport report = projectReportService.getReportById(projectId);
+    @GetMapping("/{reportId}/export")
+    public ResponseEntity<byte[]> exportProjectReport(@PathVariable Long reportId) throws IOException {
+        ProjectReport report = projectReportService.getReportById(reportId);
 
         if (report == null) {
             return ResponseEntity.notFound().build();
         }
+
+        LocalDateTime reportDate = report.getReportDate();
+        DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        String formattedDate = reportDate.format(dateFormatter);
 
         //PDF document
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
@@ -80,9 +88,8 @@ public class ProjectReportController {
                 contentStream.setFont(PDType1Font.HELVETICA, 12);
                 contentStream.showText("Report ID: " + report.getId());
                 contentStream.newLine();
-                contentStream.showText("Date: " + report.getReportDate().toString());
+                contentStream.showText("Date Of Report: " + formattedDate);
                 contentStream.newLine();
-                contentStream.showText("Total Time Spent: " + report.getTotalTimeSpent() + " hours");
                 contentStream.newLine();
                 contentStream.showText("Overall Performance: " + report.getOverallPerformance());
                 contentStream.newLine();
@@ -103,7 +110,7 @@ public class ProjectReportController {
         byte[] pdfBytes = outputStream.toByteArray();
         return ResponseEntity.ok()
                 .contentType(MediaType.APPLICATION_PDF)
-                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=project_report_" + projectId + ".pdf")
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=project_report_" + reportId + ".pdf")
                 .body(pdfBytes);
     }
 }
