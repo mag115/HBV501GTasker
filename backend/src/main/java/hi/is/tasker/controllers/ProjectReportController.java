@@ -58,7 +58,7 @@ public class ProjectReportController {
         return ResponseEntity.ok(report);
     }
 
-    @GetMapping("/{projectId}/export")
+    @GetMapping("/{reportId}/export")
     public ResponseEntity<byte[]> exportProjectReport(@PathVariable Long reportId) throws IOException {
         ProjectReport report = projectReportService.getReportById(reportId);
 

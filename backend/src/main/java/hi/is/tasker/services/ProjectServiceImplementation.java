@@ -21,17 +21,11 @@ public class ProjectServiceImplementation implements ProjectService {
     private UserRepository userRepository;
 
     public Project createProject(Project project, User owner) {
-        // Log statements
-        System.out.println("Creating project with name: " + project.getName());
-        System.out.println("Owner: " + owner.getUsername());
-
-        // Set the owner and add the owner to members
         project.setOwner(owner);
         if (!project.getMembers().contains(owner)) {
             project.getMembers().add(owner);
         }
 
-        // Add selected users to the project if they aren't already members
         if (project.getMembers() != null && !project.getMembers().isEmpty()) {
             List<Long> memberIds = project.getMembers().stream()
                     .map(User::getId)
@@ -69,5 +63,4 @@ public class ProjectServiceImplementation implements ProjectService {
     public List<Project> getProjectsForUser(User user) {
         return projectRepository.findByMembersContaining(user);
     }
-
 }

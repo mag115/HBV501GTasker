@@ -38,13 +38,6 @@ public class ProjectController {
         return projectService.createProject(project, owner);
     }
 
-    /*
-    @GetMapping
-    @PreAuthorize("hasAnyRole('PROJECT_MANAGER', 'TEAM_MEMBER')")
-    public List<Project> getAllProjects() {
-        return projectService.getAllProjects();
-    }*/
-
     @GetMapping
     @PreAuthorize("hasAnyRole('PROJECT_MANAGER', 'TEAM_MEMBER')")
     public ResponseEntity<List<Project>> getAllProjects(Principal principal) {
