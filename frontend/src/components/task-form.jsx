@@ -143,6 +143,7 @@ const TaskForm = () => {
 
     try {
       const res = await request('post', `/tasks?assignedUserId=${assignedUser}&projectId=${projectId}`, newTask);
+
       if (res.status === 200) {
         setTaskId(res.data.id);
         setResponseMessage('Task successfully created!');
@@ -151,7 +152,7 @@ const TaskForm = () => {
         setTitle('');
         setDescription('');
         setDeadline('');
-        setReminderSent(false);
+        setReminderSent(true);
         setPriority('');
         setAssignedUser('');
         setEstimatedWeeks('');

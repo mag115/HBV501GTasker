@@ -53,8 +53,7 @@ public class AuthenticationService {
         if (input.getPassword() == null || input.getPassword().isEmpty()) {
             throw new RuntimeException("Password is required");
         }
-
-        // Authenticate using the AuthenticationManager
+        //Authenticate using the AuthenticationManager
         try {
             authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(
@@ -65,7 +64,6 @@ public class AuthenticationService {
         } catch (Exception e) {
             throw new RuntimeException("Invalid credentials");
         }
-
         // Find the user and return it (role is stored as a string in User entity)
         return userRepository.findByUsername(input.getUsername())
                 .orElseThrow(() -> new RuntimeException("User not found"));

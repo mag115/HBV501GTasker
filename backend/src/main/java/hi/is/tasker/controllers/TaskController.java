@@ -103,6 +103,7 @@ public class TaskController {
     public ResponseEntity<Void> deleteTask(@PathVariable Long id) {
         Task task = taskService.findById(id);
         task.setProject(null);
+        task.setIsDeleted(true);
         taskService.delete(task);
         return ResponseEntity.noContent().build();
     }
