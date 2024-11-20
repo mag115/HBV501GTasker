@@ -22,7 +22,6 @@ build/
 
 # Backend
 backend/.gradle/
-backend/build/
 backend/out/
 backend/taskerDB.db
 backend/.idea/
