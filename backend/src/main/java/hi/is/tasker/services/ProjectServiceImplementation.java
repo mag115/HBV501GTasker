@@ -64,4 +64,10 @@ public class ProjectServiceImplementation implements ProjectService {
             projectRepository.save(project);
         }
     }
+
+    @Override
+    public List<Project> getProjectsForUser(User user) {
+        return projectRepository.findByMembersContaining(user);
+    }
+
 }

@@ -38,11 +38,24 @@ public class ProjectController {
         return projectService.createProject(project, owner);
     }
 
+    /*
     @GetMapping
     @PreAuthorize("hasAnyRole('PROJECT_MANAGER', 'TEAM_MEMBER')")
     public List<Project> getAllProjects() {
         return projectService.getAllProjects();
+    }*/
+
+    @GetMapping
+    @PreAuthorize("hasAnyRole('PROJECT_MANAGER', 'TEAM_MEMBER')")
+    public ResponseEntity<List<Project>> getAllProjects(Principal principal) {
+        String username = principal.getName();
+        User user = userService.getUserByUsername(username)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        List<Project> projects = projectService.getProjectsForUser(user);
+        return ResponseEntity.ok(projects);
     }
+
 
     @GetMapping("/{id}")
     public ResponseEntity<Project> getProjectById(@PathVariable Long id) {

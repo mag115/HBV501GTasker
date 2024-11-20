@@ -38,6 +38,7 @@ public class Project {
     @JsonIgnoreProperties({"projects", "password", "email", "assignedTasks", "currentProject"})
     private List<User> members = new ArrayList<>();
 
+
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "owner_id")
     @JsonIgnoreProperties({"ownedProjects", "password", "email", "tasks", "assignedTasks"})
