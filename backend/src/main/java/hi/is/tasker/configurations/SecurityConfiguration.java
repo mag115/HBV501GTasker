@@ -47,7 +47,7 @@ public class SecurityConfiguration {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of("http://localhost:3000"));  // React frontend origin
+        configuration.setAllowedOrigins(List.of("http://localhost:3000", "https://hbv501gtasker-1.onrender.com"));  // React frontend origin
         configuration.setAllowedMethods(List.of("GET", "POST", "PATCH", "PUT", "DELETE", "OPTIONS"));  // Ensure OPTIONS is included
         configuration.setAllowedHeaders(List.of("Authorization", "Content-Type"));  // Allow necessary headers
         configuration.setAllowCredentials(true);  // Allow credentials (like tokens)
