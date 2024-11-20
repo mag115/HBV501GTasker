@@ -68,7 +68,7 @@ const MyInfo = () => {
            <img src={userImage} alt="User" className="w-24 h-24 rounded-full border-4 border-indigo-500 mr-4" />
            <div>
              <p className="text-xl"><strong>Role:</strong> {getRoleDisplayName(role)}</p>
-             <p className="text-xl">Name: {auth.username}</p>
+             <p className="text-xl">Username: {auth.username}</p>
            </div>
          </div>
 
