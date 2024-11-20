@@ -25,9 +25,18 @@ const TaskForm = () => {
   const [maxWeeks, setMaxWeeks] = useState(0);
   const [projects, setProjects] = useState([]);
   const [projectId, setProjectId] = useState(selectedProject || '');
+  const [loading, setLoading] = useState(true);
+  const [myTasks, setMyTasks] = useState([]);
+  const [error, setError] = useState(null);
 
-  useEffect(() => {
-    const fetchUsers = async () => {
+   useEffect(() => {
+     refreshTaskData();
+     fetchUsers();
+
+         fetchProjects();
+   }, [selectedProject]);
+
+ const fetchUsers = async () => {
       try {
         const response = await request('get', '/users');
         setUsers(response.data);
@@ -36,31 +45,37 @@ const TaskForm = () => {
       }
     };
 
-    const fetchTasks = async () => {
-      try {
-        const response = await request('get', '/tasks');
-        setTasks(response.data);
-      } catch (error) {
-        console.error('Error fetching tasks:', error);
-      }
-    };
+     const fetchProjects = async () => {
+          try {
+            const response = await request('get', '/projects');
+            setProjects(response.data);
+            if (!projectId && response.data.length > 0) {
+              setProjectId(response.data[0].id);
+            }
+          } catch (error) {
+            console.error('Error fetching projects:', error);
+          }
+        };
 
-    const fetchProjects = async () => {
-      try {
-        const response = await request('get', '/projects');
-        setProjects(response.data);
-        if (!projectId && response.data.length > 0) {
-          setProjectId(response.data[0].id);
-        }
-      } catch (error) {
-        console.error('Error fetching projects:', error);
-      }
-    };
-
-    fetchUsers();
-    fetchTasks();
-    fetchProjects();
-  }, []);
+   const refreshTaskData = async () => {
+     if (!selectedProject) {
+       setMyTasks([]);
+       setTasks([]);
+       setLoading(false);
+       return;
+     }
+     try {
+       setLoading(true);
+       const response = await request('get', `/tasks/assigned?projectId=${selectedProject}`);
+       const allTasksResponse = await request('get', `/tasks?projectId=${selectedProject}`);
+       setMyTasks(response.data);
+       setTasks(allTasksResponse.data);
+     } catch (error) {
+       setError('Failed to refresh tasks.');
+     } finally {
+       setLoading(false);
+     }
+   };
 
   useEffect(() => {
     const calculateMaxWeeks = () => {
