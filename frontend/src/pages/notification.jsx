@@ -10,30 +10,33 @@ const NotificationPage = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const { auth } = useAuth(); // Get the logged-in user info from context
-    const { fetchUnreadNotifications } = useNotifications();
+  const { fetchUnreadNotifications } = useNotifications();
 
-useEffect(() => {
-  // Ensure auth object exists, user is authenticated, and userId is present
-  if (auth?.token && auth?.userId) {
-    const fetchNotifications = async () => {
-      setLoading(true);
-      try {
-        console.log('Fetching notifications for user ID:', auth.userId);
-        const response = await request('get', `/notifications/${auth.userId}`);
-        setNotifications(response.data);
-      } catch (err) {
-        console.error('Error fetching notifications:', err);
-        setError('Failed to load notifications.');
-      } finally {
-        setLoading(false);
-      }
-    };
+  useEffect(() => {
+    // Ensure auth object exists, user is authenticated, and userId is present
+    if (auth?.token && auth?.userId) {
+      const fetchNotifications = async () => {
+        setLoading(true);
+        try {
+          console.log('Fetching notifications for user ID:', auth.userId);
+          const response = await request(
+            'get',
+            `/notifications/${auth.userId}`
+          );
+          setNotifications(response.data);
+        } catch (err) {
+          console.error('Error fetching notifications:', err);
+          setError('Failed to load notifications.');
+        } finally {
+          setLoading(false);
+        }
+      };
 
-    fetchNotifications();
-  } else {
-    console.warn('User not authenticated or no userId present.');
-  }
-}, [auth?.token, auth?.userId]);
+      fetchNotifications();
+    } else {
+      console.warn('User not authenticated or no userId present.');
+    }
+  }, [auth?.token, auth?.userId]);
 
   const handleMarkAsRead = async (id) => {
     try {
@@ -44,10 +47,10 @@ useEffect(() => {
         )
       );
       if (auth?.userId && auth?.token) {
-            fetchUnreadNotifications(auth.userId, auth.token);
-          } else {
-            console.warn('Cannot fetch notifications - userId or token missing.');
-          }
+        fetchUnreadNotifications(auth.userId, auth.token);
+      } else {
+        console.warn('Cannot fetch notifications - userId or token missing.');
+      }
     } catch (err) {
       console.error('Error marking notification as read:', err);
       setError('Failed to mark notification as read.');
