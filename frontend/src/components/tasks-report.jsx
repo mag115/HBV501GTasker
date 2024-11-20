@@ -3,7 +3,7 @@ import { request } from '../api/http';
 import { useAuth } from '../context/auth-context';
 import { CommentInput } from './comment-input';
 
-const TasksReport = () => {
+const TasksReport = ({ projectId }) => {
   const [tasks, setTasks] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -12,23 +12,25 @@ const TasksReport = () => {
 
   useEffect(() => {
     const fetchTasks = async () => {
-      try {
-        const response = await request('get', '/tasks');
-        if (Array.isArray(response.data)) {
-          setTasks(response.data);
-        } else {
-          throw new Error('Invalid response format');
-        }
-      } catch (err) {
-        console.error('Error fetching tasks:', err);
-        setError('Failed to load tasks');
-      } finally {
-        setLoading(false);
-      }
-    };
+          try {
+            const response = await request('get', `/tasks?projectId=${projectId}`);
+            if (Array.isArray(response.data)) {
+              setTasks(response.data);
+            } else {
+              throw new Error('Invalid response format');
+            }
+          } catch (err) {
+            console.error('Error fetching tasks:', err);
+            setError('Failed to load tasks');
+          } finally {
+            setLoading(false);
+          }
+        };
 
-    fetchTasks();
-  }, []);
+        if (projectId) {
+          fetchTasks();
+        }
+  }, [projectId]);
 
   if (loading) {
     return <p>Loading tasks...</p>;

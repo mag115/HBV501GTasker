@@ -40,8 +40,8 @@ public class ProjectReportServiceImplementation implements ProjectReportService 
         return projectReportRepository.findAll();
     }
 
-    public ProjectReport generateProjectReport() {
-        List<Task> tasks = taskRepository.findAll();
+    public ProjectReport generateProjectReport(Long projectId) {
+        List<Task> tasks = taskRepository.findByProjectId(projectId);
 
         long totalTimeSpent = tasks.stream()
                 .mapToLong(this::calculateTotalTimeSpentForTask)
@@ -109,9 +109,9 @@ public class ProjectReportServiceImplementation implements ProjectReportService 
 
         return scheduledProgress;
     }
-    
-    public ProjectReport generateCustomProjectReport(ReportOptions options) {
-        List<Task> tasks = options.isIncludeTasks() ? taskRepository.findAll() : Collections.emptyList();
+
+    public ProjectReport generateCustomProjectReport(Long projectId, ReportOptions options) {
+        List<Task> tasks = options.isIncludeTasks() ? taskRepository.findByProjectId(projectId) : Collections.emptyList();
 
         long totalTimeSpent = 0;
         if (options.isIncludeTimeSpent()) {

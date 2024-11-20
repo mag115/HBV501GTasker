@@ -1,14 +1,19 @@
 package hi.is.tasker.entities;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
+@Setter
+@Getter
 @Entity
 @Table(name = "project_reports")
 public class ProjectReport {
 
+    // Getters and Setters
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -24,6 +29,10 @@ public class ProjectReport {
 
     private String overallPerformance;
 
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "project_id")
+    private Project project;
+
     public ProjectReport() {
     }
 
@@ -34,44 +43,4 @@ public class ProjectReport {
         this.reportDate = LocalDateTime.now();
     }
 
-    // Getters and Setters
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public List<Task> getTasks() {
-        return tasks;
-    }
-
-    public void setTasks(List<Task> tasks) {
-        this.tasks = tasks;
-    }
-
-    public LocalDateTime getReportDate() {
-        return reportDate;
-    }
-
-    public void setReportDate(LocalDateTime reportDate) {
-        this.reportDate = reportDate;
-    }
-
-    public Long getTotalTimeSpent() {
-        return totalTimeSpent;
-    }
-
-    public void setTotalTimeSpent(Long totalTimeSpent) {
-        this.totalTimeSpent = totalTimeSpent;
-    }
-
-    public String getOverallPerformance() {
-        return overallPerformance;
-    }
-
-    public void setOverallPerformance(String overallPerformance) {
-        this.overallPerformance = overallPerformance;
-    }
 }
