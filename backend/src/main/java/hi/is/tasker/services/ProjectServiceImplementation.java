@@ -48,7 +48,6 @@ public class ProjectServiceImplementation implements ProjectService {
         return projectRepository.findAll();
     }
 
-    // New method to retrieve a project by ID
     public Optional<Project> getProjectById(Long id) {
         return projectRepository.findByIdWithUsers(id);
     }

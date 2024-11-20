@@ -87,4 +87,17 @@ public class ProjectController {
 
         return ResponseEntity.ok(currentProject);
     }
+
+    @PostMapping("/{projectId}/add-member")
+    public ResponseEntity<Project> addMemberToProject(@PathVariable Long projectId, @RequestBody Map<String, Long> requestBody) {
+        Long userId = requestBody.get("userId");
+        try {
+            projectService.addMemberToProject(projectId, userId);
+            Project project = projectService.getProjectById(projectId)
+                    .orElseThrow(() -> new RuntimeException("Project not found"));
+            return ResponseEntity.ok(project);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
+    }
 }
