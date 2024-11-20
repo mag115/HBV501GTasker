@@ -24,7 +24,7 @@ public class Project {
 
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
-
+    
     @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JsonIgnoreProperties({"project", "assignedUser"})
     private List<Task> tasks = new ArrayList<>();
