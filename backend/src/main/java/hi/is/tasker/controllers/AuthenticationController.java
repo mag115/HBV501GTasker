@@ -40,8 +40,6 @@ public class AuthenticationController {
                     registeredUser.getId(),
                     registeredUser.getUsername()
             );
-            System.out.println("asdf" + loginResponse);
-
             return ResponseEntity.ok(loginResponse);
         } catch (Exception e) {
             e.printStackTrace();
