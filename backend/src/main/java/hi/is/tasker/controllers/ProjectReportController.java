@@ -16,6 +16,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @RestController
@@ -66,6 +68,10 @@ public class ProjectReportController {
             return ResponseEntity.notFound().build();
         }
 
+        LocalDateTime reportDate = report.getReportDate();
+        DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        String formattedDate = reportDate.format(dateFormatter);
+
         //PDF document
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         try (PDDocument document = new PDDocument()) {
@@ -82,7 +88,7 @@ public class ProjectReportController {
                 contentStream.setFont(PDType1Font.HELVETICA, 12);
                 contentStream.showText("Report ID: " + report.getId());
                 contentStream.newLine();
-                contentStream.showText("Date: " + report.getReportDate().toString());
+                contentStream.showText("Date Of Report: " + formattedDate);
                 contentStream.newLine();
                 contentStream.newLine();
                 contentStream.showText("Overall Performance: " + report.getOverallPerformance());
