@@ -105,6 +105,11 @@ const TaskForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    if (!projectId) {
+      alert('Please select a project.');
+      return;
+    }
+
     const newTask = {
       title,
       description,
@@ -182,12 +187,124 @@ const TaskForm = () => {
           </div>
         ) : (
           <form onSubmit={handleSubmit}>
-            {/* Other form fields... */}
             {/* Title */}
+            <div className="mb-4">
+              <label className="block text-gray-700 text-sm font-semibold mb-1" htmlFor="title">
+                Title
+              </label>
+              <input
+                id="title"
+                type="text"
+                className="w-full px-3 py-2 border rounded-md focus:ring focus:ring-indigo-300"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                required
+              />
+            </div>
+
             {/* Description */}
+            <div className="mb-4">
+              <label className="block text-gray-700 text-sm font-semibold mb-1" htmlFor="description">
+                Description
+              </label>
+              <textarea
+                id="description"
+                className="w-full px-3 py-2 border rounded-md focus:ring focus:ring-indigo-300"
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                required
+              />
+            </div>
+
             {/* Deadline */}
+            <div className="mb-4">
+              <label className="block text-gray-700 text-sm font-semibold mb-1" htmlFor="deadline">
+                Deadline
+              </label>
+              <input
+                id="deadline"
+                type="datetime-local"
+                className="w-full px-3 py-2 border rounded-md focus:ring focus:ring-indigo-300"
+                value={deadline}
+                min={new Date().toISOString().slice(0, 16)}
+                onChange={(e) => setDeadline(e.target.value)}
+                required
+              />
+            </div>
+
             {/* Priority */}
+            <div className="mb-4">
+              <label className="block text-gray-700 text-sm font-semibold mb-1" htmlFor="priority">
+                Priority
+              </label>
+              <select
+                id="priority"
+                className="w-full px-3 py-2 border rounded-md focus:ring focus:ring-indigo-300"
+                value={priority}
+                onChange={(e) => setPriority(e.target.value)}
+                required
+              >
+                <option value="">Select Priority</option>
+                <option value="low">Low</option>
+                <option value="medium">Medium</option>
+                <option value="high">High</option>
+              </select>
+            </div>
+
             {/* Estimated Duration */}
+            <div className="mb-4">
+              <label className="block text-gray-700 text-sm font-semibold mb-1">Estimated Duration</label>
+              <p className="text-gray-600 text-sm mb-2">
+                Choose either estimated weeks or effort percentage (not both).
+              </p>
+
+              <div className="mb-4">
+                <label className="block text-gray-700 text-sm font-semibold mb-1" htmlFor="estimatedWeeks">
+                  Estimated Weeks
+                </label>
+                <input
+                  id="estimatedWeeks"
+                  type="number"
+                  step="1"
+                  min="0"
+                  max={maxWeeks}
+                  className="w-full px-3 py-2 border rounded-md focus:ring focus:ring-indigo-300"
+                  value={estimatedWeeks}
+                  onChange={(e) => {
+                    setEstimatedWeeks(e.target.value);
+                    setEffortPercentage('');
+                  }}
+                />
+                <p className="text-gray-500 text-sm mt-2">
+                  Maximum available weeks of work within deadline: {maxWeeks}
+                </p>
+              </div>
+
+              <div className="mb-4">
+                <label className="block text-gray-700 text-sm font-semibold mb-1" htmlFor="effortPercentage">
+                  Effort Percentage (% of total time until deadline)
+                </label>
+                <input
+                  id="effortPercentage"
+                  type="number"
+                  step="1"
+                  min="0"
+                  max="100"
+                  className="w-full px-3 py-2 border rounded-md focus:ring focus:ring-indigo-300"
+                  value={effortPercentage}
+                  onChange={(e) => {
+                    setEffortPercentage(e.target.value);
+                    setEstimatedWeeks('');
+                  }}
+                />
+              </div>
+
+              <p className="text-gray-700">
+                <strong>Calculated Estimated Duration:</strong>{' '}
+                {estimatedDuration ? `${estimatedDuration.toFixed(2)} hours` : 'N/A'}
+              </p>
+            </div>
+
             {/* Assign User Field */}
             <div className="mb-4">
               <label className="block text-gray-700 text-sm font-semibold mb-1">Assign User</label>
@@ -206,6 +323,7 @@ const TaskForm = () => {
                   ))}
               </select>
             </div>
+
             {/* Dependencies Field */}
             <div className="mb-4">
               <label className="block text-gray-700 text-sm font-bold mb-2">Dependencies</label>
@@ -224,6 +342,7 @@ const TaskForm = () => {
                 ))}
               </select>
             </div>
+
             {/* Select Project Field */}
             <div className="mb-4">
               <label className="block text-gray-700 text-sm font-semibold mb-1">Select Project</label>
@@ -241,6 +360,7 @@ const TaskForm = () => {
                 ))}
               </select>
             </div>
+
             {/* Reminder Checkbox */}
             <div className="mb-4">
               <label className="inline-flex items-center">
@@ -253,6 +373,7 @@ const TaskForm = () => {
                 <span className="ml-2 text-gray-700">Send a reminder</span>
               </label>
             </div>
+
             {/* Submit Button */}
             <button
               type="submit"

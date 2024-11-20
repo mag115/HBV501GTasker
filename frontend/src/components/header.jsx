@@ -42,14 +42,10 @@ const Header = () => {
   };
 
   useEffect(() => {
-    if (auth?.token && auth.user?.id) {
-      // Fetch unread notifications
-      fetchUnreadNotifications(auth.user.id, auth.token);
-      // Fetch projects and current project
+      fetchUnreadNotifications();
       fetchCurrentProject();
       fetchProjects();
-    }
-  }, [auth, fetchUnreadNotifications]);
+    }, [auth]);
 
   const handleProjectChange = async (e) => {
     const projectId = e.target.value;

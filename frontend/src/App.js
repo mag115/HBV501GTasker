@@ -98,11 +98,11 @@ const router = createBrowserRouter([
 const App = () => {
   return (
     <AuthProvider>
-        <ProjectProvider>
-            <NotificationsProvider>
+        <NotificationsProvider>
+            <ProjectProvider>
                 <RouterProvider router={router} />
-            <NotificationsProvider>
-        </ProjectProvider>
+            </ProjectProvider>
+        </NotificationsProvider>
     </AuthProvider>
   );
 };
