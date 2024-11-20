@@ -1,15 +1,14 @@
 # Stage 1: Build the application
 FROM gradle:7.6-jdk17 AS builder
 
-# Set working directory
 WORKDIR /app
 
-# Copy Gradle wrapper and project files into the container
-COPY gradlew gradlew
-COPY gradle gradle
-COPY build.gradle.kts build.gradle.kts
-COPY settings.gradle.kts settings.gradle.kts
-COPY src src
+# Copy Gradle wrapper and project files
+COPY backend/gradlew gradlew
+COPY backend/gradle gradle
+COPY backend/build.gradle.kts build.gradle.kts
+COPY backend/settings.gradle.kts settings.gradle.kts
+COPY backend/src src
 
 # Run the build command
 RUN ./gradlew build -x test
@@ -17,7 +16,6 @@ RUN ./gradlew build -x test
 # Stage 2: Run the application
 FROM openjdk:17-jdk-slim
 
-# Set working directory
 WORKDIR /app
 
 # Copy the built JAR from the builder stage
