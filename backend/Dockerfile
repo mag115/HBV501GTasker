@@ -7,9 +7,6 @@ WORKDIR /app
 # Copy the entire project to the container
 COPY . .
 
-# Ensure the Gradle wrapper has execute permissions
-RUN chmod +x ./gradlew
-
 # Build the application
 RUN ./gradlew build -x test
 
