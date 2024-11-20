@@ -140,16 +140,16 @@ const Header = () => {
                 </>
               )}
 
-              <li>
+               <li>
                 <NavLink to="/notifications" className="hover:text-gray-300 relative">
-                  Notifications
-                  {unreadCount > 0 && (
-                    <span className="absolute top-0 right-0 bg-red-600 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
-                      {unreadCount}
-                    </span>
-                  )}
+                    Notifications
+                    {unreadCount > 0 && (
+                      <span className="top-0 right-0 bg-red-600 text-red text-s rounded-full w-5 h-5 flex">
+                        {"("+unreadCount+")"}
+                      </span>
+                    )}
                 </NavLink>
-              </li>
+               </li>
               <li>
                 <NavLink to="/myinfo" className="hover:text-gray-300">
                   My Info
