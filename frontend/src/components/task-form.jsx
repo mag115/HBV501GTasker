@@ -357,25 +357,6 @@ const TaskForm = () => {
                 ))}
               </select>
             </div>
-
-            {/* Select Project Field */}
-            <div className="mb-4">
-              <label className="block text-gray-700 text-sm font-semibold mb-1">Select Project</label>
-              <select
-                value={projectId}
-                onChange={(e) => setProjectId(e.target.value)}
-                className="w-full px-3 py-2 border rounded-md focus:ring focus:ring-indigo-300"
-                required
-              >
-                <option value="">Select a Project</option>
-                {projects.map((project) => (
-                  <option key={project.id} value={project.id}>
-                    {project.name}
-                  </option>
-                ))}
-              </select>
-            </div>
-
             {/* Reminder Checkbox */}
             <div className="mb-4">
               <label className="inline-flex items-center">
