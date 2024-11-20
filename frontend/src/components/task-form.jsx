@@ -29,58 +29,65 @@ const TaskForm = () => {
   const [myTasks, setMyTasks] = useState([]);
   const [error, setError] = useState(null);
 
-   useEffect(() => {
-     refreshTaskData();
-     fetchUsers();
+  useEffect(() => {
+    refreshTaskData();
+    fetchUsers();
 
-         fetchProjects();
-   }, [selectedProject]);
+    fetchProjects();
+  }, [selectedProject]);
 
- const fetchUsers = async () => {
-      try {
-        const response = await request('get', '/users');
-        setUsers(response.data);
-      } catch (error) {
-        console.error('Error fetching users:', error);
+  const fetchUsers = async () => {
+    try {
+      const response = await request('get', '/users');
+      setUsers(response.data);
+    } catch (error) {
+      console.error('Error fetching users:', error);
+    }
+  };
+
+  const fetchProjects = async () => {
+    try {
+      const response = await request('get', '/projects');
+      setProjects(response.data);
+      if (!projectId && response.data.length > 0) {
+        setProjectId(response.data[0].id);
       }
-    };
+    } catch (error) {
+      console.error('Error fetching projects:', error);
+    }
+  };
 
-     const fetchProjects = async () => {
-          try {
-            const response = await request('get', '/projects');
-            setProjects(response.data);
-            if (!projectId && response.data.length > 0) {
-              setProjectId(response.data[0].id);
-            }
-          } catch (error) {
-            console.error('Error fetching projects:', error);
-          }
-        };
-
-   const refreshTaskData = async () => {
-     if (!selectedProject) {
-       setMyTasks([]);
-       setTasks([]);
-       setLoading(false);
-       return;
-     }
-     try {
-       setLoading(true);
-       const response = await request('get', `/tasks/assigned?projectId=${selectedProject}`);
-       const allTasksResponse = await request('get', `/tasks?projectId=${selectedProject}`);
-       setMyTasks(response.data);
-       setTasks(allTasksResponse.data);
-     } catch (error) {
-       setError('Failed to refresh tasks.');
-     } finally {
-       setLoading(false);
-     }
-   };
+  const refreshTaskData = async () => {
+    if (!selectedProject) {
+      setMyTasks([]);
+      setTasks([]);
+      setLoading(false);
+      return;
+    }
+    try {
+      setLoading(true);
+      const response = await request(
+        'get',
+        `/tasks/assigned?projectId=${selectedProject}`
+      );
+      const allTasksResponse = await request(
+        'get',
+        `/tasks?projectId=${selectedProject}`
+      );
+      setMyTasks(response.data);
+      setTasks(allTasksResponse.data);
+    } catch (error) {
+      setError('Failed to refresh tasks.');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
     const calculateMaxWeeks = () => {
       if (deadline) {
-        const hoursUntilDeadline = (new Date(deadline) - new Date()) / (1000 * 60 * 60);
+        const hoursUntilDeadline =
+          (new Date(deadline) - new Date()) / (1000 * 60 * 60);
         const maxWeeks = hoursUntilDeadline / 168; // 168 hours in a week
         return Math.floor(maxWeeks);
       }
@@ -97,9 +104,13 @@ const TaskForm = () => {
 
   useEffect(() => {
     const calculateEstimatedDuration = () => {
-      const hoursUntilDeadline = deadline ? (new Date(deadline) - new Date()) / (1000 * 60 * 60) : null;
+      const hoursUntilDeadline = deadline
+        ? (new Date(deadline) - new Date()) / (1000 * 60 * 60)
+        : null;
       const millisecondsPerDay = 24 * 60 * 60 * 1000;
-      const daysUntilDeadline = deadline ? (new Date(deadline) - new Date()) / millisecondsPerDay : null;
+      const daysUntilDeadline = deadline
+        ? (new Date(deadline) - new Date()) / millisecondsPerDay
+        : null;
       const hoursAvail = daysUntilDeadline * 8;
       if (estimatedWeeks && hoursUntilDeadline !== null) {
         const weeksDuration = parseFloat(estimatedWeeks) * 40;
@@ -107,7 +118,8 @@ const TaskForm = () => {
       }
 
       if (effortPercentage && hoursUntilDeadline !== null) {
-        const calculatedDuration = hoursAvail * (parseFloat(effortPercentage) / 100);
+        const calculatedDuration =
+          hoursAvail * (parseFloat(effortPercentage) / 100);
         return Math.min(calculatedDuration, hoursUntilDeadline);
       }
 
@@ -142,7 +154,12 @@ const TaskForm = () => {
     };
 
     try {
-      const res = await request('post', `/tasks?assignedUserId=${assignedUser}&projectId=${projectId}`, newTask);
+      const res = await request(
+        'post',
+        `/tasks?assignedUserId=${assignedUser}&projectId=${projectId}`,
+        newTask
+      );
+      const reminderRes = await request('post', `/notifications/send`);
       if (res.status === 200) {
         setTaskId(res.data.id);
         setResponseMessage('Task successfully created!');
@@ -179,7 +196,9 @@ const TaskForm = () => {
   return (
     <div className="flex items-center justify-center min-h-screen bg-gradient-to-b from-indigo-500 via-purple-500 to-pink-500">
       <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-lg">
-        <h2 className="text-3xl font-semibold text-center text-indigo-600 mb-6">Add Task</h2>
+        <h2 className="text-3xl font-semibold text-center text-indigo-600 mb-6">
+          Add Task
+        </h2>
 
         {isTaskCreated ? (
           <div className="text-center">
@@ -204,7 +223,10 @@ const TaskForm = () => {
           <form onSubmit={handleSubmit}>
             {/* Title */}
             <div className="mb-4">
-              <label className="block text-gray-700 text-sm font-semibold mb-1" htmlFor="title">
+              <label
+                className="block text-gray-700 text-sm font-semibold mb-1"
+                htmlFor="title"
+              >
                 Title
               </label>
               <input
@@ -219,7 +241,10 @@ const TaskForm = () => {
 
             {/* Description */}
             <div className="mb-4">
-              <label className="block text-gray-700 text-sm font-semibold mb-1" htmlFor="description">
+              <label
+                className="block text-gray-700 text-sm font-semibold mb-1"
+                htmlFor="description"
+              >
                 Description
               </label>
               <textarea
@@ -233,7 +258,10 @@ const TaskForm = () => {
 
             {/* Deadline */}
             <div className="mb-4">
-              <label className="block text-gray-700 text-sm font-semibold mb-1" htmlFor="deadline">
+              <label
+                className="block text-gray-700 text-sm font-semibold mb-1"
+                htmlFor="deadline"
+              >
                 Deadline
               </label>
               <input
@@ -249,7 +277,10 @@ const TaskForm = () => {
 
             {/* Priority */}
             <div className="mb-4">
-              <label className="block text-gray-700 text-sm font-semibold mb-1" htmlFor="priority">
+              <label
+                className="block text-gray-700 text-sm font-semibold mb-1"
+                htmlFor="priority"
+              >
                 Priority
               </label>
               <select
@@ -268,13 +299,18 @@ const TaskForm = () => {
 
             {/* Estimated Duration */}
             <div className="mb-4">
-              <label className="block text-gray-700 text-sm font-semibold mb-1">Estimated Duration</label>
+              <label className="block text-gray-700 text-sm font-semibold mb-1">
+                Estimated Duration
+              </label>
               <p className="text-gray-600 text-sm mb-2">
                 Choose either estimated weeks or effort percentage (not both).
               </p>
 
               <div className="mb-4">
-                <label className="block text-gray-700 text-sm font-semibold mb-1" htmlFor="estimatedWeeks">
+                <label
+                  className="block text-gray-700 text-sm font-semibold mb-1"
+                  htmlFor="estimatedWeeks"
+                >
                   Estimated Weeks
                 </label>
                 <input
@@ -296,7 +332,10 @@ const TaskForm = () => {
               </div>
 
               <div className="mb-4">
-                <label className="block text-gray-700 text-sm font-semibold mb-1" htmlFor="effortPercentage">
+                <label
+                  className="block text-gray-700 text-sm font-semibold mb-1"
+                  htmlFor="effortPercentage"
+                >
                   Effort Percentage (% of total time until deadline)
                 </label>
                 <input
@@ -316,13 +355,17 @@ const TaskForm = () => {
 
               <p className="text-gray-700">
                 <strong>Calculated Estimated Duration:</strong>{' '}
-                {estimatedDuration ? `${estimatedDuration.toFixed(2)} hours` : 'N/A'}
+                {estimatedDuration
+                  ? `${estimatedDuration.toFixed(2)} hours`
+                  : 'N/A'}
               </p>
             </div>
 
             {/* Assign User Field */}
             <div className="mb-4">
-              <label className="block text-gray-700 text-sm font-semibold mb-1">Assign User</label>
+              <label className="block text-gray-700 text-sm font-semibold mb-1">
+                Assign User
+              </label>
               <select
                 value={assignedUser}
                 onChange={(e) => setAssignedUser(e.target.value)}
@@ -341,14 +384,17 @@ const TaskForm = () => {
 
             {/* Dependencies Field */}
             <div className="mb-4">
-              <label className="block text-gray-700 text-sm font-bold mb-2">Dependencies</label>
+              <label className="block text-gray-700 text-sm font-bold mb-2">
+                Dependencies
+              </label>
               <select
                 value={dependency}
                 onChange={(e) => setDependency(e.target.value)}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-300"
               >
                 <option value="">
-                  Select a task that has to be completed before this one can begin
+                  Select a task that has to be completed before this one can
+                  begin
                 </option>
                 {tasks.map((task) => (
                   <option key={task.id} value={task.id}>
