@@ -1,0 +1,115 @@
+# General Files
+HELP.md
+
+# Gradle-specific files
+.gradle/
+build/
+!gradle/wrapper/gradle-wrapper.jar
+!**/src/main/**/build/
+!**/src/test/**/build/
+
+# Log files
+*.log
+*.log.*
+
+# Compiled class files
+*.class
+
+# macOS specific
+**/.DS_Store
+.DS_Store
+
+
+# Backend
+backend/.gradle/
+backend/build/
+backend/out/
+backend/taskerDB.db
+backend/.idea/
+
+
+# Frontend
+frontend/node_modules/
+frontend/build/
+frontend/dist/
+frontend/.cache/
+frontend/node_modules/.cache/
+frontend/.idea/
+frontend/.DS_Store
+
+# Maven specific
+target/
+
+# Spring Tool Suite (STS) specific files
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+bin/
+!**/src/main/**/bin/
+!**/src/test/**/bin/
+
+# IntelliJ IDEA specific files
+.idea/
+*.iws
+*.iml
+*.ipr
+out/
+!**/src/main/**/out/
+!**/src/test/**/out/
+
+# NetBeans specific files
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+
+# Visual Studio Code specific files
+.vscode/
+
+# Node.js specific files
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+**/node_modules/
+**/node_modules/**
+
+# Environment variables
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# IDE specific files
+/.idea/
+/.vscode/
+# Distribution / packaging
+*.jar
+*.war
+*.ear
+
+# Gradle additional outputs
+.gradle/**
+*.bin
+
+# Cache directories
+**/.cache/
+
+# Lock files
+*.lock
+package-lock.json
+yarn.lock
+
+# Temporary files
+tmp/
+.tmp/
+
+# Test coverage
+coverage/
+frontend/coverage/
