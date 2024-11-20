@@ -131,9 +131,10 @@ const MyTasks = () => {
   const canStartTimer = (task) => {
     if (!task.dependency) return true;
     const depTask = tasks.find((t) => t.id === task.dependency);
-    return depTask && depTask.status === 'Done';
+    console.log("task sem er deletað", depTask);
+    console.log("taskið", task);
+    return depTask=== undefined || depTask.status === 'Done';
   };
-
 
 const handleProgressChange = async (taskId, value) => {
     const parsedValue = parseFloat(value);
@@ -174,6 +175,7 @@ const handleProgressChange = async (taskId, value) => {
         className="w-full px-3 py-2 border rounded mb-4"
         value={task.status}
         onChange={(e) => handleStatusChange(task.id, e.target.value)}
+        disabled={!canStartTimer(task)}
       >
         <option value="To-do">To-do</option>
         <option value="Ongoing">Ongoing</option>
