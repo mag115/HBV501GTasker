@@ -34,9 +34,10 @@ public class UserController {
         return new ResponseEntity<>("Authentication success", HttpStatus.OK);
     }
 
+    // Add a new endpoint if needed to return List<User>
     @GetMapping
     public ResponseEntity<List<User>> getAllUsers() {
-        List<User> users = userService.findAll();
+        List<User> users = userService.getAllUsers();
         return ResponseEntity.ok(users);
     }
 

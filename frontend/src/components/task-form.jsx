@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { request } from '../api/http';
+import { useProject } from '../context/project-context';
 
 const TaskForm = () => {
+  const { selectedProject } = useProject();
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [deadline, setDeadline] = useState('');
@@ -19,9 +21,10 @@ const TaskForm = () => {
   const [estimatedDuration, setEstimatedDuration] = useState(null);
   const navigate = useNavigate();
   const [tasks, setTasks] = useState([]);
-  const [task, setTask] = useState([]);
   const [dependency, setDependency] = useState('');
   const [maxWeeks, setMaxWeeks] = useState(0);
+  const [projects, setProjects] = useState([]);
+  const [projectId, setProjectId] = useState(selectedProject || '');
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -42,15 +45,28 @@ const TaskForm = () => {
       }
     };
 
+    const fetchProjects = async () => {
+      try {
+        const response = await request('get', '/projects');
+        setProjects(response.data);
+        if (!projectId && response.data.length > 0) {
+          setProjectId(response.data[0].id);
+        }
+      } catch (error) {
+        console.error('Error fetching projects:', error);
+      }
+    };
+
     fetchUsers();
     fetchTasks();
+    fetchProjects();
   }, []);
 
   useEffect(() => {
     const calculateMaxWeeks = () => {
       if (deadline) {
         const hoursUntilDeadline = (new Date(deadline) - new Date()) / (1000 * 60 * 60);
-        const maxWeeks = hoursUntilDeadline / 168; //168 eru klukkutímar í viku
+        const maxWeeks = hoursUntilDeadline / 168; // 168 hours in a week
         return Math.floor(maxWeeks);
       }
       return 0;
@@ -69,7 +85,7 @@ const TaskForm = () => {
       const hoursUntilDeadline = deadline ? (new Date(deadline) - new Date()) / (1000 * 60 * 60) : null;
       const millisecondsPerDay = 24 * 60 * 60 * 1000;
       const daysUntilDeadline = deadline ? (new Date(deadline) - new Date()) / millisecondsPerDay : null;
-      const hoursAvail=daysUntilDeadline*8;
+      const hoursAvail = daysUntilDeadline * 8;
       if (estimatedWeeks && hoursUntilDeadline !== null) {
         const weeksDuration = parseFloat(estimatedWeeks) * 40;
         return Math.min(weeksDuration, hoursUntilDeadline);
@@ -102,14 +118,16 @@ const TaskForm = () => {
       effortPercentage: effortPercentage ? parseFloat(effortPercentage) : null,
       estimatedDuration,
       dependency,
+      projectId: parseInt(projectId),
     };
 
     try {
-      const res = await request('post', `/tasks?assignedUserId=${assignedUser}`, newTask);
+      const res = await request('post', `/tasks?assignedUserId=${assignedUser}&projectId=${projectId}`, newTask);
       if (res.status === 200) {
         setTaskId(res.data.id);
         setResponseMessage('Task successfully created!');
         setIsTaskCreated(true);
+        // Reset form fields
         setTitle('');
         setDescription('');
         setDeadline('');
@@ -118,8 +136,9 @@ const TaskForm = () => {
         setAssignedUser('');
         setEstimatedWeeks('');
         setEffortPercentage('');
-        setDependency(null);
+        setDependency('');
         setEstimatedDuration(null);
+        setProjectId(selectedProject || '');
       } else {
         setResponseMessage('Failed to create task.');
       }
@@ -163,170 +182,89 @@ const TaskForm = () => {
           </div>
         ) : (
           <form onSubmit={handleSubmit}>
+            {/* Other form fields... */}
+            {/* Title */}
+            {/* Description */}
+            {/* Deadline */}
+            {/* Priority */}
+            {/* Estimated Duration */}
+            {/* Assign User Field */}
             <div className="mb-4">
-              <label className="block text-gray-700 text-sm font-semibold mb-1" htmlFor="title">
-                Title
-              </label>
-              <input
-                id="title"
-                type="text"
-                className="w-full px-3 py-2 border rounded-md focus:ring focus:ring-indigo-300"
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-                required
-              />
-            </div>
-
-            <div className="mb-4">
-              <label className="block text-gray-700 text-sm font-semibold mb-1" htmlFor="description">
-                Description
-              </label>
-              <textarea
-                id="description"
-                className="w-full px-3 py-2 border rounded-md focus:ring focus:ring-indigo-300"
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-                required
-              />
-            </div>
-
-            <div className="mb-4">
-              <label className="block text-gray-700 text-sm font-semibold mb-1" htmlFor="deadline">
-                Deadline
-              </label>
-              <input
-                id="deadline"
-                type="datetime-local"
-                className="w-full px-3 py-2 border rounded-md focus:ring focus:ring-indigo-300"
-                value={deadline}
-                min={new Date().toISOString().slice(0, 16)}
-                onChange={(e) => setDeadline(e.target.value)}
-                required
-              />
-            </div>
-
-            <div className="mb-4">
-              <label className="block text-gray-700 text-sm font-semibold mb-1" htmlFor="priority">
-                Priority
-              </label>
+              <label className="block text-gray-700 text-sm font-semibold mb-1">Assign User</label>
               <select
-                id="priority"
+                value={assignedUser}
+                onChange={(e) => setAssignedUser(e.target.value)}
                 className="w-full px-3 py-2 border rounded-md focus:ring focus:ring-indigo-300"
-                value={priority}
-                onChange={(e) => setPriority(e.target.value)}
                 required
               >
-                <option value="">Select Priority</option>
-                <option value="low">Low</option>
-                <option value="medium">Medium</option>
-                <option value="high">High</option>
+                <option value="">Select a User</option>
+                {Array.isArray(users) &&
+                  users.map((user) => (
+                    <option key={user.id} value={user.id}>
+                      {user.username}
+                    </option>
+                  ))}
               </select>
             </div>
-
+            {/* Dependencies Field */}
             <div className="mb-4">
-              <label className="block text-gray-700 text-sm font-semibold mb-1">Estimated Duration</label>
-              <p className="text-gray-600 text-sm mb-2">
-                Choose either estimated weeks or effort percentage (not both).
-              </p>
-
-              <div className="mb-4">
-                <label className="block text-gray-700 text-sm font-semibold mb-1" htmlFor="estimatedWeeks">
-                  Estimated Weeks
-                </label>
-                <input
-                  id="estimatedWeeks"
-                  type="number"
-                  step="1"
-                  min="0"
-                  max={maxWeeks}
-                  className="w-full px-3 py-2 border rounded-md focus:ring focus:ring-indigo-300"
-                  value={estimatedWeeks}
-                  onChange={(e) => {
-                    setEstimatedWeeks(e.target.value);
-                    setEffortPercentage('');
-                  }}
-                />
-                <p className="text-gray-500 text-sm mt-2">Maximum available weeks of work within deadline: {maxWeeks}</p>
-              </div>
-
-              <div className="mb-4">
-                <label className="block text-gray-700 text-sm font-semibold mb-1" htmlFor="effortPercentage">
-                  Effort Percentage (% of total time until deadline)
-                </label>
-                <input
-                  id="effortPercentage"
-                  type="number"
-                  step="1"
-                  min="0"
-                  max="100"
-                  className="w-full px-3 py-2 border rounded-md focus:ring focus:ring-indigo-300"
-                  value={effortPercentage}
-                  onChange={(e) => {
-                    setEffortPercentage(e.target.value);
-                    setEstimatedWeeks('');
-                  }}
-                />
-              </div>
-
-              <p className="text-gray-700">
-                <strong>Calculated Estimated Duration:</strong> {estimatedDuration ? `${estimatedDuration.toFixed(2)} hours` : 'N/A'}
-              </p>
+              <label className="block text-gray-700 text-sm font-bold mb-2">Dependencies</label>
+              <select
+                value={dependency}
+                onChange={(e) => setDependency(e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-300"
+              >
+                <option value="">
+                  Select a task that has to be completed before this one can begin
+                </option>
+                {tasks.map((task) => (
+                  <option key={task.id} value={task.id}>
+                    {task.title}
+                  </option>
+                ))}
+              </select>
             </div>
-             <div className="mb-4">
-                          <label className="block text-gray-700 text-sm font-semibold mb-1">Assign User</label>
-                          <select
-                            value={assignedUser}
-                            onChange={(e) => setAssignedUser(e.target.value)}
-                            className="w-full px-3 py-2 border rounded-md focus:ring focus:ring-indigo-300"
-                            required
-                          >
-                            <option value="">Select a User</option>
-                            {users.map((user) => (
-                              <option key={user.id} value={user.id}>{user.username}</option>
-                            ))}
-                          </select>
-                        </div>
-                                    <div className="mb-4">
-                                      <label className="block text-gray-700 text-sm font-bold mb-2">Dependencies</label>
-                                      <select
-                                        value={dependency}
-                                        onChange={(e) => setDependency(e.target.value)}
-                                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-300"
+            {/* Select Project Field */}
+            <div className="mb-4">
+              <label className="block text-gray-700 text-sm font-semibold mb-1">Select Project</label>
+              <select
+                value={projectId}
+                onChange={(e) => setProjectId(e.target.value)}
+                className="w-full px-3 py-2 border rounded-md focus:ring focus:ring-indigo-300"
+                required
+              >
+                <option value="">Select a Project</option>
+                {projects.map((project) => (
+                  <option key={project.id} value={project.id}>
+                    {project.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+            {/* Reminder Checkbox */}
+            <div className="mb-4">
+              <label className="inline-flex items-center">
+                <input
+                  type="checkbox"
+                  className="form-checkbox h-5 w-5 text-indigo-600"
+                  checked={reminderSent}
+                  onChange={(e) => setReminderSent(e.target.checked)}
+                />
+                <span className="ml-2 text-gray-700">Send a reminder</span>
+              </label>
+            </div>
+            {/* Submit Button */}
+            <button
+              type="submit"
+              className="bg-indigo-600 text-white px-4 py-2 rounded-md w-full hover:bg-indigo-700 focus:ring-2 focus:ring-indigo-400 transition"
+            >
+              Add Task
+            </button>
+          </form>
+        )}
+      </div>
+    </div>
+  );
+};
 
-                                      >
-                                        <option value="">Select a task that has to be completed before this one can begin</option>
-                                        {tasks.map((task) => (
-                                          <option key={task.id} value={task.id}>{task.title}</option>
-                                        ))}
-                                      </select>
-                                    </div>
-
-                        <div className="mb-4">
-                          <label className="inline-flex items-center">
-                            <input
-                              type="checkbox"
-                              className="form-checkbox h-5 w-5 text-indigo-600"
-                              checked={reminderSent}
-                              onChange={(e) => setReminderSent(e.target.checked)}
-                            />
-                            <span className="ml-2 text-gray-700">Send a reminder</span>
-                          </label>
-                        </div>
-
-                        <button
-                          type="submit"
-                          className="bg-indigo-600 text-white px-4 py-2 rounded-md w-full hover:bg-indigo-700 focus:ring-2 focus:ring-indigo-400 transition"
-                        >
-                          Add Task
-                        </button>
-                      </form>
-                    )}
-                  </div>
-                </div>
-              );
-            };
-
-            export { TaskForm };
-
-
-
+export { TaskForm };

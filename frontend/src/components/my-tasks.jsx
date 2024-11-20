@@ -1,35 +1,38 @@
 import React, { useEffect, useState } from 'react';
 import { request } from '../api/http';
+import { useProject } from '../context/project-context';
 
 const MyTasks = () => {
+  const { selectedProject } = useProject();
   const [myTasks, setMyTasks] = useState([]);
   const [tasks, setTasks] = useState([]); // For dependency check
   const [manualProgress, setManualProgress] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
- const refreshTaskData = async () => {
-     try {
-         const response = await request('get', '/tasks/assigned');
-         const allTasksResponse = await request('get', '/tasks');
-         setMyTasks(response.data);
-         setTasks(allTasksResponse.data);
-
-         const manualProgressMap = response.data.reduce((acc, task) => {
-             acc[task.id] = task.manualProgress || 0;
-             return acc;
-         }, {});
-         setManualProgress(manualProgressMap);
-     } catch (error) {
-         console.error('Error refreshing tasks:', error);
-         setError('Failed to refresh tasks.');
-     }
- };
-
  useEffect(() => {
-    refreshTaskData();
-  }, []);
+   refreshTaskData();
+ }, [selectedProject]);
 
+ const refreshTaskData = async () => {
+   if (!selectedProject) {
+     setMyTasks([]);
+     setTasks([]);
+     setLoading(false);
+     return;
+   }
+   try {
+     setLoading(true);
+     const response = await request('get', `/tasks/assigned?projectId=${selectedProject}`);
+     const allTasksResponse = await request('get', `/tasks?projectId=${selectedProject}`);
+     setMyTasks(response.data);
+     setTasks(allTasksResponse.data);
+   } catch (error) {
+     setError('Failed to refresh tasks.');
+   } finally {
+     setLoading(false);
+   }
+ };
 
   const handleManualTimeChange = (taskId, value, event) => {
     if (event.key === 'Enter') {
@@ -150,28 +153,10 @@ const handleProgressChange = async (taskId, value) => {
     }
 };
 
+  const toDoTasks = Array.isArray(myTasks) ? myTasks.filter((task) => task.status === 'To-do') : [];
+  const ongoingTasks = Array.isArray(myTasks) ? myTasks.filter((task) => task.status === 'Ongoing') : [];
+  const doneTasks = Array.isArray(myTasks) ? myTasks.filter((task) => task.status === 'Done') : [];
 
-  useEffect(() => {
-    const fetchMyTasks = async () => {
-      try {
-        const response = await request('get', '/tasks/assigned');
-        const allTasksResponse = await request('get', '/tasks');
-        setMyTasks(response.data);
-        setTasks(allTasksResponse.data); // Setting all tasks for dependency checks
-      } catch (error) {
-        console.error('Error fetching my tasks:', error);
-        setError('Failed to fetch tasks assigned to you.');
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchMyTasks();
-  }, []);
-
-  const toDoTasks = myTasks.filter((task) => task.status === 'To-do');
-  const ongoingTasks = myTasks.filter((task) => task.status === 'Ongoing');
-  const doneTasks = myTasks.filter((task) => task.status === 'Done');
 
   const renderTask = (task) => (
     <div key={task.id} className="bg-white p-6 shadow-lg rounded-lg mb-6 border border-gray-200">

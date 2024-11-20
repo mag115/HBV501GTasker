@@ -12,6 +12,9 @@ import { MyTasksPage } from './pages/mytasks';
 import { NotificationPage } from './pages/notification';
 import { ProjectReportPage } from './pages/projectReport';
 import { NotificationsProvider } from './context/notification-context';
+import { ProjectFormPage } from './pages/create-project';
+import { ProjectPage } from './pages/project';
+import { ProjectProvider } from './context/project-context';
 
 const router = createBrowserRouter([
   {
@@ -32,6 +35,14 @@ const router = createBrowserRouter([
       <ProtectedRoute requiredRole="PROJECT_MANAGER">
         <TaskFormPage />
       </ProtectedRoute>
+    ),
+  },
+  {
+    path: '/create-project', // Add the new route here
+    element: (
+        <ProtectedRoute requiredRole="PROJECT_MANAGER">
+        <ProjectFormPage />
+        </ProtectedRoute>
     ),
   },
   {
@@ -74,14 +85,24 @@ const router = createBrowserRouter([
       </ProtectedRoute>
     ),
   },
+  {
+    path: '/projects/:id',
+    element: (
+        <ProtectedRoute>
+          <ProjectPage />
+        </ProtectedRoute>
+    ),
+  },
 ]);
 
 const App = () => {
   return (
     <AuthProvider>
-    <NotificationsProvider>
-      <RouterProvider router={router} />
-      </NotificationsProvider>
+        <ProjectProvider>
+            <NotificationsProvider>
+                <RouterProvider router={router} />
+            <NotificationsProvider>
+        </ProjectProvider>
     </AuthProvider>
   );
 };

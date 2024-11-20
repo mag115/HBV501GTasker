@@ -9,7 +9,6 @@ import java.util.List;
 public interface TaskRepository extends JpaRepository<Task, Long> {
     List<Task> findAllByDeadlineBeforeAndReminderSentFalse(LocalDateTime deadline);
 
-    //Nýjar pælingar, hafa þetta líka eða nei?:
     List<Task> findAllByStatus(String status);
 
     List<Task> findAllByAssignedUserId(Long userId);
@@ -20,4 +19,7 @@ public interface TaskRepository extends JpaRepository<Task, Long> {
 
     List<Task> findByDeadlineBetween(LocalDateTime start, LocalDateTime end);
 
+    List<Task> findByProjectId(Long projectId);
+
+    List<Task> findByAssignedUserUsernameAndProjectId(String username, Long projectId);
 }

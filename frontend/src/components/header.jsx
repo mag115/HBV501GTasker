@@ -1,18 +1,66 @@
 import React, { useState, useEffect } from 'react';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/auth-context';
 import { request } from '../api/http';
 import { useNotifications } from '../context/notification-context';
+import { useProject } from '../context/project-context';
 
 const Header = () => {
   const { auth, logout } = useAuth();
   const { unreadCount, fetchUnreadNotifications } = useNotifications();
+  const [projects, setProjects] = useState([]);
+  const { selectedProject, setSelectedProject } = useProject();
+  const navigate = useNavigate();
+
+  // Function to fetch projects
+  const fetchProjects = async () => {
+    if (auth?.token) {
+      try {
+        const response = await request('get', '/projects');
+        setProjects(response.data);
+        if (response.data.length > 0 && !selectedProject) {
+          setSelectedProject(response.data[0].id); // Default to the first project
+        }
+      } catch (error) {
+        console.error('Error fetching projects:', error);
+      }
+    }
+  };
+
+  // Function to fetch the current project
+  const fetchCurrentProject = async () => {
+    if (auth?.token) {
+      try {
+        const response = await request('get', '/projects/current');
+        if (response.status === 200) {
+          setSelectedProject(response.data.id);
+        }
+      } catch (error) {
+        console.error('Error fetching current project:', error);
+      }
+    }
+  };
 
   useEffect(() => {
-      if (auth?.token && auth.user?.id) {
-        fetchUnreadNotifications(auth.user.id, auth.token);
-      }
-    }, [auth, fetchUnreadNotifications]);
+    if (auth?.token && auth.user?.id) {
+      // Fetch unread notifications
+      fetchUnreadNotifications(auth.user.id, auth.token);
+      // Fetch projects and current project
+      fetchCurrentProject();
+      fetchProjects();
+    }
+  }, [auth, fetchUnreadNotifications]);
+
+  const handleProjectChange = async (e) => {
+    const projectId = e.target.value;
+    setSelectedProject(projectId);
+    try {
+      await request('post', '/projects/set-current', { projectId: parseInt(projectId) });
+      navigate(`/projects/${projectId}`);
+    } catch (error) {
+      console.error('Error setting current project:', error);
+    }
+  };
 
   return (
     <header className="bg-indigo-600 text-white p-4 shadow-md">
@@ -31,10 +79,33 @@ const Header = () => {
               Home
             </NavLink>
           </li>
+          {auth?.token && (
+            <li>
+              <select
+                value={selectedProject}
+                onChange={handleProjectChange}
+                className="bg-indigo-500 text-white rounded px-3 py-1"
+              >
+                <option value="" disabled>
+                  Select Project
+                </option>
+                {projects.map((project) => (
+                  <option key={project.id} value={project.id}>
+                    {project.name}
+                  </option>
+                ))}
+              </select>
+            </li>
+          )}
           {auth?.token ? (
             <>
               {auth.role === 'PROJECT_MANAGER' && (
                 <>
+                  <li>
+                    <NavLink to="/create-project" className="hover:text-gray-300">
+                      Create Project
+                    </NavLink>
+                  </li>
                   <li>
                     <NavLink to="/create-task" className="hover:text-gray-300">
                       Create Task
@@ -75,13 +146,13 @@ const Header = () => {
 
               <li>
                 <NavLink to="/notifications" className="hover:text-gray-300 relative">
-                             Notifications
-                             {unreadCount > 0 && (
-                               <span className="top-0 right-0 bg-red-600 text-red text-s rounded-full w-5 h-5 flex">
-                                 {"("+unreadCount+")"}
-                               </span>
-                             )}
-                           </NavLink>
+                  Notifications
+                  {unreadCount > 0 && (
+                    <span className="absolute top-0 right-0 bg-red-600 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                      {unreadCount}
+                    </span>
+                  )}
+                </NavLink>
               </li>
               <li>
                 <NavLink to="/myinfo" className="hover:text-gray-300">

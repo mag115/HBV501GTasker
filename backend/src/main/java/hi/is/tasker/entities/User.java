@@ -1,6 +1,6 @@
 package hi.is.tasker.entities;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Size;
@@ -12,6 +12,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
@@ -39,6 +40,8 @@ public class User implements UserDetails {
     @Size(min = 8, message = "Password must be at least 8 characters")
     private String password;
 
+    @Getter
+    @Setter
     @Column(nullable = false)
     private String role;
 
@@ -50,9 +53,22 @@ public class User implements UserDetails {
     @Column(name = "updated_at")
     private Date updatedAt;
 
-    @OneToMany(mappedBy = "assignedUser", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JsonBackReference
-    private List<Task> tasks;
+    @OneToMany(mappedBy = "owner", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JsonIgnoreProperties({"owner", "members", "tasks"})
+    private List<Project> ownedProjects = new ArrayList<>();
+
+    @ManyToMany(mappedBy = "members", fetch = FetchType.EAGER)
+    @JsonIgnoreProperties({"members", "tasks", "owner", "password", "email", "assignedTasks", "currentProject"})
+    private List<Project> projects = new ArrayList<>();
+
+    // Tasks assigned to the user
+    @OneToMany(mappedBy = "assignedUser", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JsonIgnoreProperties({"assignedUser", "project"})
+    private List<Task> assignedTasks;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "current_project_id")
+    private Project currentProject;
 
     // Default constructor
     public User() {

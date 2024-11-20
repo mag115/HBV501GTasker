@@ -13,6 +13,6 @@ public interface UserService {
     Optional<User> getUserByEmail(String email);
     Optional<User> getUserById(Long id);
     void deleteUser(Long id);
-    List<User> getAllUsers();
+    List<User> getAllUsers();         // Original method
     User updateUserRole(Long id, String role);  // New method for updating the role
 }

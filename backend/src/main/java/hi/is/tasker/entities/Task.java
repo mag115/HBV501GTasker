@@ -31,21 +31,23 @@ Task {
     private Double progress;
     private Double manualProgress;//ATH: geymir hvað user setur progress sem
 
-    // New fields:
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "project_id")
+    @JsonIgnoreProperties({"tasks", "members", "owner"})
+    private Project project;
+
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id", nullable = true)
-    @JsonIgnoreProperties({"tasks"})  // Avoids potential circular reference issues.
+    @JsonIgnoreProperties({"tasks", "password", "email", "role", "assignedTasks", "ownedProjects", "projects"})
     private User assignedUser;
 
     private String status;  // Example values: "To Do", "In Progress", "Completed"
     private String priority;  // Example values: "Low", "Medium", "High"
-    private String project_name;
-    private String project_id;
     private double timeSpent;
     private double elapsedTime;
     private Double scheduledProgress;
 
-    @OneToMany(mappedBy = "task", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "task", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private List<TimeTracking> timeTrackings;
 
 
@@ -101,84 +103,7 @@ Task {
         }
     }
 
-    public void setManualProgress(Double manualProgress) {
-        this.manualProgress = manualProgress;
-    }
-
-    public Double getManualProgress() {
-        return manualProgress;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
-    public double getTimeSpent() {
-        return timeSpent;
-    }
-
-    public void setTimeSpent(double timeSpent) {
-        this.timeSpent = timeSpent;
-    }
-
-    public double getElapsedTime() {
-        return elapsedTime;
-    }
-
     public void setElapsedTime(double elapsedTimes) {
         this.elapsedTime = elapsedTime;
-    }
-
-
-    public String getPriority() {
-        return priority;
-    }
-
-    public void setPriority(String priority) {
-        this.priority = priority;
-    }
-
-    public Double getEstimatedDuration() {
-        return estimatedDuration;
-    }
-
-    public void setEstimatedDuration(Double estimatedDuration) {
-        this.estimatedDuration = estimatedDuration;
-    }
-
-    public String getProgressStatus() {
-        return progressStatus;
-    }
-
-    public void setProgressStatus(String progressStatus) {
-        this.progressStatus = progressStatus;
-    }
-
-    public Integer getEstimatedWeeks() {
-        return estimatedWeeks;
-    }
-
-    public void setEstimatedWeeks(Integer estimatedWeeks) {
-        this.estimatedWeeks = estimatedWeeks;
-    }
-
-    public Double getEffortPercentage() {
-        return effortPercentage;
-    }
-
-    public void setEffortPercentage(Double effortPercentage) {
-        this.effortPercentage = effortPercentage;
-    }
-
-    public void setAssignedUser(User user) {
-        this.assignedUser = user;
-    }
-
-    public void setDependency(Long taskId) {
-        this.dependency = taskId;
     }
 }

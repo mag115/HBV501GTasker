@@ -4,6 +4,7 @@ import { Page } from '../components/page';
 import { useAuth } from '../context/auth-context';
 import { TasksReport } from '../components/tasks-report';
 import CustomReportDialog from '../components/custom-report-dialog';
+import { useProject } from '../context/project-context';
 
 const ProjectReportPage = () => {
   const [reports, setReports] = useState([]);
@@ -12,6 +13,7 @@ const ProjectReportPage = () => {
   const { auth } = useAuth();
   const [tasks, setTasks] = useState([]);
   const [showTasksReport, setShowTasksReport] = useState(false);
+  const { selectedProject } = useProject();
 
   // State for custom report dialog
   const [isCustomReportModalOpen, setIsCustomReportModalOpen] = useState(false);
@@ -25,14 +27,16 @@ const ProjectReportPage = () => {
   useEffect(() => {
     const fetchReports = async () => {
       try {
+        if (!selectedProject) {
+          setError('Please select a project.');
+          return;
+        }
         setLoading(true);
-
-        const response2 = await request('get', '/tasks');
-
-        setTasks(response2.data);
+        const response = await request('get', `/tasks?projectId=${selectedProject}`);
+        setTasks(response.data);
       } catch (err) {
-        console.error('Error fetching reports:', err);
-        setError('Failed to load project reports.');
+        console.error('Error fetching tasks:', err);
+        setError('Failed to load tasks.');
       } finally {
         setLoading(false);
       }
@@ -41,27 +45,29 @@ const ProjectReportPage = () => {
     fetchReports();
 
     return () => {
-      console.log("Cleaning up...");
+      console.log('Cleaning up...');
       setReports([]);
       setTasks([]);
       setShowTasksReport(false);
     };
-  }, []);
-
+  }, [selectedProject]);
 
   const handleCreateReport = async () => {
     try {
+      if (!selectedProject) {
+        alert('Please select a project.');
+        return;
+      }
       setLoading(true);
-      const response = await request('post', '/reports/generate');
+      const response = await request('post', `/reports/generate?projectId=${selectedProject}`);
       alert('Project report created successfully!');
       setReports([response.data]);
-      setShowTasksReport(true); // Display tasks after creating the report
+      setShowTasksReport(true);
       setReportOptions((prevOptions) => ({
-              ...prevOptions,
-              includePerformance: true,
-              includeTimeSpent: true,
-            }));
-
+        ...prevOptions,
+        includePerformance: true,
+        includeTimeSpent: true,
+      }));
     } catch (err) {
       console.error('Error creating report:', err);
       setError('Failed to create project report.');
@@ -116,18 +122,16 @@ const ProjectReportPage = () => {
 
   const handleGenerateCustomReport = async () => {
     try {
+      if (!selectedProject) {
+        alert('Please select a project.');
+        return;
+      }
       setLoading(true);
-      const response = await request('post', '/reports/generate/custom', reportOptions);
+      const response = await request('post', `/reports/generate/custom?projectId=${selectedProject}`, reportOptions);
       alert('Custom project report created successfully!');
       setReports([response.data]);
       setIsCustomReportModalOpen(false);
-
-      // Show tasks report if tasks are included in the custom report
-      if (reportOptions.includeTasks) {
-        setShowTasksReport(true);
-      } else {
-        setShowTasksReport(false);
-      }
+      setShowTasksReport(reportOptions.includeTasks);
     } catch (err) {
       console.error('Error creating custom report:', err);
       setError('Failed to create custom project report.');
@@ -135,6 +139,7 @@ const ProjectReportPage = () => {
       setLoading(false);
     }
   };
+
 
   if (loading) {
     return <p>Loading...</p>;
@@ -202,7 +207,7 @@ const ProjectReportPage = () => {
               >
                 Download PDF
               </button>
-              {showTasksReport && <TasksReport />}
+              {showTasksReport && <TasksReport projectId={selectedProject}/>}
             </div>
           ))}
         </div>

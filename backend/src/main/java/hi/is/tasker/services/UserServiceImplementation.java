@@ -42,7 +42,6 @@ public class UserServiceImplementation implements UserService {
         userRepository.deleteById(id);
     }
 
-    @Override
     public List<User> getAllUsers() {
         return userRepository.findAll();
     }

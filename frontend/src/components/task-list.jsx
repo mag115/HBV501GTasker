@@ -3,50 +3,36 @@ import { request } from '../api/http';
 import { useAuth } from '../context/auth-context';
 import { CommentInput } from './comment-input';
 import { useNotifications } from '../context/notification-context';
+import { useProject } from '../context/project-context';
 
 const TaskList = () => {
   const [tasks, setTasks] = useState([]);
+  const { selectedProject } = useProject();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const { auth } = useAuth();
   const { fetchUnreadNotifications } = useNotifications();
 
+  useEffect(() => {
+    refreshTaskData();
+  }, [selectedProject]);
+
   const refreshTaskData = async () => {
+    if (!selectedProject) {
+      setTasks([]);
+      setLoading(false);
+      return;
+    }
     try {
-      const response = await request('get', '/tasks');
+      setLoading(true);
+      const response = await request('get', `/tasks?projectId=${selectedProject}`);
       setTasks(response.data);
     } catch (error) {
-      console.error('Error refreshing tasks:', error);
       setError('Failed to load tasks');
     } finally {
       setLoading(false);
     }
   };
-
-  useEffect(() => {
-    refreshTaskData();
-  }, []);
-
-  useEffect(() => {
-    const fetchTasks = async () => {
-      try {
-        const response = await request('get', '/tasks');
-        console.log('Tasks fetched:', response.data); // Log all tasks and their assigned users
-        if (Array.isArray(response.data)) {
-          setTasks(response.data);
-        } else {
-          throw new Error('Invalid response format');
-        }
-      } catch (err) {
-        console.error('Error fetching tasks:', err);
-        setError('Failed to load tasks');
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchTasks();
-  }, []);
 
   if (loading) {
     return <p>Loading tasks...</p>;
@@ -103,27 +89,28 @@ const TaskList = () => {
       alert('Reminder sent successfully!');
       refreshTaskData();
       if (auth?.userId && auth?.token) {
-            fetchUnreadNotifications(auth.userId, auth.token);
-          } else {
-            console.warn('Cannot fetch notifications - userId or token missing.');
-          }
+        fetchUnreadNotifications(auth.userId, auth.token);
+      } else {
+        console.warn('Cannot fetch notifications - userId or token missing.');
+      }
     } catch (error) {
       console.error('Error sending reminder:', error);
       alert('Failed to send reminder. Please try again.');
     }
   };
 
-   const handleDelete = async (taskId) => {
-        const confirmDelete = window.confirm('Are you sure you want to delete the task?');
-        if(confirmDelete){
-            try {
-                await request('delete', `/tasks/${taskId}`);
-                refreshTaskData();
-            } catch (error) {
-                console.error('Error deleting task:', error);
-                alert('Failed to delete task. Please try again.');
-            }
-   };}
+  const handleDelete = async (taskId) => {
+    const confirmDelete = window.confirm('Are you sure you want to delete the task?');
+    if (confirmDelete) {
+      try {
+        await request('delete', `/tasks/${taskId}`);
+        refreshTaskData();
+      } catch (error) {
+        console.error('Error deleting task:', error);
+        alert('Failed to delete task. Please try again.');
+      }
+    }
+  };
 
   const getPriorityColor = (priority) => {
     switch (priority) {
@@ -172,7 +159,6 @@ const TaskList = () => {
           )}
         </p>
 
-
         {/* Display calculated and user-set (manual) progress separately */}
         <p className="text-gray-500 mb-2">
           <strong>Calculated Progress:</strong>{' '}
@@ -182,7 +168,6 @@ const TaskList = () => {
           <strong>User-Set Progress:</strong>{' '}
           {task.manualProgress !== undefined ? `${Math.round(task.manualProgress)}%` : 'Not set'}
         </p>
-
 
         {/* Due Date */}
         <p className="text-gray-500 mb-2">
@@ -227,9 +212,14 @@ const TaskList = () => {
           </button>
         )}
       </div>
- {auth.role === 'PROJECT_MANAGER' && (
-          <>
-      <button  className="p-1 bg-red text-white rounded hover:bg-black transition" onClick={() => handleDelete(task.id)}> Delete task </button></>)}
+      {auth.role === 'PROJECT_MANAGER' && (
+        <button
+          className="p-1 bg-red text-white rounded hover:bg-black transition m-2"
+          onClick={() => handleDelete(task.id)}
+        >
+          Delete Task
+        </button>
+      )}
     </div>
   );
 

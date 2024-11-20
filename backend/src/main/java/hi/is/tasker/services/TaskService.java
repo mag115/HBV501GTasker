@@ -5,12 +5,11 @@ import hi.is.tasker.entities.Task;
 import java.util.List;
 
 public interface TaskService {
-    //Task createTask(Task task);
-    List<Task> findAll();
+    Task createTask(Task task, Long projectId);
+
+    List<Task> findAll(Long projectId);
 
     Task findById(Long id);
-
-    Task save(Task task);
 
     void delete(Task task);
 
@@ -20,7 +19,8 @@ public interface TaskService {
 
     Task updateTaskPriority(Long taskId, String priority);
 
-    List<Task> getTasksAssignedToUser(String username);
+    List<Task> getTasksAssignedToUser(String username, Long projectId);
+
     void calculateAndUpdateTaskProgress(Task task);
 
     List<Task> filterTasksByStatus(String status);
@@ -38,4 +38,8 @@ public interface TaskService {
     Task updateTaskProgress(Long taskId, Double progress);
 
     List<Task> findTasksWithUpcomingDeadlines(int days);
+
+    List<Task> findTasksByProjectId(Long projectId);
+
+    Task save(Task task);
 }
