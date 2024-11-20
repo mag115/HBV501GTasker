@@ -29,6 +29,7 @@ Task {
     private Long dependency;
     private Double progress;
     private Double manualProgress;//ATH: geymir hvað user setur progress sem
+    private Boolean isDeleted;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "project_id")

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { TaskList } from '../components/task-list';
 import { Page } from '../components/page';
 import { SearchBar } from '../components/search-bar';
@@ -6,6 +6,8 @@ import { TaskDialog } from '../components/task-dialog';
 import { UpcomingTasksDialog } from '../components/upcoming-tasks-dialog'; // Updated import
 import { request } from '../api/http';
 import { useAuth } from '../context/auth-context';
+import { useProject } from '../context/project-context';
+import { useNavigate } from 'react-router-dom';
 
 
 const TaskListPage = () => {
@@ -14,14 +16,57 @@ const TaskListPage = () => {
   const [days, setDays] = useState('');
   const [upcomingTasks, setUpcomingTasks] = useState([]);
   const [isUpcomingDialogOpen, setIsUpcomingDialogOpen] = useState(false);
-
+  const { selectedProject } = useProject();
+  const [assignedUser, setAssignedUser] = useState('');
+  const [isTaskCreated, setIsTaskCreated] = useState(false);
+  const [responseMessage, setResponseMessage] = useState('');
+  const [taskId, setTaskId] = useState(null);
+  const [timeSpent, setTimeSpent] = useState('');
+  const [estimatedWeeks, setEstimatedWeeks] = useState('');
+  const [effortPercentage, setEffortPercentage] = useState('');
+  const [estimatedDuration, setEstimatedDuration] = useState(null);
+  const navigate = useNavigate();
+  const [tasks, setTasks] = useState([]);
+  const [dependency, setDependency] = useState('');
+  const [maxWeeks, setMaxWeeks] = useState(0);
+  const [projects, setProjects] = useState([]);
+  const [projectId, setProjectId] = useState(selectedProject || '');
+  const [loading, setLoading] = useState(true);
+  const [myTasks, setMyTasks] = useState([]);
+  const [error, setError] = useState(null);
   const { auth } = useAuth();
 
+useEffect(() => {
+     refreshTaskData();
+   }, [selectedProject]);
+
+const refreshTaskData = async () => {
+     if (!selectedProject) {
+       setMyTasks([]);
+       setTasks([]);
+       setUpcomingTasks([]);
+       setLoading(false);
+       return;
+     }
+     try {
+       setLoading(true);
+       const response = await request('get', `/tasks/assigned?projectId=${selectedProject}`);
+       const allTasksResponse = await request('get', `/tasks?projectId=${selectedProject}`);
+       setMyTasks(response.data);
+       setTasks(allTasksResponse.data);
+
+     } catch (error) {
+       setError('Failed to refresh tasks.');
+     } finally {
+       setLoading(false);
+     }
+   };
 const fetchTaskById = async (id) => {
   try {
     const response = await request('get', `/tasks/${id}`); // Using the request function
     console.log('Fetched task data:', response.data);
-    setTask(response.data);
+    const filtered=response.data.filter(task=>!task.isDeleted);
+    setTask(filtered);
     setIsDialogOpen(true);
   } catch (error) {
     console.error('Error fetching task:', error);
@@ -38,16 +83,19 @@ const fetchTaskById = async (id) => {
     // Function to fetch upcoming tasks
   const fetchUpcomingTasks = async () => {
     if (!days || days <= 0) {
-        alert('Please enter a valid number of days.');
-        return;
+      alert('Please enter a valid number of days.');
+      return;
     }
     try {
-        const response = await request('get', `/tasks/upcoming?days=${days}`);
-        setUpcomingTasks(response.data);
-        setIsUpcomingDialogOpen(true);
+      const response = await request('get', `/tasks/upcoming?days=${days}`);
+      console.log("öll upcoming", response.data);
+      const filteredTasks = response.data.filter(task => !task.isDeleted); // Adjust based on your task structure
+      console.log(filteredTasks);
+      setUpcomingTasks(filteredTasks);
+      setIsUpcomingDialogOpen(true);
     } catch (error) {
-        console.error('Error fetching upcoming tasks:', error);
-        alert('Failed to fetch upcoming tasks.');
+      console.error('Error fetching upcoming tasks:', error);
+      alert('Failed to fetch upcoming tasks.');
     }
   };
 

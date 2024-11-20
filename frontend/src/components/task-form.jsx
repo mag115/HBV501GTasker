@@ -160,6 +160,7 @@ const TaskForm = () => {
         newTask
       );
       const reminderRes = await request('post', `/notifications/send`);
+
       if (res.status === 200) {
         setTaskId(res.data.id);
         setResponseMessage('Task successfully created!');
@@ -168,7 +169,7 @@ const TaskForm = () => {
         setTitle('');
         setDescription('');
         setDeadline('');
-        setReminderSent(false);
+        setReminderSent(true);
         setPriority('');
         setAssignedUser('');
         setEstimatedWeeks('');
