@@ -159,7 +159,9 @@ const TaskForm = () => {
         `/tasks?assignedUserId=${assignedUser}&projectId=${projectId}`,
         newTask
       );
-      const reminderRes = await request('post', `/notifications/send`);
+      if (reminderSent) {
+        await request('post', `/notifications/send`);
+      }
 
       if (res.status === 200) {
         setTaskId(res.data.id);
