@@ -1,5 +1,5 @@
 import React from 'react';
-import { createBrowserRouter, RouterProvider } from 'react-router-dom';
+import { HashRouter, Routes, Route } from 'react-router-dom';
 import { TaskFormPage } from './pages/create-task';
 import { Login } from './pages/login';
 import { Signup } from './pages/signup';
@@ -16,96 +16,86 @@ import { ProjectFormPage } from './pages/create-project';
 import { ProjectPage } from './pages/project';
 import { ProjectProvider } from './context/project-context';
 
-const router = createBrowserRouter([
-  {
-    path: '/',
-    element: <Home />,
-  },
-  {
-    path: '/login',
-    element: <Login />,
-  },
-  {
-    path: '/signup',
-    element: <Signup />,
-  },
-  {
-    path: '/create-task',
-    element: (
-      <ProtectedRoute requiredRole="PROJECT_MANAGER">
-        <TaskFormPage />
-      </ProtectedRoute>
-    ),
-  },
-  {
-    path: '/create-project', // Add the new route here
-    element: (
-        <ProtectedRoute requiredRole="PROJECT_MANAGER">
-        <ProjectFormPage />
-        </ProtectedRoute>
-    ),
-  },
-  {
-    path: '/project',
-    element: (
-      <ProtectedRoute requiredRole="PROJECT_MANAGER">
-        <ProjectReportPage />
-      </ProtectedRoute>
-    ),
-  },
-  {
-    path: '/task-list',
-    element: (
-      <ProtectedRoute>
-        <TaskListPage />
-      </ProtectedRoute>
-    ),
-  },
-  {
-    path: '/myinfo',
-    element: (
-      <ProtectedRoute>
-        <MyInfoPage />
-      </ProtectedRoute>
-    ),
-  },
-  {
-    path: '/notifications',
-    element: (
-      <ProtectedRoute>
-        <NotificationPage />
-      </ProtectedRoute>
-    ),
-  },
-  {
-    path: '/my-tasks',
-    element: (
-      <ProtectedRoute>
-        <MyTasksPage />
-      </ProtectedRoute>
-    ),
-  },
-  {
-    path: '/projects/:id',
-    element: (
-        <ProtectedRoute>
-          <ProjectPage />
-        </ProtectedRoute>
-    ),
-  },
-]);
-
 const App = () => {
   return (
     <AuthProvider>
-        <NotificationsProvider>
-            <ProjectProvider>
-                <RouterProvider router={router} />
-            </ProjectProvider>
-        </NotificationsProvider>
+      <NotificationsProvider>
+        <ProjectProvider>
+          <HashRouter>
+            <Routes>
+              <Route path="/" element={<Home />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/signup" element={<Signup />} />
+              <Route
+                path="/create-task"
+                element={
+                  <ProtectedRoute requiredRole="PROJECT_MANAGER">
+                    <TaskFormPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/create-project"
+                element={
+                  <ProtectedRoute requiredRole="PROJECT_MANAGER">
+                    <ProjectFormPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/project"
+                element={
+                  <ProtectedRoute requiredRole="PROJECT_MANAGER">
+                    <ProjectReportPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/task-list"
+                element={
+                  <ProtectedRoute>
+                    <TaskListPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/myinfo"
+                element={
+                  <ProtectedRoute>
+                    <MyInfoPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/notifications"
+                element={
+                  <ProtectedRoute>
+                    <NotificationPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/my-tasks"
+                element={
+                  <ProtectedRoute>
+                    <MyTasksPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/projects/:id"
+                element={
+                  <ProtectedRoute>
+                    <ProjectPage />
+                  </ProtectedRoute>
+                }
+              />
+            </Routes>
+          </HashRouter>
+        </ProjectProvider>
+      </NotificationsProvider>
     </AuthProvider>
   );
 };
 
 export default App;
-
