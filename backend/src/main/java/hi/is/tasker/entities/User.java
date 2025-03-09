@@ -116,4 +116,7 @@ public class User implements UserDetails {
     public boolean isEnabled() {
         return true;
     }
+
+    @Column(name = "fcm_token")
+    private String fcmToken;
 }

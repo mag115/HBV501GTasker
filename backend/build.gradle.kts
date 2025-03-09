@@ -46,6 +46,7 @@ dependencies {
 	implementation("javax.annotation:javax.annotation-api:1.3.2")
 	implementation("com.itextpdf:itextpdf:5.5.13.2")
 	implementation("org.apache.pdfbox:pdfbox:2.0.29")
+	implementation("org.json:json:20210307")
 }
 
 tasks.withType<Test> {

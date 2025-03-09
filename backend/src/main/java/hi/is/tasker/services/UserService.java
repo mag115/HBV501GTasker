@@ -23,4 +23,6 @@ public interface UserService {
     List<User> getAllUsers();
 
     User updateUserRole(Long id, String role);  // New method for updating the role
+
+    void updateFcmToken(Long userId, String fcmToken);
 }

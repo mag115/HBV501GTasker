@@ -64,5 +64,12 @@ public class UserServiceImplementation implements UserService {
     public User save(User user) {
         return userRepository.save(user);
     }
+
+    public void updateFcmToken(Long userId, String fcmToken) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        user.setFcmToken(fcmToken);
+        userRepository.save(user);
+    }
 }
 

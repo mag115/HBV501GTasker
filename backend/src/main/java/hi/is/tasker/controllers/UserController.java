@@ -84,4 +84,11 @@ public class UserController {
         userService.deleteUser(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
+
+    @PostMapping("/{id}/update-fcm-token")
+    public ResponseEntity<?> updateFcmToken(@PathVariable Long id, @RequestBody Map<String, String> request) {
+        String fcmToken = request.get("fcmToken");
+        userService.updateFcmToken(id, fcmToken);
+        return ResponseEntity.ok("FCM Token Updated Successfully");
+    }
 }
